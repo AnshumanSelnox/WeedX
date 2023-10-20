@@ -1,0 +1,185 @@
+
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import pandas as pd
+
+
+html = '''
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<body>
+    <div style="display:grid;place-items: center;">
+
+        <div class="table_container_border" style="height:900px;border:1px solid black;width:92%;">
+            <div style="width:100%; height:60px;background-color: #31B665;margin-top:0px;">
+                <div style="display:flex;align-items: center;">
+                    <p style="margin-left:20px;color:#ffff">New Order:#{OrderId}</p>
+
+                </div>
+
+            </div>
+            <div style="width: 100%;display: grid;place-items: center;">
+                <div style="width: 90%;">
+                    <p style="font-size: 14px;">You have received the following order from Selnox teams </p>
+
+
+
+                </div>
+                <div style="width:90%;">
+                    <p style="margin-top: 0px;color: #31B665;">[Order#{OrderId}](date:15/04) </p>
+
+
+
+                </div>
+            </div>
+
+            <div style="display:grid;place-items: center;">
+                <div style="width:90%;height:328px;">
+                    <table style="width:100% ;border-spacing: 0;">
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <th style="text-align:left;border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left: 10px;">Product</p>
+                            </th>
+                            <th style="text-align:left;border:1px solid rgb(12, 11, 11);width:10%;border-spacing: 1">
+                                <p style="margin-left: 10px;">Quantity</p>
+                            </th>
+                            <th style="text-align:left;border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left: 10px;">Price</p>
+                            </th>
+
+                        </tr>
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">{ProductName}</p>
+                                <span>{Weight}</span>
+
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">1</p>
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">$400</p>
+                            </td>
+                        </tr>
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <td style="border:1px solid rgb(12, 11, 11);" colspan="2">
+                                <p style="margin-left:10px;font-size: 14px;">Sub Total</p>
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">${subtotal}</p>
+                            </td>
+                        </tr>
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <td style="border:1px solid rgb(12, 11, 11)" colspan="2">
+                                <p style="margin-left:10px;font-size: 14px;">Shipping</p>
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">Free Shipping</p>
+                            </td>
+                        </tr>
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <td style="border:1px solid rgb(12, 11, 11)" colspan="2">
+                                <p style="margin-left:10px;font-size: 14px;">Payment method</p>
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">Cash on delivery</p>
+                            </td>
+                        </tr>
+                        <tr style="border:1px solid rgb(12, 11, 11)">
+                            <td style="border:1px solid rgb(12, 11, 11)" colspan="2">
+                                <p style="margin-left:10px;font-size: 14px;">Total</p>
+                            </td>
+                            <td style="border:1px solid rgb(12, 11, 11)">
+                                <p style="margin-left:10px;font-size: 14px;">${subtotal}</p>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+            </div>
+          
+
+            <div style="width:100%;height:180px;margin-top:20px;display:grid;place-items: center;margin-top: 90px;">
+                <div style="width:90%;height:328px;">
+
+                    <table style="width:100%;border-spacing: 0;">
+                        <tr style="text-align:left;border:1px solid rgb(12, 11, 11)">
+                            <th style="text-align:left;border:1px solid rgb(12, 11, 11);padding: 10px;">Billing Address</th>
+                            <th style="text-align:left;border:1px solid rgb(12, 11, 11);padding: 10px;">Shipping Address</th>
+
+                        </tr>
+                        <tr style="text-align:left;border:1px solid rgb(12, 11, 11)">
+                            <td style="text-align:left;border:1px solid rgb(12, 11, 11);font-size: 11px;">
+                                <p style="margin-left:10px;font-size: 11px;">
+                                    {Address}
+                                </p>
+
+
+                            </td>
+                            <td style="text-align:left;border:1px solid rgb(12, 11, 11);font-size: 11px;">
+                                <p style="margin-left:10px;font-size:11px;">
+                                    Rashida gumb 2147 2nd floor lavina mi 04711 6392004333 Selnoxreact@gmail.com
+                                </p>
+
+
+                            </td>
+
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="width: 100%;display: grid;place-items:center;">
+                <div style="width: 90%;">
+                    <p>Congratulations on the sale </p>
+
+
+                </div>
+                <div style="width: 90%;">
+                    <p style="margin-top: 0px;">Collect payment easily with our mobile app easily </p>
+
+
+                </div>
+            </div>
+            <div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
+    '''
+
+
+
+def sendmailoforderdetails(email_to=[],OrderId='',subtotal='',ProductName='',Address='',StoreName='',Weight=""):
+    email_from = 'selnoxinfo@gmail.com'
+    password = 'ddylfolnferwhjue'
+    date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
+    email_message = MIMEMultipart()
+    email_message['From'] = email_from
+    email_message['To']=", ".join(email_to)
+    email_message['Subject'] = f'New order  - {date_str},StoreName {StoreName} ,OrderId#{OrderId}'
+    email_message.attach(MIMEText(html.format(OrderId=OrderId,subtotal=subtotal,ProductName="<br>".join([i for i in ProductName]),Weight="<br>".join([i for i in Weight]),Address=Address), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        server.sendmail(email_from, email_to, email_string)
+        
