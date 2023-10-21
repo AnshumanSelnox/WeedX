@@ -1,4 +1,4 @@
-# WeedX - E-commerce Django Website Project
+# WeedX 
 
 
 **Link to live version - [WeedX](https://www.weedx.io)**
