@@ -161,8 +161,8 @@ from functools import reduce
 
 def sendmailoforderdetailsVendor(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',IdCard='',CustomerName='',Store_Name=''):
     a=[]
-    email_from = 'selnoxinfo@gmail.com'
-    password = 'ddylfolnferwhjue'
+    email_from = 'weedxselnox@gmail.com'
+    password = 'cbseekrjymhpiydc'
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
     email_message['From'] = email_from
@@ -326,8 +326,8 @@ html1='''
 '''  
 def sendmailoforderdetailsCustomer(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',CustomerName=''):
     a=[]
-    email_from = 'selnoxinfo@gmail.com'
-    password = 'ddylfolnferwhjue'
+    email_from = 'weedxselnox@gmail.com'
+    password = 'cbseekrjymhpiydc'
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
     email_message['From'] = email_from
