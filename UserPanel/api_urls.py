@@ -107,6 +107,7 @@ urlpatterns = [
     path('Get-UserProfileOrderDetails/',GetUserProfileOrderDetails.as_view()),
     path('BuyXGetYDiscount/',BuyXGetYDiscount.as_view()),
     path('Get-PopularStrain/',PopularStrain.as_view()),
+    path('PriceFilter/',PriceFilter.as_view()),
     
 
 

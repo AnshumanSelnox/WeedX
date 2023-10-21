@@ -2354,3 +2354,27 @@ class ProductDiscountCoupoun(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
+class PriceFilter(APIView):
+    def post(self,request):
+        try:
+            a=[]
+            z=[]
+            MinPrice=request.data.get("MinPrice")
+            MaxPrice=request.data.get("MaxPrice")
+            product=Product.objects.all()
+            serialize=Serializer_Product(product,many=True).data
+            for i in serialize:
+                for j in i["Prices"]:
+                    for k in j["Price"]:
+                        if MinPrice <= k["SalePrice"] <= MaxPrice:
+                            response={"Product":i["id"],"Price":k["SalePrice"]}
+                            a.append(response)
+            for l in a:
+                product=Product.objects.filter(id=l["Product"])
+                serialize=Serializer_Product(product,many=True).data
+                for m in serialize:
+                    z.append(m)
+            return Response(z)
+            
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
