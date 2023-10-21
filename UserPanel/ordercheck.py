@@ -165,7 +165,7 @@ def sendmailoforderdetailsVendor(email_to='',OrderId='',subtotal='',ProductName=
     password = 'cbseekrjymhpiydc'
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
-    email_message['From'] = "WeedX"
+    email_message['From'] = email_from
     email_message['To']=email_to
     email_message['Subject'] = f'[{Store_Name}] Order Details - {date_str}'
     
@@ -330,7 +330,7 @@ def sendmailoforderdetailsCustomer(email_to='',OrderId='',subtotal='',ProductNam
     password = 'cbseekrjymhpiydc'
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
-    email_message['From'] = "WeedX"
+    email_message['From'] = email_from
     email_message['To']=email_to
     email_message['Subject'] = f'Order Details - {date_str}'
     
