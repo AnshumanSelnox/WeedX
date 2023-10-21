@@ -1,6 +1,5 @@
 # WeedX - E-commerce Django Website Project
 
-[![Build Status](https://github.com/AnshumanSelnox/BackwoodAroma.git](https://github.com/AnshumanSelnox/BackwoodAroma.git)
 
 **Link to live version - [WeedX](https://www.weedx.io)**
 
