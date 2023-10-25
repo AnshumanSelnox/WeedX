@@ -182,3 +182,8 @@ class Serializer_UserProfileOrderDetails(serializers.ModelSerializer):
     fields='__all__'
     
     
+    
+class Serializer_SiteMap(serializers.ModelSerializer):
+  class Meta:
+    model=SiteMap
+    fields='__all__'

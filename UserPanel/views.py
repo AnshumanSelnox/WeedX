@@ -2378,3 +2378,55 @@ class PriceFilter(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+ 
+       
+class GetSiteMap(APIView):
+    def get(self, request, format=None):
+        try:
+            User = SiteMap.objects.select_related().all()
+            serialize = Serializer_SiteMap(User, many=True)
+            return Response({"data":serialize.data},status=200)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+
+
+
+class AddSiteMap(APIView):
+    def post(self, request):
+        try:
+            serializer = Serializer_SiteMap(data=request.data, partial=True)
+            if serializer.is_valid(): 
+                serializer.save()
+                return Response({"status": "success","data": serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UpdateSiteMap(APIView):
+    def post(self, request, id=None):
+        try:
+            User = SiteMap.objects.get(id=id)
+            serializer = Serializer_SiteMap(User, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save(modified_by=request.user.username)
+                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+class DeleteSiteMap(APIView):
+    def delete(self, request, id=None):
+        try:
+            User = get_object_or_404(SiteMap, id=id)
+            User.delete()
+            return Response({"status": "success", "data": "Deleted"})
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+        

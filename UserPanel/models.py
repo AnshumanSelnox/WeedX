@@ -105,3 +105,7 @@ class UserProfileOrderDetails(models.Model):
     MedicalMarijuanaNumber=models.CharField(max_length=20)
     email=models.EmailField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+    
+    
+class SiteMap(models.Model):
+    Xml=models.JSONField()

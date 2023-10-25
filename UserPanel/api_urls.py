@@ -108,8 +108,14 @@ urlpatterns = [
     path('BuyXGetYDiscount/',BuyXGetYDiscount.as_view()),
     path('Get-PopularStrain/',PopularStrain.as_view()),
     path('PriceFilter/',PriceFilter.as_view()),
+    #################################################################################################################################################
+    path('Get-SiteMap/',GetSiteMap.as_view()),
+    path('Add-SiteMap',AddSiteMap.as_view()),
+    path('Update-SiteMap/<int:id>',UpdateSiteMap.as_view()),
+    path('Delete-SiteMap/<int:id>',DeleteSiteMap.as_view()),
     
 
 
 ]
 
+   
