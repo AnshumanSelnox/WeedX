@@ -1,12 +1,10 @@
 from django.db import models
 from .choices import *
 from ckeditor.fields import RichTextField
-from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from AdminPanel.choices import *
 
-import django.conf.global_settings
 
 class UserManager(BaseUserManager):
     def create_user(self, username,email, password=None, **kwargs):

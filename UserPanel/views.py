@@ -2382,11 +2382,11 @@ class PriceFilter(APIView):
  
        
 class GetSiteMap(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
         try:
-            User = SiteMap.objects.select_related().all()
+            User = SiteMap.objects.all()
             serialize = Serializer_SiteMap(User, many=True)
-            return Response({"data":serialize.data},status=200)
+            return Response(serialize.data,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
