@@ -389,7 +389,6 @@ class StoreByCities(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class GetNews(APIView):
-
     def get(self, request, format=None):
         try:
             User = News.objects.select_related().all()
