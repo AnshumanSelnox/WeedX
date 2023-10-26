@@ -2448,3 +2448,24 @@ class GetProductByStoreAndBrand(APIView):
             return Response(serialize.data,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+        
+class GetBrandByStore(APIView):
+    def get(self,request,id=None):
+        try:
+            z=[]
+            x=[]
+            brand=Product.objects.filter(Store_id=id)
+            for i in brand:
+                a=brand.filter(Brand_id=i.Brand_id)
+                if a:
+                    for j in a:
+                        if j.Brand_id == None:
+                            x.append({"None":None})
+                        else:
+                            response={"name":j.Brand_id.name,"id":j.Brand_id_id,"Store_id":j.Store_id_id}
+                            z.append(response)
+                    return Response(z,status=200)
+                else:
+                    return Response("No Brand in this Store")
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
