@@ -114,6 +114,7 @@ urlpatterns = [
     path('Update-SiteMap/<int:id>',UpdateSiteMap.as_view()),
     path('Delete-SiteMap/<int:id>',DeleteSiteMap.as_view()),
     path('Get-SitemapbyId/<int:id>',getSitemapbyId.as_view()),
+    path('Get-ProductByStoreAndBrand/<int:store>/<int:brand>',GetProductByStoreAndBrand.as_view()),
     
 
 

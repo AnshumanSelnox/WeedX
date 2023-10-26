@@ -2439,3 +2439,12 @@ class getSitemapbyId(APIView):
             return Response(serialize.data,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+        
+class GetProductByStoreAndBrand(APIView):
+    def get(self,request,store=None,brand=None):
+        try:
+            product=Product.objects.filter(Store_id=store).filter(Brand_id=brand)
+            serialize=Serializer_Product(product,many=True)
+            return Response(serialize.data,status=200)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
