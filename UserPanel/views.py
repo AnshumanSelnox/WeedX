@@ -2435,7 +2435,7 @@ class getSitemapbyId(APIView):
     def get(self,request,id=None):
         try:
             site=SiteMap.objects.filter(id=id)
-            serialize=Serializer_Salestax(site,many=True)
+            serialize=Serializer_SiteMap(site,many=True)
             return Response(serialize.data,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
