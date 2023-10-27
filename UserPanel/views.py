@@ -2476,3 +2476,61 @@ class GetBrandByStore(APIView):
                     return Response("No Brand in this Store")
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+        
+        
+class ProductFilterByWeightandStore(APIView):
+    def post(self,request):
+        try:
+            a=[]
+            z=[]
+            store=request.data.get("store")
+            weight=request.data.get("weight")
+            product=Product.objects.filter(Store_id=store)
+            serialize=Serializer_Product(product,many=True).data
+            for i in serialize:
+                for j in i["Prices"]:
+                    for k in j["Price"]:
+                        if k["Weight"]==weight:
+                            response={"Product":i["id"],"Price":k["Weight"]}
+                            a.append(response)
+                        else:
+                            continue
+            for l in a:
+                product=Product.objects.filter(id=l["Product"])
+                serialize=Serializer_Product(product,many=True).data
+                for m in serialize:
+                    z.append(m)
+            return Response(z,status=200)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+        
+class ProductFilterByUnitandStore(APIView):
+    def post(self,request):
+        try:
+            a=[]
+            z=[]
+            Store=request.data.get("Store")
+            MinUnit=request.data.get("MinUnit")
+            MaxUnit=request.data.get("MaxUnit")
+            product=Product.objects.filter(Store_id=Store)
+            serialize=Serializer_Product(product,many=True).data
+            for i in serialize:
+                for j in i["Prices"]:
+                    for k in j["Price"]:
+                        if k["Unit"]=='' or k["Unit"]==None:
+                            continue
+                        else:
+                            if (MinUnit) <= int(k["Unit"]) <= (MaxUnit):
+                                response={"Product":i["id"],"Unit":k["Unit"]}
+                                a.append(response)
+                            else:
+                                continue
+            for l in a:
+                product=Product.objects.filter(id=l["Product"])
+                serialize=Serializer_Product(product,many=True).data
+                for m in serialize:
+                    z.append(m)
+            return Response(z)
+            
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
