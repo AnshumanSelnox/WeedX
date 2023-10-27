@@ -66,7 +66,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
-    created = models.DateField(auto_now_add=True,null=True)
+    # created = models.DateField(auto_now_add=True,null=True)
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
@@ -346,10 +346,15 @@ class News(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
-    # likeCount=models.IntegerField(default=None,null=True)
-    # commentCount=models.IntegerField(default=None,null=True)
+    ViewCount=models.IntegerField(default=0) 
+
     def __str__(self):
         return self.Title
+    
+    def save(self, *args, **kwargs):
+        self.ViewCount = self.ViewCount + 1
+        super().save(*args, **kwargs)
+
 
 
 

@@ -391,9 +391,16 @@ class StoreByCities(APIView):
 class GetNews(APIView):
     def get(self, request, format=None):
         try:
+            z=[]
             User = News.objects.select_related().all()
-            serialize = Serializer_News(User, many=True)
-            return Response(serialize.data)
+            serialize=Serializer_News(User,many=True).data
+            for i in serialize:
+                a=BlogComment.objects.filter(Blog=i["id"]).count()
+                b=BlogLike.objects.filter(Blog=i["id"]).count()
+                c=BlogView.objects.filter(blog=i["id"]).first()
+                response={"id":i["id"],"Title":i["Title"],"Description":i["Description"],"username":i["username"],"Image":i["Image"],"Publish_Date":i["Publish_Date"],"likeCount":a,"commentCount":b,"ViewCount":i["ViewCount"]}
+                z.append(response)
+            return Response(z)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
