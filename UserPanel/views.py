@@ -2365,9 +2365,10 @@ class PriceFilter(APIView):
         try:
             a=[]
             z=[]
+            Store=request.data.get("Store")
             MinPrice=request.data.get("MinPrice")
             MaxPrice=request.data.get("MaxPrice")
-            product=Product.objects.all()
+            product=Product.objects.filter(Store_id=Store)
             serialize=Serializer_Product(product,many=True).data
             for i in serialize:
                 for j in i["Prices"]:
