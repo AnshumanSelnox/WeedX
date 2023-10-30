@@ -202,6 +202,7 @@ class Stores(models.Model):
     CurbSideZipCode=models.CharField(max_length=999999,null=True)
     CurbsideLatAndLong=models.JSONField(null=True)
     TotalRating=models.IntegerField(default=0)
+    DeliveryHours=models.JSONField(null=True)
 
     def __str__(self):
         return self.Store_Name
