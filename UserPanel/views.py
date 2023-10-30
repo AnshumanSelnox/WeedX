@@ -2520,3 +2520,14 @@ class BlogSearchApi(APIView):
             return Response(serializer.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class StrainFilterProduct(APIView):
+    def post(self,request):
+        try:
+            store=request.data.get("store")
+            strain=request.data.get("strain")
+            product=Product.objects.filter(strain=strain).filter(Store_id=store)
+            serialize=Serializer_Product(product,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
