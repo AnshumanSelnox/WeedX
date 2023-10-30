@@ -915,7 +915,7 @@ class ExportImportExcel(APIView):
     
     def get(self,request):
         try:
-            User = Product.objects.filter(created_by=request.user)
+            User = Product.objects.filter(created_by=request.user).values('Product_Name','Product_Description','strain')
             serialize = Serializer_Product(User, many=True)
             df=pd.DataFrame(serialize.data)
             df.to_csv(f'/home/selnoxinfotech/BackwoodAroma/Ecommerce/Ecommerce/media/excel{uuid.uuid4()}.csv',encoding="UTF-8",index=False)

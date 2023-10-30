@@ -115,7 +115,7 @@ urlpatterns = [
     path('Get-BrandByStore/<int:id>',GetBrandByStore.as_view()),
     path('ProductFilterByWeightandStore/',ProductFilterByWeightandStore.as_view()),
     path('ProductFilterByUnitandStore/',ProductFilterByUnitandStore.as_view()),
-    
+    path('Get-BlogSearchApi/',BlogSearchApi.as_view()),
     
     
 

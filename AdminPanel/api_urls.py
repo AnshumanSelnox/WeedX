@@ -8,11 +8,6 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-
-
-
-
-
 urlpatterns = [
     path('Add-Category/', AddCategories.as_view()),
     path('Get-Category/', GetCategories.as_view()),
