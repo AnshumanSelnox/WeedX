@@ -89,7 +89,6 @@ class LoginSerializer(serializers.Serializer):
 class Serializer_Wishlist(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='created_by.username')
   ProductName=serializers.ReadOnlyField(source='product.Product_Name')
-  # Price=serializers.ReadOnlyField(source='product.Price')
   class Meta:
     model=Wishlist
     fields='__all__'

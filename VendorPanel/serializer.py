@@ -1,9 +1,5 @@
-from dataclasses import fields
 from rest_framework import serializers
 from .models import *
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth.password_validation import validate_password
-import datetime
 from AdminPanel.choices import *
 from AdminPanel.models import *
 from django.contrib.auth import authenticate

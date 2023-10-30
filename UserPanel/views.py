@@ -157,9 +157,6 @@ class VerifyOtpForgetPassword(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
     serializer_class = UserSerializer
@@ -212,8 +209,6 @@ class RegisterAPI(generics.GenericAPIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class ResetPassword(APIView):
     serializer_class = PasswordReseetSerializer
     model = User
@@ -247,9 +242,6 @@ class ResetPassword(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 #Category Api
 class GetCategories(APIView):
@@ -588,10 +580,6 @@ class ProductByCategory(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-
-
 class GetAddtocart(APIView):
     permission_classes_by_action = [IsAuthenticated]
 
@@ -603,10 +591,6 @@ class GetAddtocart(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-# from rest_condition import Or
-#from django.db.models import F
 
 
 class AddAddtoCart(APIView):
@@ -687,14 +671,6 @@ class DeleteAddtoCart(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)    
 
-
-
-    
-    
-    
-
-    
-    
 
 class ClearAddtoCart(APIView):
     permission_classes=[IsAuthenticated]

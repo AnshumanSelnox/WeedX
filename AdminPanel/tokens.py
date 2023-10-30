@@ -1,9 +1,5 @@
-#from django.contrib.auth.models import User 
-# from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
-# User = get_user_model()
-
 
 def create_jwt_pair_for_user( user:User):
     refresh = RefreshToken.for_user(user)

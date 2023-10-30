@@ -25,4 +25,4 @@ urlpatterns = [
     path('Team/',include('Team.api_urls')),
     path('DeliveryBoy/',include('DeliveryBoy.api_urls')),
 ]  + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
-# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

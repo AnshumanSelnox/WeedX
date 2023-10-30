@@ -1,5 +1,3 @@
-
-
 from django.db import models
 from AdminPanel.models import *
 
@@ -23,7 +21,7 @@ class AddtoCart(models.Model):
         super().save(*args, **kwargs)
 
 
-#import uuid
+
 class Order(models.Model):
     DeliveryTime=models.JSONField(null=True)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)

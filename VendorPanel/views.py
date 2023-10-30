@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, permissions
-# from knox.models import AuthToken
+
 from rest_framework.permissions import IsAuthenticated
 from AdminPanel.tokens import create_jwt_pair_for_user
 from rest_framework import status
@@ -31,11 +31,6 @@ def send_OneToOneMail(from_email='', to_emails=''):
     user.otp = Otp
     user.save()
     server.quit()
-
-
-
-
-
 
 
 class VerifyOtpLogin(APIView):
@@ -81,12 +76,6 @@ class VerifyOtpLogin(APIView):
             return Response(data=content, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
 
 class ForgetPasswordAPI(APIView):
     serializer_class = ChangePasswordSerializer
@@ -184,8 +173,6 @@ class VerifyOtpForgetPassword(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 
 class LoginAPI(APIView):
@@ -407,10 +394,7 @@ class DeleteProduct(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
- 
-
-        
-        
+     
 #Brand
 class GetBrand(APIView):
     permission_classes = [IsAuthenticated]
@@ -486,14 +470,6 @@ class UpdateBrand(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-        
-
-
-
-
-
-     
-
 #Stores 
 class GetStores(APIView):
     permission_classes = [IsAuthenticated]
@@ -509,8 +485,6 @@ class GetStores(APIView):
                 return Response("No Store Available")
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
-
-
 
 class AddStores(APIView):
     def post(self, request):
@@ -554,10 +528,6 @@ class UpdateStores(APIView):
                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
 
 #NET Weight 
 class GetNet_Weight(APIView):
@@ -623,11 +593,6 @@ class UpdateNet_Weight(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
-
-
 #Category Api
 class GetCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -654,9 +619,6 @@ class GetSubCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class FilterbyCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request,id=None):
@@ -669,12 +631,7 @@ class FilterbyCategory(APIView):
                 return Response({"status": "success", "data":serializer}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-    
-        
-        
+     
 class FilterStatesByCountry(APIView):
     def get(self,request,id=None):
         try:
@@ -808,9 +765,6 @@ class GetOrderByVendors(APIView):
         except Exception as e:
             return Response({'error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteProductImage(APIView):
     permission_classes=[IsAuthenticated]
     def delete(self, request, id=None):
@@ -837,8 +791,6 @@ class StatusVendor(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class TotalCountOrder(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request,format=None):
@@ -855,8 +807,6 @@ class TotalCountOrder(APIView):
                                     {"title":"Cancel Order","total":CancelOrder},]})
         except Exception as e:
             return Response({'error' : str(e)},status=500) 
-
- 
 
 class GetApplyCoupoun(APIView):
     permission_classes = [IsAuthenticated]
@@ -957,9 +907,6 @@ class VendorCardDashBoard(APIView):
                                     {"title":"TotalIncome","total":f}])
         except Exception as e:
             return Response({'error' : str(e)},status=500)  
-
-
-
 
 class CountryFilter(APIView):
     def post(self,request):
@@ -1132,10 +1079,7 @@ class ConvertZipIntoName(APIView):
             return Response(a,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-  
-  
- 
- 
+
 class MainCategoryProductCount(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1166,10 +1110,7 @@ class MainCategoryProductCount(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
 
-
 from django.http import JsonResponse
-
-
 
 class GetPendingOrder(APIView):
     permission_classes = [IsAuthenticated]
@@ -1235,9 +1176,7 @@ class GetOrderBYID(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
-        
+     
 class UpdateOrder(APIView):
     permission_classes = [IsAuthenticated]
 

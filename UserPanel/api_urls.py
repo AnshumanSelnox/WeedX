@@ -38,8 +38,6 @@ urlpatterns = [
     path('Delete-Order/<int:id>',DeleteOrder.as_view()),
     path('ClearAddtoCart/',ClearAddtoCart.as_view()),
     path('Get-AddtoCartImage/<int:id>',GetAddtoCartImage.as_view()),
-    # path('Get-Order/',GetOrder.as_view()),
-    # path('Add-Order/',AddOrder.as_view()),
     path('Update-Order/<int:id>',UpdateOrder.as_view()),
     path('Delete-Order/<int:id>',DeleteOrder.as_view()),
     path('Get-DeliveryStores/',GetDeliveryStores.as_view()),
@@ -70,7 +68,6 @@ urlpatterns = [
     #################################################################################################################################################
     path('Get-Comment/',GetComment.as_view()),
     path('Add-Comment/',AddComment.as_view()),
-    # path('Update-Comment/<int:id>',UpdateComment.as_view()),
     path('Delete-Comment/<int:id>',DeleteComment.as_view()),
     path('FacebookSignInView/',FacebookSignInView.as_view()),
     path('Get-DeliveryAddress/<int:id>',DeliveryAddress.as_view()),

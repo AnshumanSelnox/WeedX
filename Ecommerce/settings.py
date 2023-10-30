@@ -48,13 +48,9 @@ INSTALLED_APPS = [
     'VendorPanel',
     'Team',
     'rest_framework',
-
     'ckeditor',
     'phonenumber_field',
-    # 'coupons',
     'rest_framework.authtoken',
-    # 'knox',
-#    'corsheaders',
     'DeliveryBoy',
     'rest_framework_simplejwt',
     
@@ -98,11 +94,6 @@ DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             "NAME": BASE_DIR / "db.sqlite3",
-            # 'NAME':'selnox',
-            # 'USER':'selnox94',
-            # 'PASSWORD':'Selnox@123',
-            # 'HOST':'127.0.0.5',
-            # 'PORT': '5432'
             
         }
     }
@@ -150,7 +141,6 @@ AWS_ACCESS_KEY_ID = "AKIAS4WSA6KJNP6NPPES"
 AWS_SECRET_ACCESS_KEY = "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"
 AWS_STORAGE_BUCKET_NAME = "selnoxmedia"
 AWS_S3_SIGNATURE_VERSION = 's3v4'
-# AWS_S3_REGION_NAME = "US East (N. Virginia) us-east-1"
 AWS_S3_FILE_OVERWRITE = False 
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
@@ -163,10 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-# STATIC_URL='/static/'
-# MEDIA_URL="/image/images/download/"
-# MEDIA_ROOT=BASE_DIR
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
 
 
 USER_SETTINGS = getattr(settings, "SIMPLE_JWT", None)

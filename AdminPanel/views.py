@@ -6,30 +6,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from .models import *
 from django.shortcuts import get_object_or_404
-from rest_framework.parsers import MultiPartParser,FormParser
-from django_filters.rest_framework import DjangoFilterBackend
 import pandas as pd
 import uuid
 from .serializer import *
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from django_filters import FilterSet, NumberFilter
-# from knox.views import LoginView as KnoxLoginView
 from .tokens import create_jwt_pair_for_user
-from django.conf import settings
-from django.contrib.auth.decorators import user_passes_test
-from django.utils.decorators import method_decorator
-from rest_framework.decorators import action
-
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status
-
+from rest_framework import  status
 from Ecommerce.settings import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,EMAIL_PORT
 import smtplib
 import random
-
-
-
 # Class based view to Get User Details using Token Authentication
 def send_OneToOneMail(from_email='',to_emails=''):
     Otp=random.randint(1000, 9999)
@@ -46,10 +32,7 @@ def send_OneToOneMail(from_email='',to_emails=''):
     user.otp=Otp
     user.save()
     server.quit()
-    
-# from django.contrib.auth import authenticate
-    
-    
+
 class VerifyOtpLogin(APIView):
     permission_classes=(permissions.AllowAny,)
     def post(self,request):
@@ -91,10 +74,7 @@ class VerifyOtpLogin(APIView):
             return Response(data=content, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-            
-        
-        
+      
 class ResetPasswordAPI(APIView):
     serializer_class = ChangePasswordSerializer
     model = User
@@ -126,10 +106,7 @@ class ResetPasswordAPI(APIView):
                 return Response({"message":"Something Goes Wrong"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-                
-        
-        
+ 
 class VerifyOtpResetPassword(APIView):
     def get_object(self, queryset=None):
         
@@ -173,9 +150,6 @@ class VerifyOtpResetPassword(APIView):
                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
-
 
 class LoginAPI(APIView):
     permission_classes=(permissions.AllowAny,)
@@ -209,9 +183,6 @@ class LoginAPI(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 # Get User API
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
@@ -222,12 +193,7 @@ class UserAPI(generics.RetrieveAPIView):
             return self.request.user
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
-#Class based view to register user
 
-#Class based view to register user
 class RegisterAPI(generics.GenericAPIView):
     serializer_class =RegisterSerializer
 
@@ -244,10 +210,6 @@ class RegisterAPI(generics.GenericAPIView):
             })
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
-
-
 
 #Category Api
 class GetCategories(APIView):
@@ -265,7 +227,6 @@ class GetCategories(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
     
 class AddCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -308,8 +269,6 @@ class UpdateCategories(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
 
 class DeleteCategory(APIView):
     permission_classes = [IsAuthenticated]
@@ -325,8 +284,7 @@ class DeleteCategory(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
- 
- 
+
 #Sub Category Api
 class GetSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -342,7 +300,6 @@ class GetSubCategories(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class AddSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -364,7 +321,6 @@ class AddSubCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateSubCategories(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -384,8 +340,6 @@ class UpdateSubCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteSubCategory(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -400,8 +354,6 @@ class DeleteSubCategory(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 #Country
 class GetCountry(APIView):
@@ -419,17 +371,12 @@ class GetCountry(APIView):
         
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
-class AddCountry(APIView):
- #   permission_classes = [IsAuthenticated]
 
+class AddCountry(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
             if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
-
                 serializer = Serializer_Country(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -441,7 +388,6 @@ class AddCountry(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateCountry(APIView):
     permission_classes = [IsAuthenticated]
@@ -464,8 +410,6 @@ class UpdateCountry(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteCountry(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -480,8 +424,7 @@ class DeleteCountry(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+
 #States
 class GetStates(APIView):
     permission_classes = [IsAuthenticated]
@@ -498,11 +441,8 @@ class GetStates(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
 
-    
 class AddStates(APIView):
-  #  permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -519,7 +459,6 @@ class AddStates(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateStates(APIView):
     permission_classes = [IsAuthenticated]
@@ -542,8 +481,6 @@ class UpdateStates(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteStates(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, id=None):
@@ -557,8 +494,7 @@ class DeleteStates(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+
 #Cities 
 class GetCities(APIView):
     permission_classes = [IsAuthenticated]
@@ -574,10 +510,8 @@ class GetCities(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+
 class AddCities(APIView):
-   # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -593,7 +527,6 @@ class AddCities(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateCities(APIView):
     permission_classes = [IsAuthenticated]
@@ -613,9 +546,6 @@ class UpdateCities(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 class DeleteCities(APIView):
     permission_classes = [IsAuthenticated]
@@ -647,9 +577,7 @@ class GetBrand(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+
 class AddBrand(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -669,7 +597,6 @@ class AddBrand(APIView):
                         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateBrand(APIView):
     permission_classes = [IsAuthenticated]
@@ -692,9 +619,6 @@ class UpdateBrand(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteBrand(APIView): 
     permission_classes = [IsAuthenticated]
     def delete(self, request, id=None):
@@ -708,8 +632,6 @@ class DeleteBrand(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-
 
 #Salestax
 class GetSalesTax(APIView):
@@ -722,9 +644,7 @@ class GetSalesTax(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+
 class AddSalesTax(APIView): 
     permission_classes = [IsAuthenticated]
 
@@ -744,7 +664,6 @@ class AddSalesTax(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateSalesTax(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -763,9 +682,6 @@ class UpdateSalesTax(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteSalesTax(APIView): 
     permission_classes = [IsAuthenticated]
     
@@ -776,8 +692,6 @@ class DeleteSalesTax(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-
 
 #Esteemedtax
 class GetEsteemedTax(APIView):
@@ -790,9 +704,7 @@ class GetEsteemedTax(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+
 class AddEsteemedTax(APIView): 
     permission_classes = [IsAuthenticated]
 
@@ -806,7 +718,6 @@ class AddEsteemedTax(APIView):
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateEsteemedTax(APIView):
     permission_classes = [IsAuthenticated]
@@ -826,9 +737,6 @@ class UpdateEsteemedTax(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteEsteemedTax(APIView): 
     permission_classes = [IsAuthenticated]
     
@@ -840,9 +748,6 @@ class DeleteEsteemedTax(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)    
 
-
-
-     
 #Replicate or Duplicate Data
 #Replicate or Duplicate Data
 class Replicate_data(APIView):
@@ -859,7 +764,6 @@ class Replicate_data(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)          
         
-
 #Stores 
 class GetStores(APIView):
     permission_classes = [IsAuthenticated]
@@ -875,9 +779,7 @@ class GetStores(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+
 class AddStores(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
@@ -896,8 +798,6 @@ class AddStores(APIView):
                             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class UpdateStores(APIView):
     permission_classes = [IsAuthenticated]
@@ -920,9 +820,6 @@ class UpdateStores(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteStores(APIView): 
     permission_classes = [IsAuthenticated]
     
@@ -937,10 +834,6 @@ class DeleteStores(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
-
-
 
 #News
 class GetNews(APIView):
@@ -957,9 +850,7 @@ class GetNews(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+
 class AddNews(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -979,7 +870,6 @@ class AddNews(APIView):
                                         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateNews(APIView):
     permission_classes = [IsAuthenticated]
@@ -1002,8 +892,6 @@ class UpdateNews(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteNews(APIView): 
     permission_classes = [IsAuthenticated]
     
@@ -1018,8 +906,7 @@ class DeleteNews(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)    
-    
-    
+
 import pandas as pd
 import uuid
 
@@ -1035,12 +922,7 @@ class ExportImportExcel(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-    
-    
-####################################################################################################################################
-###################Count############################################################################################################
-####################################################################################################################################
+
 
 class TotalCount(APIView):
     permission_classes = [IsAuthenticated]
@@ -1060,7 +942,6 @@ class TotalCount(APIView):
                                     {"title":"Total News","total":news}]})
         except Exception as e:
             return Response({'error' : str(e)},status=500)    
-
 
 class TotalProductGraph(APIView):   
     permission_classes = [IsAuthenticated]
@@ -1117,9 +998,6 @@ class GetNewsCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
     
-    
-    
-    
 class AddNewsCategories(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1158,7 +1036,6 @@ class UpdateNewsCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class DeleteNewsCategory(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1173,8 +1050,7 @@ class DeleteNewsCategory(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
- 
- 
+
 #Sub Category Api
 class GetNewsSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1190,8 +1066,6 @@ class GetNewsSubCategories(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class AddNewsSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1210,7 +1084,6 @@ class AddNewsSubCategories(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateNewsSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1231,9 +1104,6 @@ class UpdateNewsSubCategories(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteNewsSubCategory(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1248,8 +1118,7 @@ class DeleteNewsSubCategory(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
- 
+
 class FilterbyNewsSubCategory(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1262,8 +1131,6 @@ class FilterbyNewsSubCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-
-
 class FilterbyCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request,id=None):
@@ -1274,13 +1141,8 @@ class FilterbyCategory(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-        
-        
+    
 class FilterStatesByCountry(APIView):
-#    permission_classes = [IsAuthenticated]
     def get(self,request,id=None):
         try:
             User = States.objects.filter(Country_id=id)
@@ -1292,7 +1154,6 @@ class FilterStatesByCountry(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FilterCitiesByStates(APIView):
-#    permission_classes = [IsAuthenticated]
     def get(self,request,id=None):
         try:
             User = Cities.objects.filter(States_id=id)
@@ -1303,9 +1164,7 @@ class FilterCitiesByStates(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
-        
-        
-        
+ 
 class ActiveCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1315,8 +1174,7 @@ class ActiveCategory(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            
+      
 class ActiveSubCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1327,7 +1185,6 @@ class ActiveSubCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class ActiveCountry(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1337,8 +1194,7 @@ class ActiveCountry(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class ActiveStates(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1378,10 +1234,7 @@ class ActiveBrand(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
-        
-        
+      
 class ActiveNetWeight(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -1391,7 +1244,6 @@ class ActiveNetWeight(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class  DeleteVendor(APIView):
     permission_classes=[IsAuthenticated]
@@ -1469,11 +1321,7 @@ class GetHideVendor(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
-
-
-   
 #Home_Page_Banner  
 class Get_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
@@ -1490,9 +1338,7 @@ class Get_Home_Page_Banner(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
+ 
 class Add_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1510,7 +1356,6 @@ class Add_Home_Page_Banner(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class Update_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
@@ -1531,8 +1376,6 @@ class Update_Home_Page_Banner(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class Delete_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1547,11 +1390,6 @@ class Delete_Home_Page_Banner(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-
-        
-        
-
 
 import io, csv, pandas as pd
 class FileUploadAPIView(generics.CreateAPIView):
@@ -1590,9 +1428,6 @@ class FileUploadAPIView(generics.CreateAPIView):
         ]
             a=USACountry.objects.bulk_create(objs)
         return Response("Sucess")
-
-
-
 
 class GetLaw(APIView):
     permission_classes=[IsAuthenticated]
@@ -1645,8 +1480,6 @@ class UpdateLaw(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteLaw(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1661,7 +1494,6 @@ class DeleteLaw(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class GetAboutUs(APIView):
     permission_classes = [IsAuthenticated]
@@ -1713,8 +1545,6 @@ class UpdateAboutUs(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteAboutUs(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1729,8 +1559,7 @@ class DeleteAboutUs(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
+     
 class GetTermsandCondition(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
@@ -1780,8 +1609,6 @@ class UpdateTermsandCondition(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class DeleteTermsandCondition(APIView):
     permission_classes = [IsAuthenticated]
@@ -1848,8 +1675,6 @@ class UpdatePrivacyandPolicies(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeletePrivacyandPolicies(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1864,7 +1689,6 @@ class DeletePrivacyandPolicies(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class GetPromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
@@ -1916,8 +1740,6 @@ class UpdatePromotionalBanners(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeletePromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1932,9 +1754,6 @@ class DeletePromotionalBanners(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-
-
 
 class GetNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
@@ -1950,8 +1769,6 @@ class GetNet_Weight(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class AddNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
@@ -1970,7 +1787,6 @@ class AddNet_Weight(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
@@ -1991,9 +1807,6 @@ class UpdateNet_Weight(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class DeleteNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -2008,10 +1821,6 @@ class DeleteNet_Weight(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
-
-
 
 class GetSubscribe(APIView):
     permission_classes = [IsAuthenticated]
@@ -2023,11 +1832,6 @@ class GetSubscribe(APIView):
             return Response({"data":serialize.data},status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
-      
-      
-#   GetStaticImages  AddStaticImages  UpdateStaticImages  DeleteStaticImages
 
 class GetStaticImages(APIView):
     permission_classes = [IsAuthenticated]
@@ -2043,8 +1847,6 @@ class GetStaticImages(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class AddStaticImages(APIView):
     permission_classes = [IsAuthenticated]
@@ -2064,7 +1866,6 @@ class AddStaticImages(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateStaticImages(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -2083,9 +1884,6 @@ class UpdateStaticImages(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 class DeleteStaticImages(APIView):
     permission_classes = [IsAuthenticated]
