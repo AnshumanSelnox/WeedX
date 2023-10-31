@@ -1284,7 +1284,7 @@ class GetAllVendor(APIView):
                 for i in allvendor:
                     l=Stores.objects.filter(created_by=i.id)
                     for m in l:
-                        response={"email":i.email,"Name":i.username,"MobileNo.":i.MobilePhone,"Status":i.status,"Register Date":m.created,"StoreName":m.Store_Name,"StoreType":m.Store_Type}
+                        response={"email":i.email,"Name":i.username,"MobileNo.":i.MobilePhone,"Status":i.status,"Register Date":m.created,"StoreName":m.Store_Name,"StoreType":m.Store_Type,"id":i.id}
                         z.append(response)
                 return Response({"status":"success","data":z},status=status.HTTP_200_OK)
             else:
@@ -1899,3 +1899,22 @@ class DeleteStaticImages(APIView):
                 return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+
+
+class UpdateProfileForVendor(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self, request, id=None):
+        try:
+            a=request.user.user_type
+            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+                user = User.objects.get(id=id)
+                serializer = UserSerializer(user, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(modified_by=request.user.username)
+                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+                else:
+                    return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

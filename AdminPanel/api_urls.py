@@ -148,6 +148,8 @@ urlpatterns = [
     path('Get-StaticImages', GetStaticImages.as_view()),
     path('Update-StaticImages/<int:id>', UpdateStaticImages.as_view()),
     path('Delete-StaticImages/<int:id>', DeleteStaticImages.as_view()),
+    ######################################################################################################################
+    path('UpdateProfileForVendor/<int:id>', UpdateProfileForVendor.as_view()),
 
 
 
