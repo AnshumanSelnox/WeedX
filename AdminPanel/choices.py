@@ -9,11 +9,10 @@ LabResult=(
 Status=(('Active','Active'),('Hide','Hide'))
 Gender=(('M','MALE'),('F','FEMALE'))
 
-StoreType=(("brand","Brand"),
-           ("cbd store","CBD Store"),
+StoreType=(
            ("dispensary","Dispensary"),
            ("delivery","Delivery"),
-           ("doctor","Doctor"))
+           ("Curbside Pickup","Curbside Pickup"))
 
 LicenseType=(("None","None"),
 	     ("Adult-Use Cultivation","Adult-Use Cultivation"),

@@ -915,11 +915,17 @@ class ExportImportExcel(APIView):
     
     def get(self,request):
         try:
-            User = Product.objects.filter(created_by=request.user).values('Product_Name','Product_Description','strain')
-            serialize = Serializer_Product(User, many=True)
-            df=pd.DataFrame(serialize.data)
-            df.to_csv(f'/home/selnoxinfotech/BackwoodAroma/Ecommerce/Ecommerce/media/excel{uuid.uuid4()}.csv',encoding="UTF-8",index=False)
-            return Response(serialize.data)
+            a=[]
+            User = Product.objects.filter(created_by=request.user)
+            serialize=Serializer_Product(User,many=True).data
+            for i in serialize:
+                for j in i["Prices"]:
+                    for k in j["Price"]:
+                        response={"Product_Name":i["Product_Name"],"SubcategoryName":i["SubcategoryName"],"category_name":i["category_name"],"StoreAddress":i["StoreAddress"],"StoreName":i["StoreName"],"Product_Description":i["Product_Description"],"strain":i["strain"],"Status":i["Status"],"Brand_Name":i["Brand_Name"],"Store_Country":i["Store_Country"],"Store_State":i["Store_State"],"Store_City":i["Store_City"],"Store_Type":i["Store_Type"],"Price":k}
+                        a.append(response)
+            df=pd.DataFrame(a)
+            df.to_csv(f'/home/selnoxinfotech/Anshuman/BackwoodAroma/{uuid.uuid4()}.csv',encoding="UTF-8",index=False)
+            return Response(a)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 

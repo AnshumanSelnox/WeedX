@@ -195,14 +195,14 @@ class Stores(models.Model):
     Delivery=models.BooleanField(default=False,null=True)
     CurbSide_Pickup=models.BooleanField(default=False,null=True)
     Has_bar_on_site=models.BooleanField(default=False,null=True)
-    CurbSideAddress=models.CharField(max_length=999999,null=True)
+    # CurbSideAddress=models.CharField(max_length=999999,null=True)
     CurbSidePickupHours=models.JSONField(null=True)
     CurbSideCity=models.CharField(max_length=999999,null=True)
     CurbSideState=models.CharField(max_length=999999,null=True)
     CurbSideZipCode=models.CharField(max_length=999999,null=True)
     CurbsideLatAndLong=models.JSONField(null=True)
     TotalRating=models.IntegerField(default=0)
-    DeliveryHours=models.JSONField(null=True)
+    # DeliveryHours=models.JSONField(null=True)
 
     def __str__(self):
         return self.Store_Name
