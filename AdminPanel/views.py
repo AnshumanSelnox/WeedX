@@ -916,12 +916,13 @@ class ExportImportExcel(APIView):
     def get(self,request):
         try:
             a=[]
-            User = Product.objects.filter(created_by=request.user)
+            # User = Product.objects.filter(created_by=request.user)
+            User = Product.objects.all()
             serialize=Serializer_Product(User,many=True).data
             for i in serialize:
                 for j in i["Prices"]:
                     for k in j["Price"]:
-                        response={"Product_Name":i["Product_Name"],"SubcategoryName":i["SubcategoryName"],"category_name":i["category_name"],"StoreAddress":i["StoreAddress"],"StoreName":i["StoreName"],"Product_Description":i["Product_Description"],"strain":i["strain"],"Status":i["Status"],"Brand_Name":i["Brand_Name"],"Store_Country":i["Store_Country"],"Store_State":i["Store_State"],"Store_City":i["Store_City"],"Store_Type":i["Store_Type"],"Price":k}
+                        response={"Product_Name":i["Product_Name"],"SubcategoryName":i["SubcategoryName"],"category_name":i["category_name"],"StoreAddress":i["StoreAddress"],"StoreName":i["StoreName"],"Product_Description":i["Product_Description"],"strain":i["strain"],"Status":i["Status"],"Store_Country":i["Store_Country"],"Store_State":i["Store_State"],"Store_City":i["Store_City"],"Store_Type":i["Store_Type"],"Price":k}
                         a.append(response)
             df=pd.DataFrame(a)
             df.to_csv(f'/home/selnoxinfotech/Anshuman/BackwoodAroma/{uuid.uuid4()}.csv',encoding="UTF-8",index=False)
