@@ -51,3 +51,18 @@ driver.quit()
 #     if i==6:
 #         a.remove(6)
 #     print(a)
+
+# lst=[2,4,4,4,3,8,5,5]
+# a=[]
+# for i in lst:
+#     if i not in a:
+#             a.append(i)
+        
+# print(a)
+# a=[1,2,3]
+# d={a:20}
+# print(d)
+# x=[1,2,3]
+# y=x
+# y.append(4)
+# print(x)
