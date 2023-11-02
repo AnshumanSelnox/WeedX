@@ -108,4 +108,7 @@ class UserProfileOrderDetails(models.Model):
 class SiteMap(models.Model):
     Xml=models.JSONField()
 
-# class 
+class ReplyonReview(models.Model):
+    Review=models.ForeignKey(StoreRatingAndReview,on_delete=models.CASCADE)
+    reply=models.TextField()
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
