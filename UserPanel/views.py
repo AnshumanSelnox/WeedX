@@ -806,7 +806,7 @@ class GetDeliveryStores(APIView):
                             for l in serialize1:
                                 for m in category:
                                     productCount=Product.objects.filter(Sub_Category_id__category_id_id=m.id).filter(Store_id=i["id"]).count()
-                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"]}
+                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"],"email":i["StoreEmail"]}
                                     a.append(response)
                 if a:
                     a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
@@ -2176,10 +2176,7 @@ class FilterDispensaries(APIView):
                 return Response("Not Found",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            
-            
-            
+ 
 
 class HighPriceToLowPrice(APIView):
     def get(self,request,id=None):
@@ -2229,8 +2226,6 @@ class GetRecentViews(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
          
 
-
-
 class AddSubscribe(APIView):
     def post(self,request):
         try:
@@ -2243,10 +2238,6 @@ class AddSubscribe(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
-
-
-
 
 class AddUserProfileOrderDetails(APIView):
     permission_classes = [IsAuthenticated]
@@ -2528,6 +2519,7 @@ class StrainFilterProduct(APIView):
             strain=request.data.get("strain")
             product=Product.objects.filter(strain=strain).filter(Store_id=store)
             serialize=Serializer_Product(product,many=True)
-            return Response(serialize.data)
+            return Response(serialize.data)  
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

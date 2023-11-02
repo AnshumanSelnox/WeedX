@@ -107,3 +107,5 @@ class UserProfileOrderDetails(models.Model):
     
 class SiteMap(models.Model):
     Xml=models.JSONField()
+
+# class 

@@ -156,6 +156,7 @@ class Stores(models.Model):
     Instagram=models.URLField(null=True)
     Twitter=models.URLField(null=True)
     VideoLink=models.URLField(null=True)
+    StoreEmail=models.EmailField(null=True)
     DeliveryInformation=models.CharField(max_length=9999999,null=True,blank=True)
     Store_Name=models.CharField(max_length=100,null=True)
     Legal_Store_Name=models.CharField(max_length=1000,null=True)
