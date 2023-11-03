@@ -71,11 +71,15 @@ class BlankImage(models.Model):
     Image=models.ImageField(upload_to='media/BlankImage',null=True)
 
 
-class StoreRatingAndReview(models.Model):
-    StoreRating=models.IntegerField()
-    StoreReview=models.TextField(null=True)
-    Store=models.ForeignKey(Stores,on_delete=models.CASCADE)
-    created_by=models.ForeignKey(User,on_delete=models.CASCADE)
+class StoreReview(models.Model):
+    Store = models.ForeignKey(Stores, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=0)
+    Title=models.CharField(max_length=500,default=None,null=True)
+    comment = models.TextField(null=True,default=None,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
     
 class BlogView(models.Model):
     blog=models.ForeignKey(News,on_delete=models.CASCADE,null=True)
@@ -108,7 +112,13 @@ class UserProfileOrderDetails(models.Model):
 class SiteMap(models.Model):
     Xml=models.JSONField()
 
-class ReplyonReview(models.Model):
-    Review=models.ForeignKey(StoreRatingAndReview,on_delete=models.CASCADE)
+class ReplyonStoreReview(models.Model):
+    Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
     reply=models.TextField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+    
+class HelpfullStoreReview(models.Model):
+    Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
+    helpfull=models.BooleanField()
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    

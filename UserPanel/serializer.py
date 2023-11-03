@@ -154,7 +154,7 @@ class StoreRatingAndReviewSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
     userImage=serializers.ReadOnlyField(source='user.image.url')
     class Meta:
-        model = StoreRatingAndReview
+        model = StoreReview
         fields = '__all__'
         extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
         
@@ -186,3 +186,16 @@ class Serializer_SiteMap(serializers.ModelSerializer):
   class Meta:
     model=SiteMap
     fields='__all__'
+
+class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
+  username=serializers.ReadOnlyField(source='user.username')
+  class Meta:
+    model=ReplyonStoreReview
+    fields='__all__'
+   
+class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
+  username=serializers.ReadOnlyField(source='user.username')
+  class Meta:
+    model=HelpfullStoreReview
+    fields='__all__' 
+    

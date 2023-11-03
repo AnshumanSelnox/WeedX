@@ -67,3 +67,8 @@ x=[1,2,3] #call by reference
 y=x
 y.append(4)
 print(x)
+
+
+s={1,2,3,4}
+s.discard(1)
+print(s)

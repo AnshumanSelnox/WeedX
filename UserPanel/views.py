@@ -2062,17 +2062,17 @@ class AddBlogLike(APIView):
 
 
        
-class GetBlankImage(APIView): #LikeSerializer BlogLike
+# class GetBlankImage(APIView): #LikeSerializer BlogLike
 
-    def get(self, request, format=None):
-        try:
+#     def get(self, request, format=None):
+#         try:
 
-            User = StoreRatingAndReview.objects.select_related().all()
-            serialize = StoreRatingAndReviewSerializer(User, many=True)
-            return Response(serialize.data)
+#             User = StoreRatingAndReview.objects.select_related().all()
+#             serialize = StoreRatingAndReviewSerializer(User, many=True)
+#             return Response(serialize.data)
 
-        except Exception as e:
-            return Response({'error' : str(e)},status=500)
+#         except Exception as e:
+#             return Response({'error' : str(e)},status=500)
     
     
     
@@ -2094,35 +2094,35 @@ class AddBlankImage(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-class UpdateBlankImage(APIView):
+# class UpdateBlankImage(APIView):
 
-    def post(self, request, id=None):
-        try:
+#     def post(self, request, id=None):
+#         try:
 
-            User = StoreRatingAndReview.objects.get(id=id)
-            serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save(modified_by=request.user.username)
-                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
-            else:
-                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+#             User = StoreRatingAndReview.objects.get(id=id)
+#             serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
+#             if serializer.is_valid():
+#                 serializer.save(modified_by=request.user.username)
+#                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+#             else:
+#                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             
-        except Exception as e:
-            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         except Exception as e:
+#             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
 
-class DeleteBlankImage(APIView):
+# class DeleteBlankImage(APIView):
 
-    def delete(self, request, id=None):
-        try:
+#     def delete(self, request, id=None):
+#         try:
 
-            User = get_object_or_404(StoreRatingAndReview, id=id)
-            User.delete()
-            return Response({"status": "success", "data": "Deleted"})
+#             User = get_object_or_404(StoreRatingAndReview, id=id)
+#             User.delete()
+#             return Response({"status": "success", "data": "Deleted"})
 
-        except Exception as e:
-            return Response({'error' : str(e)},status=500)
+#         except Exception as e:
+#             return Response({'error' : str(e)},status=500)
 
 
 class AddBlogView(APIView):
@@ -2522,4 +2522,32 @@ class StrainFilterProduct(APIView):
             return Response(serialize.data)  
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
+class AddandUpdateHelpfullButton(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            Helpfull=request.data.get("Helpfull")
+            like=HelpfullStoreReview.objects.filter(user=request.user).filter(Review=Helpfull).first()
+            if like:
+                serializer=Serializer_HelpfullStoreReview(like, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(modified_by=request.user)
+                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+                return Response(serialize.data)
+            else:
+                serialize=Serializer_HelpfullStoreReview(data=request.data,partial=True)
+                if serialize.is_valid():
+                    serialize.save()
+                    return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
+                else:
+                    return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class GetHelfullButton(APIView):
+    def get(self,request):
+        try:
+            pass
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
