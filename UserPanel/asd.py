@@ -46,29 +46,40 @@
 # driver.quit()
 
 # Practice question
-a=[1,5,6,7,9] #remove element from list
-for i in a:
-    if i==6:
-        a.remove(6)
-    print(a)
+# a=[1,5,6,7,9] #remove element from list
+# for i in a:
+#     if i==6:
+#         a.remove(6)
+#     print(a)
 
-lst=[2,4,4,4,3,8,5,5] #remove duplicate items from list
-a=[]
-for i in lst:
-    if i not in a:
-            a.append(i)
-print(a)
+# lst=[2,4,4,4,3,8,5,5] #remove duplicate items from list
+# a=[]
+# for i in lst:
+#     if i not in a:
+#             a.append(i)
+# print(a)
 
-a=[1,2,3] #whats gone be output of this
-d={a:20}
-print(d)
+# a=[1,2,3] #whats gone be output of this
+# d={a:20}
+# print(d)
 
-x=[1,2,3] #call by reference
-y=x
-y.append(4)
-print(x)
+# x=[1,2,3] #call by reference
+# y=x
+# y.append(4)
+# print(x)
 
 
-s={1,2,3,4}
-s.discard(1)
-print(s)
+# s={1,2,3,4}
+# s.discard(1)
+# print(s)
+
+# a=[1,2,3,5,"aaa",{"a":"as","s":"df"}]   #remove duplicate item from 2 array
+# b=[1,2,5,4,{"a":"as","s":"df"}]
+# c=[]
+# for i in a:
+#     for j in b:
+#         if i not in c:
+#             c.append(i)
+#         elif j not in c:
+#             c.append(j)
+# print(c)

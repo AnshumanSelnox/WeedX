@@ -2548,6 +2548,8 @@ class AddandUpdateHelpfullButton(APIView):
 class GetHelfullButton(APIView):
     def get(self,request):
         try:
-            pass
+            store=request.data.get("store")
+            like=HelpfullStoreReview.objects.filter(user=request.user).filter(Review__Store=store).first()
+            
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
