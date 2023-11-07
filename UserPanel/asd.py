@@ -91,6 +91,5 @@
 # j=[{"a":15},{"a":200},{"a":30}] #Highest value in json and dict 
 # for i in j:
 #     for k in j:
-#         if i["a"] >k["a"]:
+#         if i["a"] >20:
 #             print(i["a"])
-
