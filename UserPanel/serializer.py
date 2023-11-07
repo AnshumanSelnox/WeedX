@@ -195,6 +195,10 @@ class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
    
 class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='user.username')
+  Review=serializers.ReadOnlyField(source='Review.Title')
+  comment=serializers.ReadOnlyField(source='Review.comment')
+  Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
+  Store=serializers.ReadOnlyField(source='Review.Store')
   class Meta:
     model=HelpfullStoreReview
     fields='__all__' 

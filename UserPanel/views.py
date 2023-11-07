@@ -2550,6 +2550,7 @@ class GetHelfullButton(APIView):
         try:
             store=request.data.get("store")
             like=HelpfullStoreReview.objects.filter(user=request.user).filter(Review__Store=store).first()
-            
+            serialize=Serializer_HelpfullStoreReview(like,many=True)
+            return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

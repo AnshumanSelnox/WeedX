@@ -83,3 +83,14 @@
 #         elif j not in c:
 #             c.append(j)
 # print(c)
+
+# a=[1,5,9,13,{"a":15}] #Biggest element in list
+# print(max(a))
+
+
+# j=[{"a":15},{"a":200},{"a":30}] #Highest value in json and dict 
+# for i in j:
+#     for k in j:
+#         if i["a"] >k["a"]:
+#             print(i["a"])
+
