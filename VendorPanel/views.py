@@ -1236,3 +1236,34 @@ class GetTopSellingProduct(APIView):
         
         
 
+class AddReplyonStoreReview(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            Helpfull=request.data.get("Helpfull")
+            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review=Helpfull).first()
+            if like:
+                serializer=Serializer_ReplyonStoreReview(like, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(modified_by=request.user)
+                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+                return Response(serialize.data)
+            else:
+                serialize=Serializer_ReplyonStoreReview(data=request.data,partial=True)
+                if serialize.is_valid():
+                    serialize.save()
+                    return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
+                else:
+                    return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error':str(e)}, status=500)
+        
+class GetReplyonStoreReview(APIView):
+    def get(self,request):
+        try:
+            store=request.data.get("store")
+            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review__Store=store).first()
+            serialize=Serializer_ReplyonStoreReview(like,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
