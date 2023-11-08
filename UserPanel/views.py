@@ -737,10 +737,19 @@ class AddOrder(APIView):
                     for i in s:
                         d.append(i["ProductName"])
                         e=i["StoreName"]
-                        #print(i["Price"])
                         w.append(i["Price"]["Weight"])
                         f.append(i["Cart_Quantity"])
                         q.append(i["Price"]["SalePrice"])
+                        a=Product.objects.filter(id=i["Product_id"]).first()
+                        serialize=Serializer_Product(a).data
+                        z=serialize["Prices"] 
+                        for j in z:
+                            for k in j["Price"]:
+                                sub=[{"Quantity":(k["Quantity"]-i["Cart_Quantity"])}]
+                                weight=ProductWeight.objects.filter(product=i["Product_id"]).first()
+                                serializer = ProductWeightSerializer(weight, data=sub, partial=True)
+                                if serializer.is_valid():
+                                    serializer.save()
                 sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard="http://52.3.255.128:8000/"+z.url,CustomerName=CustomerName,Store_Name=Store_Name)
                 sendmailoforderdetailsCustomer(email_to=Customer,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,CustomerName=CustomerName)
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
