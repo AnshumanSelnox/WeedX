@@ -2563,3 +2563,15 @@ class GetHelfullButton(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class DeleteStoreReview(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id=None):
+        try:
+            User = get_object_or_404(StoreReview, id=id)
+            User.delete()
+            return Response({"status": "success", "data": "Deleted"})
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)

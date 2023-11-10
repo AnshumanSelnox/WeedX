@@ -116,7 +116,7 @@ urlpatterns = [
     path('ProductFilterByWeightandStore/',ProductFilterByWeightandStore.as_view()),
     path('ProductFilterByUnitandStore/',ProductFilterByUnitandStore.as_view()),
     path('StrainFilterProduct/',StrainFilterProduct.as_view()),
-    
+    path('Delete-StoreReview/<int:id>',DeleteStoreReview.as_view()),
     
 
 
