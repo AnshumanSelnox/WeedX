@@ -11,7 +11,7 @@ urlpatterns = [
     # path('logoutall/',knox_views.LogoutAllView.as_view(),name='logoutall'),
     path('OTPverificationForRegisterAPI/', OTPverificationForRegisterAPI.as_view()),
     path('ForgetPasswordEmailsentAPI/',ForgetPasswordAPI.as_view(),name='ResetPasswordAPI'),
-    path('OTPValidationForgetPasswordAPI/',VerifyOtpForgetPassword.as_view()),
+    path('OTPValidationForgetPasswordAPI/',ValidateOTPForgetPassword.as_view()),
     path('ForgetPassword/',VerifyOtpForgetPassword.as_view(),name='VerifyOtpResetPassword'),
     ###################################################################################################
     path('Add-Product/', AddProduct.as_view()),
@@ -80,6 +80,10 @@ urlpatterns = [
     path('Update-Order/<int:id>', UpdateOrder.as_view()),
     path('SearchOrder/<int:id>', SearchOrder.as_view()),
     path('GetTopSellingProduct/<int:id>',GetTopSellingProduct.as_view()),
+    path('AddReplyonStoreReview/',AddReplyonStoreReview.as_view()),
+    path('GetReplyonStoreReview/',GetReplyonStoreReview.as_view()),
+    
     
 
 ]
+

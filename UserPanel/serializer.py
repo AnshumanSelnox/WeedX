@@ -189,13 +189,14 @@ class Serializer_SiteMap(serializers.ModelSerializer):
 
 class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='user.username')
-  Review=serializers.ReadOnlyField(source='Review.Title')
+  review=serializers.ReadOnlyField(source='Review.Title')
   comment=serializers.ReadOnlyField(source='Review.comment')
-  Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
-  Store=serializers.ReadOnlyField(source='Review.Store')
+  # Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
+  # Store=serializers.ReadOnlyField(source='Review.Store')
   class Meta:
     model=ReplyonStoreReview
     fields='__all__'
+    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
    
 class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='user.username')
@@ -206,4 +207,5 @@ class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
   class Meta:
     model=HelpfullStoreReview
     fields='__all__' 
+    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
     

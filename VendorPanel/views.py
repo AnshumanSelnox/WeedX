@@ -150,7 +150,7 @@ class VerifyOtpForgetPassword(APIView):
                 email = serializer.validated_data['email']
                 new_password = serializer.validated_data['new_password']
 
-                user = User.objects.filter(email=email)
+                user = User.objects.get(email=email)
                 if not user.exists():
                     return Response({
                         'message': 'Something goes wrong',
@@ -1240,8 +1240,8 @@ class AddReplyonStoreReview(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
         try:
-            Helpfull=request.data.get("Helpfull")
-            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review=Helpfull).first()
+            store=request.data.get("store")
+            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review=store).first()
             if like:
                 serializer=Serializer_ReplyonStoreReview(like, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1251,7 +1251,7 @@ class AddReplyonStoreReview(APIView):
             else:
                 serialize=Serializer_ReplyonStoreReview(data=request.data,partial=True)
                 if serialize.is_valid():
-                    serialize.save()
+                    serialize.save(user=request.user)
                     return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
                 else:
                     return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
