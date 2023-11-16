@@ -1259,11 +1259,20 @@ class AddReplyonStoreReview(APIView):
             return Response({'error':str(e)}, status=500)
         
 class GetReplyonStoreReview(APIView):
-    def get(self,request):
+    def get(self,request,id=None):
         try:
-            store=request.data.get("store")
-            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review__Store=store).first()
-            serialize=Serializer_ReplyonStoreReview(like,many=True)
-            return Response(serialize.data)
+            a=[]
+            like=StoreReview.objects.filter(Store=id)
+            z=ReplyonStoreReview.objects.filter(Review__Store=id)
+            serialize=StoreRatingAndReviewSerializer(like,many=True).data
+            serialize1=Serializer_ReplyonStoreReview(z,many=True).data
+            for i in serialize:
+                for j in serialize1:
+                    respone={"id":i["id"],"username":i["username"],"Title":i["Title"],"comment":i["comment"],"rating":i["rating"],"Store":i["Store"],"reply":j["reply"]}
+                    a.append(respone)
+                respone={"id":i["id"],"username":i["username"],"Title":i["Title"],"comment":i["comment"],"rating":i["rating"],"Store":i["Store"]}
+                a.append(respone)
+                
+            return Response(a)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
