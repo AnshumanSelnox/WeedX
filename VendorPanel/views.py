@@ -1240,21 +1240,12 @@ class AddReplyonStoreReview(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
         try:
-            store=request.data.get("store")
-            like=ReplyonStoreReview.objects.filter(user=request.user).filter(Review=store).first()
-            if like:
-                serializer=Serializer_ReplyonStoreReview(like, data=request.data, partial=True)
-                if serializer.is_valid():
-                    serializer.save(modified_by=request.user)
-                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
-                return Response(serialize.data)
+            serialize=Serializer_ReplyonStoreReview(data=request.data,partial=True)
+            if serialize.is_valid():
+                serialize.save(user=request.user)
+                return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
             else:
-                serialize=Serializer_ReplyonStoreReview(data=request.data,partial=True)
-                if serialize.is_valid():
-                    serialize.save(user=request.user)
-                    return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
-                else:
-                    return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
+                return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error':str(e)}, status=500)
         
