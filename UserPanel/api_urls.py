@@ -118,6 +118,7 @@ urlpatterns = [
     path('StrainFilterProduct/',StrainFilterProduct.as_view()),
     path('Delete-StoreReview/<int:id>',DeleteStoreReview.as_view()),
     
+    
 
 
 ]

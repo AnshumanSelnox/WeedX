@@ -152,7 +152,7 @@ class Serializer_BlankImage(serializers.ModelSerializer):
 
 class StoreRatingAndReviewSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
-    # userImage=serializers.ReadOnlyField(source='user.image.url')
+    userImage=serializers.ReadOnlyField(source='user.image')
     class Meta:
         model = StoreReview
         fields = '__all__'

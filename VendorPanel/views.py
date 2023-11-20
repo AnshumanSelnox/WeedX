@@ -1238,32 +1238,23 @@ class GetTopSellingProduct(APIView):
 
 class AddReplyonStoreReview(APIView):
     permission_classes=[IsAuthenticated]
-    def post(self,request):
+    def post(self, request, id=None):
         try:
-            serialize=Serializer_ReplyonStoreReview(data=request.data,partial=True)
-            if serialize.is_valid():
-                serialize.save(user=request.user)
-                return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
+            User = StoreReview.objects.get(id=id)
+            serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save(modified_by=request.user.username)
+                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
             else:
-                return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
+                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error':str(e)}, status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class GetReplyonStoreReview(APIView):
     def get(self,request,id=None):
         try:
-            a=[]
             like=StoreReview.objects.filter(Store=id)
-            z=ReplyonStoreReview.objects.filter(Review__Store=id)
             serialize=StoreRatingAndReviewSerializer(like,many=True).data
-            serialize1=Serializer_ReplyonStoreReview(z,many=True).data
-            for i in serialize:
-                for j in serialize1:
-                    respone={"id":i["id"],"username":i["username"],"Title":i["Title"],"comment":i["comment"],"rating":i["rating"],"Store":i["Store"],"reply":j["reply"]}
-                    a.append(respone)
-                respone={"id":i["id"],"username":i["username"],"Title":i["Title"],"comment":i["comment"],"rating":i["rating"],"Store":i["Store"]}
-                a.append(respone)
-                
-            return Response(a)
+            return Response(serialize)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

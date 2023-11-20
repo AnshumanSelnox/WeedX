@@ -2575,3 +2575,17 @@ class DeleteStoreReview(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+        
+        
+class UpdateStoreReview(APIView):
+    def post(self, request, id=None):
+        try:
+            User = StoreReview.objects.get(id=id)
+            serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save(modified_by=request.user.username)
+                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

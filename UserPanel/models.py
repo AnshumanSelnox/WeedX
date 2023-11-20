@@ -76,6 +76,7 @@ class StoreReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(default=0)
     Title=models.CharField(max_length=500,default=None,null=True)
+    Reply=models.TextField(null=True)
     comment = models.TextField(null=True,default=None,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

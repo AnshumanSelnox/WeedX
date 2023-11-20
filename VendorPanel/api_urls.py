@@ -80,8 +80,8 @@ urlpatterns = [
     path('Update-Order/<int:id>', UpdateOrder.as_view()),
     path('SearchOrder/<int:id>', SearchOrder.as_view()),
     path('GetTopSellingProduct/<int:id>',GetTopSellingProduct.as_view()),
-    path('AddReplyonStoreReview/',AddReplyonStoreReview.as_view()),
-    path('GetReplyonStoreReview/<int:id>',GetReplyonStoreReview.as_view()),
+    path('AddReplyonStoreReview/<int:id>',AddReplyonStoreReview.as_view()),
+    # path('GetReplyonStoreReview/<int:id>',GetReplyonStoreReview.as_view()),
     
     
 
