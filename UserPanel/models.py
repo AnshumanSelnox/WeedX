@@ -53,6 +53,10 @@ class Review(models.Model):
     Title=models.CharField(max_length=500,default=None,null=True)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    Reply=models.TextField(null=True)
+    VendorName=models.CharField(max_length=500,default=None,null=True)
+    ReplyTime=models.CharField(max_length=500,default=None,null=True)
+    VendorImage=models.CharField(max_length=9999,default=None,null=True)
      
 class BlogComment(models.Model):
     Blog = models.ForeignKey(News, on_delete=models.CASCADE)
@@ -76,9 +80,12 @@ class StoreReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(default=0)
     Title=models.CharField(max_length=500,default=None,null=True)
-    Reply=models.TextField(null=True)
     comment = models.TextField(null=True,default=None,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    Reply=models.TextField(null=True)
+    VendorName=models.CharField(max_length=500,default=None,null=True)
+    ReplyTime=models.CharField(max_length=500,default=None,null=True)
+    VendorImage=models.CharField(max_length=9999,default=None,null=True)
 
 
     

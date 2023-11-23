@@ -81,7 +81,7 @@ urlpatterns = [
     path('SearchOrder/<int:id>', SearchOrder.as_view()),
     path('GetTopSellingProduct/<int:id>',GetTopSellingProduct.as_view()),
     path('AddReplyonStoreReview/<int:id>',AddReplyonStoreReview.as_view()),
-    # path('GetReplyonStoreReview/<int:id>',GetReplyonStoreReview.as_view()),
+    path('Reply-ProductReview/<int:id>',ReplyProductReview.as_view()),
     
     
 
