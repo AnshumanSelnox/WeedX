@@ -307,7 +307,6 @@ class GetAllProduct(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 #All Product by Category
 class ProductByCategorybyStore(APIView):
     def get(self,request,id=None):
@@ -396,8 +395,6 @@ class GetNews(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class GetAllDispensaries(APIView):
     def post(self,request,format=None):
         try:
@@ -439,9 +436,7 @@ class GetAllDelivery(APIView):
                 return Response("No Available Delivery",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-
+  
 class GetDispensaryByid(APIView):
     def get(self,request,id=None):
         try:
@@ -454,9 +449,6 @@ class GetDispensaryByid(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class SortingFilter(APIView):
     def get(self,request,id=None):
         try:
@@ -467,8 +459,6 @@ class SortingFilter(APIView):
         except Exception as e:
              return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class ProductAccordingToDispensaries(APIView):
     def get(self,request,id=None):
         try:
@@ -477,9 +467,6 @@ class ProductAccordingToDispensaries(APIView):
             return Response(serialize.data,status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 class GetProductById(APIView):
     def get(self,request,id=None):
@@ -491,9 +478,6 @@ class GetProductById(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 from VendorPanel.serializer import *
 
@@ -535,8 +519,6 @@ class GetProductbyBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 
 class ProductByCategory(APIView):
@@ -1057,11 +1039,6 @@ class filterSubcategorybyStoreandCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-
-
-
-
-
 class filterProductbyStoreandSubCategory(APIView):
     def post(self,request):
         try:
@@ -1074,8 +1051,6 @@ class filterProductbyStoreandSubCategory(APIView):
                 
         except Exception as e:  
             return Response({'error' : str(e)},status=500)
-        
-
 
 class filterProductbyStoreandCategory(APIView):
     def post(self,request):
@@ -1331,8 +1306,6 @@ class UpdateReview(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
-
 class DeleteReview(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1343,8 +1316,6 @@ class DeleteReview(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class GetComment(APIView):
 
@@ -1357,8 +1328,7 @@ class GetComment(APIView):
             return Response(response)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+     
 class AddComment(APIView):
     permission_classes = [IsAuthenticated] 
 
@@ -1387,8 +1357,6 @@ class AddComment(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
-
 class UpdateCommsouent(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1405,8 +1373,6 @@ class UpdateCommsouent(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
-
 class DeleteComment(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1417,8 +1383,6 @@ class DeleteComment(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 import os
 FACEBOOK_DEBUG_TOKEN_URL = "https://graph.facebook.com/debug_token"
@@ -1633,11 +1597,7 @@ class YouMayAlsoLike(APIView):
                 return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-            
-            
+          
 class GetDeliveryStoresHomepage(APIView):
     def post(self, request):
         try:
@@ -1673,8 +1633,6 @@ class GetDeliveryStoresHomepage(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
        
 class GetPendingOrder(APIView):
     permission_classes = [IsAuthenticated]
@@ -1755,9 +1713,6 @@ class AllUser(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
         
-        
-#[{"id": 679, "username": "Chandrajeet123", "StoreName": "selnox", "ProductName": "Cheetos Crunchy", "Image": "/image/images/download/product_images/c2332ed107db69ad415ca5fe1ec46743_psdZnWu.jpeg", "Cart_Quantity": 2, "Price": {"id": 1, "Weight": "1 G", "Price": 122, "Discount": 12, "SalePrice": 107.36, "Unit": "", "Quantity": 2, "Stock": "", "Status": "Active"}, "TotalPrice": 215, "created_by": 29, "Product_id": 93, "Store_id": 15, "Image_id": 112}]
-
 class PromoCodeCheck(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
@@ -1958,8 +1913,6 @@ class AverageReviewAndRating(APIView):
                 return Response({"OneStar":0,"TwoStar":0,"ThreeStar":0,"FourStar":0,"FiveStar":0,"AverageReview":0,"TotalReview":0})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
        
 class GetBlankImage(APIView): #LikeSerializer BlogLike
 
@@ -1972,10 +1925,7 @@ class GetBlankImage(APIView): #LikeSerializer BlogLike
 
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
-    
+
 class AddBlankImage(APIView):
 
     def post(self, request):
@@ -2008,8 +1958,6 @@ class UpdateBlankImage(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
 
 class DeleteBlankImage(APIView):
 
@@ -2022,9 +1970,7 @@ class DeleteBlankImage(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=500)
- 
- 
- 
+
 class GetBlogLike(APIView): 
 
     def get(self, request, id=None):
@@ -2038,9 +1984,6 @@ class GetBlogLike(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
-    
     
 class AddBlogLike(APIView):
     permission_classes = [IsAuthenticated]
@@ -2063,25 +2006,7 @@ class AddBlogLike(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
-
-
-       
-# class GetBlankImage(APIView): #LikeSerializer BlogLike
-
-#     def get(self, request, format=None):
-#         try:
-
-#             User = StoreRatingAndReview.objects.select_related().all()
-#             serialize = StoreRatingAndReviewSerializer(User, many=True)
-#             return Response(serialize.data)
-
-#         except Exception as e:
-#             return Response({'error' : str(e)},status=500)
-    
-    
-    
     
 class AddBlankImage(APIView):
 
@@ -2097,40 +2022,8 @@ class AddBlankImage(APIView):
 
 
         except Exception as e:
-            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
         
-
-# class UpdateBlankImage(APIView):
-
-#     def post(self, request, id=None):
-#         try:
-
-#             User = StoreRatingAndReview.objects.get(id=id)
-#             serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
-#             if serializer.is_valid():
-#                 serializer.save(modified_by=request.user.username)
-#                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
-#             else:
-#                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
-            
-#         except Exception as e:
-#             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-
-# class DeleteBlankImage(APIView):
-
-#     def delete(self, request, id=None):
-#         try:
-
-#             User = get_object_or_404(StoreRatingAndReview, id=id)
-#             User.delete()
-#             return Response({"status": "success", "data": "Deleted"})
-
-#         except Exception as e:
-#             return Response({'error' : str(e)},status=500)
-
-
 class AddBlogView(APIView):
     def post(self, request):
         try: 
@@ -2331,8 +2224,7 @@ class ProductDiscountCoupoun(APIView):
             return Response(z, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+            
 class PriceFilter(APIView):
     def post(self,request):
         try:
@@ -2358,9 +2250,7 @@ class PriceFilter(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
- 
-       
+      
 class GetSiteMap(APIView):
     def get(self, request):
         try:
@@ -2369,8 +2259,6 @@ class GetSiteMap(APIView):
             return Response(serialize.data,status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class AddSiteMap(APIView):
     def post(self, request):
@@ -2397,9 +2285,6 @@ class UpdateSiteMap(APIView):
                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 class DeleteSiteMap(APIView):
     def delete(self, request, id=None):
