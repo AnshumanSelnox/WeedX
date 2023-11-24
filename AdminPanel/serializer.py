@@ -163,8 +163,6 @@ class ProductWeightSerializer(serializers.ModelSerializer):
     class Meta:
         model= ProductWeight
         fields=('Price','id')
-
-
   
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -220,12 +218,10 @@ class UpdateProfile(serializers.ModelSerializer):
         model=User
         fields='__all__'
 
-
 class Serializer_HomePageBanner(serializers.ModelSerializer):
     class Meta:
         model=HomePageBanner
         fields='__all__'
-
 
 class Serializer_Coupoun(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='created_by.username')
@@ -233,8 +229,6 @@ class Serializer_Coupoun(serializers.ModelSerializer):
         model=Coupoun
         fields='__all__'
         extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
-
-
 
 class Serializer_USAData(serializers.ModelSerializer):
     file = models.FileField(blank=False, null=False,upload_to='CSV')
@@ -248,12 +242,10 @@ class FileUploadSerializer(serializers.Serializer):
     class Meta:
         fields = ('file',)
 
-
 class Serializer_Law(serializers.ModelSerializer):
     class Meta:
         model=Law
         fields='__all__'
-
 
 class Serializer_AboutUs(serializers.ModelSerializer):
     class Meta:

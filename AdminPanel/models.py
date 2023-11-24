@@ -24,9 +24,6 @@ class UserManager(BaseUserManager):
         kwargs.setdefault('is_superuser', True)
         return self.create_user(username,email, password, **kwargs)
 
-
-
-
 class User(AbstractBaseUser):
     USER_CHOICES = (
         ('Admin', 'Admin'),
@@ -90,11 +87,7 @@ class Category(models.Model):               #category table
     
     def __str__(self):
         return self.name
-    
-    
-    
-   
-    
+
 class SubCategory(models.Model):            #Subcategory table
     name=models.CharField(max_length=500,unique=True)
     category_id=models.ForeignKey(Category,on_delete=models.CASCADE,default=1,related_name='subcategories')
@@ -207,9 +200,6 @@ class Stores(models.Model):
 
     def __str__(self):
         return self.Store_Name
-    
-
-
 
 class Brand(models.Model):                  #Brand
     name=models.CharField(max_length=50,default=None,unique=True)
@@ -226,9 +216,6 @@ class Brand(models.Model):                  #Brand
     rating=models.IntegerField(default=None,null=True)
     def __str__(self):
         return self.name
-    
-    
-    
     
 class Salestaxes(models.Model):                    #Salestax
     tax_value=models.IntegerField(default=0)
@@ -250,9 +237,6 @@ class Estemeedtaxes(models.Model):                    #Esteemedtax
     def __str__(self):
         return self.tax_type    
 
-    
-    
-
 class Net_Weight(models.Model):                 #Net Weight
     Weight=models.CharField(max_length=50,default=None)
     Weight_Price=models.IntegerField(default=0)
@@ -262,8 +246,6 @@ class Net_Weight(models.Model):                 #Net Weight
     #created_by=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return self.Weight
-
-    
 
 class Product(models.Model):                #Product
     id=models.AutoField(primary_key=True)
@@ -311,11 +293,7 @@ class NewsCategory(models.Model):               #category table
     created_by=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return self.name
-    
-    
-    
-   
-    
+
 class NewsSubCategory(models.Model):            #Subcategory table
     name=models.CharField(max_length=500,unique=True)
     category_id=models.ForeignKey(NewsCategory,on_delete=models.CASCADE,default=1)

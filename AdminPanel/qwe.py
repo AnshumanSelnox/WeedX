@@ -29,5 +29,5 @@
 # a='https%3A/lh3.googleusercontent.com/a/ACg8ocLulocd8Rxb3wx8VBZrU9PMYmxDv2zf33-4aDDP4dve%3Ds96-c'
 # url = unquote(a)
 # print(url)
-c="hello"
-print(c.center(20,"2"))
+# c="hello"
+# print(c.center(20,"2"))

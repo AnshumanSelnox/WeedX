@@ -1350,7 +1350,6 @@ class GetComment(APIView):
 
     def get(self, request, id=None):
         try:
-
             User = BlogComment.objects.filter(Blog=id)
             CommentCount=BlogComment.objects.filter(Blog=id).filter(user=request.user).count()
             serialize = CommentSerializer(User, many=True)
@@ -1395,8 +1394,6 @@ class UpdateCommsouent(APIView):
 
     def post(self, request, id=None):
         try:
-            
-
             User = BlogComment.objects.get(id=id)
             serializer = CommentSerializer(User, data=request.data, partial=True)
             if serializer.is_valid():
