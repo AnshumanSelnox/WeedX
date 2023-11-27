@@ -727,7 +727,7 @@ class AddOrder(APIView):
                         z=serialize["Prices"] 
                         for j in z:
                             for k in j["Price"]:
-                                sub=[{"Quantity":(k["Quantity"]-i["Cart_Quantity"])}]
+                                sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Quantity":(k["Quantity"]-i["Cart_Quantity"])}]
                                 weight=ProductWeight.objects.filter(product=i["Product_id"]).first()
                                 serializer = ProductWeightSerializer(weight, data=sub, partial=True)
                                 if serializer.is_valid():
