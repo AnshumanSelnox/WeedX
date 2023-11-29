@@ -2276,8 +2276,12 @@ class AddSiteMap(APIView):
 class UpdateSiteMap(APIView):
     def post(self, request, id=None):
         try:
-            User = SiteMap.objects.get(id=id)
-            serializer = Serializer_SiteMap(User, data=request.data, partial=True)
+            j=request.data.get("j")
+            User = SiteMap.objects.filter(id=id).first()
+            if j not in User.Xml:
+                        User.Xml.append(j)
+            asd={"Xml":User.Xml}
+            serializer = Serializer_SiteMap(User,data=asd, partial=True)    
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)

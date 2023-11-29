@@ -440,7 +440,7 @@ class PromotionalBanners(models.Model):
     Country=models.CharField(max_length=100,null=True)
     State=models.CharField(max_length=100,null=True)
     Banner=models.ImageField(upload_to='media/PromotionalBanner',null=True)
-    Title=models.CharField(max_length=999,null=True)
+    Title=models.CharField(max_length=999,default="",null=True)
     Link=models.URLField(null=True)
     mobile=models.ImageField(upload_to='media/MobilePromotionalBanner')
 

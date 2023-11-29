@@ -23,7 +23,7 @@ class AddtoCart(models.Model):
 
 
 class Order(models.Model):
-    DeliveryTime=models.JSONField(null=True)
+    DeliveryTime=models.CharField(max_length=20)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     OrderId=models.AutoField(primary_key=True)
     IdCard=models.ImageField(upload_to='media/IdCard')
