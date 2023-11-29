@@ -722,17 +722,30 @@ class AddOrder(APIView):
                         w.append(i["Price"]["Weight"])
                         f.append(i["Cart_Quantity"])
                         q.append(i["Price"]["SalePrice"])
-                        a=Product.objects.filter(id=i["Product_id"]).first()
-                        serialize=Serializer_Product(a).data
+                        zxc=Product.objects.filter(id=i["Product_id"]).first()
+                        serialize=Serializer_Product(zxc).data
                         z=serialize["Prices"] 
                         for j in z:
                             for k in j["Price"]:
-                                sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Quantity":(k["Quantity"]-i["Cart_Quantity"])}]
+                                if i["Price"]["Quantity"]:
+                                    if k["Quantity"]>1 :
+                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":k["Unit"],"Quantity":(k["Quantity"]-i["Cart_Quantity"]),"Stock":k["Stock"],"Status":k["Status"]}]    
+                                        qwe={"Price":sub}
+                                    else:
+                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":k["Unit"],"Quantity":(k["Quantity"]-i["Cart_Quantity"]),"Stock":"Out of Stock","Status":k["Status"]}]    
+                                        qwe={"Price":sub}
+                                elif i["Price"]["Unit"]:
+                                    if k["Unit"]>1 :
+                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":(k["Unit"]-i["Cart_Quantity"]),"Quantity":k["Quantity"],"Stock":k["Stock"],"Status":k["Status"]}]    
+                                        qwe={"Price":sub}
+                                    else:
+                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":(k["Unit"]-i["Cart_Quantity"]),"Quantity":k["Quantity"],"Stock":"Out of Stock","Status":k["Status"]}]    
+                                        qwe={"Price":sub}
                                 weight=ProductWeight.objects.filter(product=i["Product_id"]).first()
-                                serializer = ProductWeightSerializer(weight, data=sub, partial=True)
-                                if serializer.is_valid():
-                                    serializer.save()
-                sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard="http://52.3.255.128:8000/"+z.url,CustomerName=CustomerName,Store_Name=Store_Name)
+                                serializer1 = ProductWeightSerializer(weight, data=qwe, partial=True)
+                                if serializer1.is_valid():
+                                    serializer1.save()
+                sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=z,CustomerName=CustomerName,Store_Name=Store_Name)
                 sendmailoforderdetailsCustomer(email_to=Customer,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,CustomerName=CustomerName)
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
