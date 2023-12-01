@@ -13,7 +13,7 @@ from django.contrib.auth.hashers import make_password
 import requests,smtplib,random
 from rest_framework_simplejwt.tokens import RefreshToken   
 from .serializer import *
-from .ordercheck import sendmailoforderdetailsVendor,sendmailoforderdetailsCustomer
+from .ordercheck import sendmailoforderdetailsVendor,sendmailoforderdetailsCustomer,sendmailoforderdetailsAdmin
 
 
 class Login(APIView): 
@@ -697,6 +697,7 @@ class AddOrder(APIView):
 
     def post(self, request):
         try:
+            index=0
             w=[]
             d=[]
             f=[]
@@ -727,33 +728,23 @@ class AddOrder(APIView):
                         z=serialize["Prices"] 
                         for j in z:
                             for k in j["Price"]:
-                                if i["Price"]["Quantity"]:
-                                    if k["Quantity"]>1 :
-                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":k["Unit"],"Quantity":(k["Quantity"]-i["Cart_Quantity"]),"Stock":k["Stock"],"Status":k["Status"]}]    
-                                        qwe={"Price":sub}
-                                    else:
-                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":k["Unit"],"Quantity":(k["Quantity"]-i["Cart_Quantity"]),"Stock":"Out of Stock","Status":k["Status"]}]    
-                                        qwe={"Price":sub}
-                                elif i["Price"]["Unit"]:
-                                    if k["Unit"]>1 :
-                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":(k["Unit"]-i["Cart_Quantity"]),"Quantity":k["Quantity"],"Stock":k["Stock"],"Status":k["Status"]}]    
-                                        qwe={"Price":sub}
-                                    else:
-                                        sub=[{"id":k["id"],"Weight":k["Weight"],"Price":k["Price"],"Discount":k["Discount"],"SalePrice":k["SalePrice"],"Unit":(k["Unit"]-i["Cart_Quantity"]),"Quantity":k["Quantity"],"Stock":"Out of Stock","Status":k["Status"]}]    
-                                        qwe={"Price":sub}
-                                weight=ProductWeight.objects.filter(product=i["Product_id"]).first()
-                                serializer1 = ProductWeightSerializer(weight, data=qwe, partial=True)
-                                if serializer1.is_valid():
-                                    serializer1.save()
+                                if k["id"]==i["Price"]["id"]:   
+                                    k.update({ "Quantity" : k["Quantity"] - i["Cart_Quantity"]})
+                                    if k["Quantity"]<1:
+                                        k.update({ "Stock" : "Out of Stock"})
+                                    weight=ProductWeight.objects.filter(product=i["Product_id"]).first()
+                                    serializer1 = ProductWeightSerializer(weight, data=j, partial=True)
+                                    if serializer1.is_valid():
+                                        serializer1.save()
                 sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=z,CustomerName=CustomerName,Store_Name=Store_Name)
                 sendmailoforderdetailsCustomer(email_to=Customer,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,CustomerName=CustomerName)
+                sendmailoforderdetailsAdmin(email_to="selnox88@gmail.com",OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=z,CustomerName=CustomerName,Store_Name=Store_Name)
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-
 
 class UpdateOrder(APIView):
     permission_classes = [permissions.AllowAny]
@@ -771,7 +762,6 @@ class UpdateOrder(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 class DeleteOrder(APIView):
@@ -901,8 +891,6 @@ class GetDeliveryStores(APIView):
                 return Response(a)            
             else:
                 return Response({"message":"No Delivery Found in your Area"})
-                       
-
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
         

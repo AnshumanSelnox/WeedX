@@ -98,9 +98,42 @@
 
 # [{"id":728,"username":"qwertyyu","StoreName":"selnox","ProductName":"Big Bad Sour Bears - Indica","Cart_Quantity":2,"Price":{"id":1,"Weight":"1 G","Price":12212,"Discount":2,"SalePrice":11967.76,"Unit":"","Quantity":1,"Stock":"","Status":"Active"},"TotalPrice":23936,"created_by":36,"Product_id":1,"Store_id":15,"Image_id":113}]
 
-a=[{"id": 14,"Xml": ["https://www.weedx.io/weed-dispensaries/in/united-states/texas/el-paso","https://www.weedx.io/weed-dispensaries/in/united-states/new-york/","https://www.weedx.io/weed-dispensaries/in/united-states/district-of-columbia/washington",]}]
-j="https://www.weedx.io/weed-dispensaries/in/united-states/texas/el-pas"
-for i in a:
-    if j not in i["Xml"]:
-            a[0]["Xml"].append(j)
-print(a)
+# a=[{"id": 14,"Xml": ["https://www.weedx.io/weed-dispensaries/in/united-states/texas/el-paso","https://www.weedx.io/weed-dispensaries/in/united-states/new-york/","https://www.weedx.io/weed-dispensaries/in/united-states/district-of-columbia/washington",]}]
+# j="https://www.weedx.io/weed-dispensaries/in/united-states/texas/el-pas"
+# for i in a:
+#     if j not in i["Xml"]:
+#             a[0]["Xml"].append(j)
+# print(a)
+
+# sub=[{"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":7,"Stock":"Out of Stock","Status":"Active"},{"id":2,"Weight":"2 g","Price":30,"Discount":5,"SalePrice":29,"Unit":0,"Quantity":5,"Stock":"Out of Stock","Status":"Active"}]    
+# z={"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":5,"Stock":"In Stock","Status":"Active"}
+# # a=0
+# cartquantity=1
+# id=1
+# # for i in sub:
+# #         if i["id"]==id:
+# #             # sub[a]= z
+# #             # print(i["Quantity"]-cartquantity)
+# #         # a=+1
+# for i in sub:
+#     # for k, v in i.items():
+#     #     if k['id']==id:
+#     #         sub[k] = ''
+#     if i["id"]==id:
+#         a=i["Quantity"]-cartquantity
+#         sub.Quantity.update(a)
+        
+# print("AAAAAAAAAAAAAAAAAAA",sub)
+
+
+
+sub=[{"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":0,"Stock":"Out of Stock","Status":"Active"},{"id":2,"Weight":"2 g","Price":30,"Discount":5,"SalePrice":29,"Unit":0,"Quantity":5,"Stock":"Out of Stock","Status":"Active"}]    
+# z={"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":5,"Stock":"In Stock","Status":"Active"}
+# a=0
+cartquantity=1
+id=1
+for i in sub:
+    if i['id'] == id :
+        i.update({ "Quantity" : i["Quantity"] - cartquantity})
+        print( sub)
+        
