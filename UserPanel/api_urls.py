@@ -117,11 +117,13 @@ urlpatterns = [
     path('ProductFilterByUnitandStore/',ProductFilterByUnitandStore.as_view()),
     path('StrainFilterProduct/',StrainFilterProduct.as_view()),
     path('Delete-StoreReview/<int:id>',DeleteStoreReview.as_view()),
-    
+    path('Get-GetTest/',GetTest.as_view()),
+    path('Add-Test/',AddTest.as_view()),
     
 
 
 ]
 
+   
    
    

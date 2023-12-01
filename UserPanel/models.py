@@ -130,3 +130,6 @@ class HelpfullStoreReview(models.Model):
     helpfull=models.BooleanField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     
+    
+class Test(models.Model):
+    file=models.FileField(upload_to='media/test`')

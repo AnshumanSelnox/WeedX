@@ -211,3 +211,8 @@ class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
     fields='__all__' 
     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
     
+    
+class Serializer_test(serializers.ModelSerializer):
+  class Meta:
+    model=Test
+    fields='__all__'

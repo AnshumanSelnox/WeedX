@@ -670,7 +670,7 @@ class ActiveSubCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         try:
-            User=SubCategory.objects.filter(Status="Active")
+            User=SubCategory.objects.filter(Status="Active").order_by("name")
             serializer = Serializer_SubCategory(User,many=True)
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
@@ -1273,3 +1273,17 @@ class ReplyProductReview(APIView):
                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)       
+
+
+class SearchProduct(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id=None):
+        try:
+            search=request.data.get("search",None)
+            store=Product.objects.filter(Store=id)
+            User=store.filter(Product_Name__icontains=search)
+            serializer = Serializer_Product(User, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -82,6 +82,7 @@ urlpatterns = [
     path('GetTopSellingProduct/<int:id>',GetTopSellingProduct.as_view()),
     path('AddReplyonStoreReview/<int:id>',AddReplyonStoreReview.as_view()),
     path('Reply-ProductReview/<int:id>',ReplyProductReview.as_view()),
+    path('SearchProduct/<int:id>', SearchProduct.as_view()),
     
     
 

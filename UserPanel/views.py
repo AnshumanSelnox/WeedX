@@ -714,7 +714,7 @@ class AddOrder(APIView):
                 vendoremail=User.Store.created_by.email
                 storeaddress=User.Store.Store_Address
                 s=a.Product
-                z=a.IdCard
+                icard=a.IdCard
                 Store_Name=User.Store.Store_Name
                 if len(s):
                     for i in s:
@@ -736,7 +736,7 @@ class AddOrder(APIView):
                                     serializer1 = ProductWeightSerializer(weight, data=j, partial=True)
                                     if serializer1.is_valid():
                                         serializer1.save()
-                sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=z,CustomerName=CustomerName,Store_Name=Store_Name)
+                sendmailoforderdetailsVendor(email_to=vendoremail,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=icard,CustomerName=CustomerName,Store_Name=Store_Name)
                 sendmailoforderdetailsCustomer(email_to=Customer,OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,CustomerName=CustomerName)
                 sendmailoforderdetailsAdmin(email_to="selnox88@gmail.com",OrderId=a.OrderId,subtotal=a.subtotal,Address=a.Address,ProductName=d,Weight=w,Quantity=f,Price=q,storeaddress=storeaddress,IdCard=z,CustomerName=CustomerName,Store_Name=Store_Name)
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
@@ -751,12 +751,15 @@ class UpdateOrder(APIView):
 
     def post(self, request, id=None):
         try:
-            
+            cancel=request.data.get("cancel",None)
             User = Order.objects.get(OrderId=id)
             serializer = Serializer_Order(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
                 return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+            if cancel:
+                for i in User["Product"]:
+                    i["Cart_Quantity"],i["Quantity"]
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             
@@ -2231,6 +2234,7 @@ class PriceFilter(APIView):
         try:
             a=[]
             z=[]
+            p=[]
             Store=request.data.get("Store")
             MinPrice=request.data.get("MinPrice")
             MaxPrice=request.data.get("MaxPrice")
@@ -2247,7 +2251,10 @@ class PriceFilter(APIView):
                 serialize=Serializer_Product(product,many=True).data
                 for m in serialize:
                     z.append(m)
-            return Response(z)
+            for t in z:
+                    if t not in p:
+                        p.append(t)
+            return Response(p)
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -2474,5 +2481,26 @@ class UpdateStoreReview(APIView):
                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
             else:
                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AddTest(APIView):
+    def post(self, request):
+        try:
+            serializer = Serializer_test(data=request.data, partial=True)
+            if serializer.is_valid(): 
+                serializer.save()
+                return Response({"status": "success","data": serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GetTest(APIView):
+    def get(self,request):
+        try:
+            a=Test.objects.all()
+            serialize=Serializer_test(a,many=True)
+            return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
