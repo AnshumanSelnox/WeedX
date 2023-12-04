@@ -119,11 +119,11 @@ urlpatterns = [
     path('Delete-StoreReview/<int:id>',DeleteStoreReview.as_view()),
     path('Get-GetTest/',GetTest.as_view()),
     path('Add-Test/',AddTest.as_view()),
-    
+    path('AddandUpdateHelpfullButton/',AddandUpdateHelpfullButton.as_view()),
+    path('Get-Net_Weight/',GetNet_Weight.as_view()),
 
 
 ]
 
-   
    
    

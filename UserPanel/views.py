@@ -2504,3 +2504,13 @@ class GetTest(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GetNet_Weight(APIView):
+    def get(self, request, format=None):
+        try:
+            User = Net_Weight.objects.select_related().all()
+            serialize = Serializer_Net_Weight(User, many=True)
+            return Response({"data":serialize.data},status=200)
+
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)

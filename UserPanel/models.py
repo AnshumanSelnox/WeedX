@@ -129,6 +129,7 @@ class HelpfullStoreReview(models.Model):
     Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
     helpfull=models.BooleanField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+    count=models.IntegerField()
     
     
 class Test(models.Model):
