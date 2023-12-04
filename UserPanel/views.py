@@ -2447,14 +2447,23 @@ class BlogSearchApi(APIView):
 class StrainFilterProduct(APIView):
     def post(self,request):
         try:
+            a=[]
+            z=[]
             store=request.data.get("store")
             strain=request.data.get("strain")
-            product=Product.objects.filter(strain=strain).filter(Store_id=store)
-            serialize=Serializer_Product(product,many=True)
-            return Response(serialize.data)  
+            for i in strain:
+                product=Product.objects.filter(strain=i).filter(Store_id=store)
+                if product:
+                    serialize=Serializer_Product(product,many=True).data
+                    a.append(serialize)
+            for j in a:
+                for l in j:
+                    z.append(l)
+            return Response(z)  
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
+
+
 # class AddandUpdateHelpfullButton(APIView):
 #     permission_classes=[IsAuthenticated]
 #     def post(self,request):
