@@ -86,6 +86,8 @@ class StoreReview(models.Model):
     VendorName=models.CharField(max_length=500,default=None,null=True)
     ReplyTime=models.CharField(max_length=500,default=None,null=True)
     VendorImage=models.CharField(max_length=9999,default=None,null=True)
+    helpfull=models.JSONField(default=list,null=True)
+    count=models.IntegerField(default=0)
 
 
     
@@ -120,17 +122,18 @@ class UserProfileOrderDetails(models.Model):
 class SiteMap(models.Model):
     Xml=models.JSONField()
 
-class ReplyonStoreReview(models.Model):
-    Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
-    reply=models.TextField()
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
+# class ReplyonStoreReview(models.Model):
+#     Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
+#     reply=models.TextField()
+#     user=models.ForeignKey(User,on_delete=models.CASCADE)
+#     helpfull=models.JSONField(default=list,null=True)
     
-class HelpfullStoreReview(models.Model):
-    Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
-    helpfull=models.BooleanField()
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    count=models.IntegerField()
+# class HelpfullStoreReview(models.Model):
+#     Review=models.ManyToManyField(StoreReview)
+#     helpfull=models.BooleanField()
+#     user=models.ForeignKey(User,on_delete=models.CASCADE)
+#     # count=models.IntegerField()
     
     
 class Test(models.Model):
-    file=models.FileField(upload_to='media/test`')
+    file=models.FileField(upload_to='media/test')

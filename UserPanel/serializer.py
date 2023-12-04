@@ -152,7 +152,7 @@ class Serializer_BlankImage(serializers.ModelSerializer):
 
 class StoreRatingAndReviewSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
-    userImage=serializers.ReadOnlyField(source='user.image')
+    # userImage=serializers.ReadOnlyField(source='user.image')
     class Meta:
         model = StoreReview
         fields = '__all__'
@@ -187,29 +187,29 @@ class Serializer_SiteMap(serializers.ModelSerializer):
     model=SiteMap
     fields='__all__'
 
-class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
-  username=serializers.ReadOnlyField(source='user.username')
-  review=serializers.ReadOnlyField(source='Review.Title')
-  comment=serializers.ReadOnlyField(source='Review.comment')
-  Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
-  Store=serializers.ReadOnlyField(source='Review.Store.id')
-  rating=serializers.ReadOnlyField(source='Review.rating')
+# class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
+#   username=serializers.ReadOnlyField(source='user.username')
+#   review=serializers.ReadOnlyField(source='Review.Title')
+#   comment=serializers.ReadOnlyField(source='Review.comment')
+#   Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
+#   Store=serializers.ReadOnlyField(source='Review.Store.id')
+#   rating=serializers.ReadOnlyField(source='Review.rating')
 
-  class Meta:
-    model=ReplyonStoreReview
-    fields='__all__'
-    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
+#   class Meta:
+#     model=ReplyonStoreReview
+#     fields='__all__'
+#     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
    
-class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
-  username=serializers.ReadOnlyField(source='user.username')
-  Review=serializers.ReadOnlyField(source='Review.Title')
-  comment=serializers.ReadOnlyField(source='Review.comment')
-  Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
-  Store=serializers.ReadOnlyField(source='Review.Store')
-  class Meta:
-    model=HelpfullStoreReview
-    fields='__all__' 
-    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
+# class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
+#   username=serializers.ReadOnlyField(source='user.username')
+#   # Review=serializers.ReadOnlyField(source='Review.Title')
+#   # comment=serializers.ReadOnlyField(source='Review.comment')
+#   Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
+#   # Store=serializers.ReadOnlyField(source='Review.Store')
+#   class Meta:
+#     model=HelpfullStoreReview
+#     fields='__all__' 
+#     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
     
     
 class Serializer_test(serializers.ModelSerializer):

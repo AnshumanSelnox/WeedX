@@ -119,11 +119,13 @@ urlpatterns = [
     path('Delete-StoreReview/<int:id>',DeleteStoreReview.as_view()),
     path('Get-GetTest/',GetTest.as_view()),
     path('Add-Test/',AddTest.as_view()),
-    path('AddandUpdateHelpfullButton/',AddandUpdateHelpfullButton.as_view()),
+    # path('AddandUpdateHelpfullButton/',AddandUpdateHelpfullButton.as_view()),
     path('Get-Net_Weight/',GetNet_Weight.as_view()),
+    # path('Get-HelfullButton/',GetHelfullButton.as_view()),
+    path('WeightFilter/',WeightFilter.as_view()),
+    path('Add-Helpfull/',AddHelpfull.as_view()),
+    path('Get-StoreReview/<int:id>',GetStoreReview.as_view()),
 
 
 ]
 
-   
-   
