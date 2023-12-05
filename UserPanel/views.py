@@ -286,27 +286,24 @@ class GetAllProduct(APIView):
             Country=request.data.get("Country")
             State=request.data.get("State")
             City=request.data.get("City")
-            if Country:
-                User = Product.objects.filter(Status="Active").filter(Store_id__Country=Country) 
-                serialize = Serializer_Product(User, many=True)
-                return Response(serialize.data)
-            elif State:
-                User = Product.objects.filter(Status="Active").filter(Store_id__State=State) 
-                serialize = Serializer_Product(User, many=True)
-                return Response(serialize.data)
-            elif City:
+            if City or State or Country:
                 User = Product.objects.filter(Status="Active").filter(Store_id__City=City) 
                 serialize = Serializer_Product(User, many=True)
-                return Response(serialize.data)
-            elif Country and State and City:
-                User = Product.objects.filter(Status="Active").filter(Store_id__Country=Country).filter(Store_id__State=State).filter(Store_id__City=City) 
-                serialize = Serializer_Product(User, many=True)
+                if len(User)==0:
+                    User1 = Product.objects.filter(Status="Active").filter(Store_id__State=State) 
+                    serialize1 = Serializer_Product(User1, many=True)
+                    if len(User1)==0:
+                        User2 = Product.objects.filter(Status="Active").filter(Store_id__Country=Country)
+                        serialize2 = Serializer_Product(User2, many=True)
+                        return Response(serialize2.data)
+                    return Response(serialize1.data)
+                        
                 return Response(serialize.data)
             else:
                 return Response("No Product Found",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            
 #All Product by Category
 class ProductByCategorybyStore(APIView):
     def get(self,request,id=None):
@@ -401,29 +398,21 @@ class GetAllDispensaries(APIView):
             Country=request.data.get("Country")
             State=request.data.get("State")
             City=request.data.get("City")
-            if Country:
-                user = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(Country=Country)
-                serialize=Serializer_Store(user,many=True)
-                return Response(serialize.data,status=status.HTTP_200_OK)
-            elif State:
-                user = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(State=State)
-                serialize=Serializer_Store(user,many=True)
-                return Response(serialize.data,status=status.HTTP_200_OK)
-            elif City:
+            if City or State or Country:
                 user = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(City=City)
                 serialize=Serializer_Store(user,many=True)
+                if len(user) == 0:
+                    user1 = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(State=State)
+                    serialize1=Serializer_Store(user1,many=True)
+                    if len(user1)==0:
+                        user2 = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(Country=Country)
+                        serialize2=Serializer_Store(user2,many=True)
+                        return Response(serialize2.data,status=status.HTTP_200_OK)
+                    return Response(serialize1.data,status=status.HTTP_200_OK)
                 return Response(serialize.data,status=status.HTTP_200_OK)
-            elif Country and State and City:
-                user = Stores.objects.filter(Store_Type="dispensary").filter(Status="Active").filter(Country=Country).filter(State=State).filter(City=City)
-                serialize=Serializer_Store(user,many=True)
-                return Response(serialize.data,status=status.HTTP_200_OK)
-            else:
-                return Response("No Available Dispensaries in your Location",status=status.HTTP_400_BAD_REQUEST)
-    
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-        
+            
 class GetAllDelivery(APIView):
     def get(self,request,format=None):
         try:
@@ -2075,39 +2064,6 @@ class FilterDispensaries(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-                
-            # if City:
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(City=City)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif State:
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(State=State)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif Country:
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(Country=Country)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif Country and City and State :
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(City=City).filter(Country=Country).filter(State=State)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif Country or City or State :
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(City=City).filter(Country=Country).filter(State=State)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif Country and State :
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(Country=Country).filter(State=State)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # elif Country or State :
-            #     check=Stores.objects.filter(Store_Name__icontains=store).filter(Store_Type="dispensary").filter(Country=Country).filter(State=State)
-            #     serialize=Serializer_Store(check,many=True)
-            #     return Response(serialize.data)
-            # else:
-            #     return Response("Not Found",status=status.HTTP_400_BAD_REQUEST)
-        # except Exception as e:
-        #     return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
  
 
 class HighPriceToLowPrice(APIView):
@@ -2462,41 +2418,6 @@ class StrainFilterProduct(APIView):
             return Response(z)  
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# class AddandUpdateHelpfullButton(APIView):
-#     permission_classes=[IsAuthenticated]
-#     def post(self,request):
-#         try:
-#             Review=request.data.get("Review")
-#             like=HelpfullStoreReview.objects.filter(user=request.user).filter(Review=Review).first()
-#             if like:
-#                 serializer=Serializer_HelpfullStoreReview(like, data=request.data, partial=True)
-#                 if serializer.is_valid():
-#                     serializer.save(modified_by=request.user)
-#                     return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
-#                 return Response(serialize.data)
-#             else:
-#                 serialize=Serializer_HelpfullStoreReview(data=request.data,partial=True)
-#                 if serialize.is_valid():
-#                     serialize.save(user=request.user)
-#                     return Response({"status": "success","data": serialize.data}, status.HTTP_200_OK)
-#                 else:
-#                     return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-# class GetHelfullButton(APIView):
-#     def get(self,request):
-#         try:
-#             store=request.data.get("store")
-#             like=HelpfullStoreReview.objects.filter(user=request.user)
-#             data=like.Review.all()
-#             serialize=Serializer_HelpfullStoreReview(data,many=True)
-#             return Response(serialize.data)
-#         except Exception as e:
-#             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
         
 class DeleteStoreReview(APIView):
     permission_classes = [IsAuthenticated]
@@ -2586,7 +2507,7 @@ class AddHelpfull(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
         try:
-            z=[]
+
             userid=request.data.get("userid")
             review=request.data.get("review")
             a=StoreReview.objects.filter(id=review).first()
@@ -2613,3 +2534,39 @@ class GetStoreReview(APIView):
             return Response(serialize)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AddProductHelpfull(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+        try:
+
+            userid=request.data.get("userid")
+            review=request.data.get("review")
+            a=Review.objects.filter(id=review).first()
+            
+            if userid in a.helpfull:
+                a.helpfull.remove(userid)
+            else:
+                a.helpfull.append(userid)
+            l=len(a.helpfull)
+            response={"helpfull":a.helpfull,"count":l}
+            serialize=ReviewSerializer(a,data=response,partial=True)
+            if serialize.is_valid():
+                serialize.save()
+            return Response(serialize.data,status=201)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+
+
+
+class ProductListView(APIView):
+    def post(self,request):
+        try:
+            search=request.data.get("search")
+            store=request.data.get("store")
+            product=Product.objects.filter(Product_Name__icontains=search).filter(Store_id=store)
+            serialize=Serializer_Product(product,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error':str(e)},status=500)

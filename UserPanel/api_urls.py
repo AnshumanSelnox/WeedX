@@ -125,6 +125,7 @@ urlpatterns = [
     path('WeightFilter/',WeightFilter.as_view()),
     path('Add-Helpfull/',AddHelpfull.as_view()),
     path('Get-StoreReview/<int:id>',GetStoreReview.as_view()),
+    path('Add-ProductHelpfull/',AddProductHelpfull.as_view()),
 
 
 ]

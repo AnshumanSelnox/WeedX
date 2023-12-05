@@ -3,11 +3,11 @@ from AdminPanel.models import *
 from AdminPanel.serializer import *
 
 from rest_framework import generics
-class ProductListView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = Serializer_Product
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['Product_Name']
+# class ProductListView(generics.ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = Serializer_Product
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['Product_Name']
 
 
 class StoreListView(generics.ListAPIView):
