@@ -827,6 +827,7 @@ class AddApplyCoupoun(APIView):
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
                     serializer.save()
+                    
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -1285,5 +1286,18 @@ class SearchProduct(APIView):
             User=store.filter(Product_Name__icontains=search)
             serializer = Serializer_Product(User, many=True)
             return Response(serializer.data)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class DeleteMultipleProduct(APIView):
+    permission_classes=[IsAuthenticated]
+    def delete(self,request):
+        try:
+            id=request.data.get("id")
+            for i in id:
+                User = get_object_or_404(Product, id=i)
+                User.delete()
+            return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

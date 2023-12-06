@@ -300,7 +300,7 @@ class GetAllProduct(APIView):
                         
                 return Response(serialize.data)
             else:
-                return Response("No Product Found",status=status.HTTP_400_BAD_REQUEST)
+                return Response("No Product Found")
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -516,7 +516,7 @@ class ProductByCategory(APIView):
             Country=request.data.get("Country")
             State=request.data.get("State")
             City=request.data.get("City")        
-            if Country:  
+            if  City or State or Country:  
                 user= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
                 if user:
                     serialize=Serializer_Product(user,many=True)
@@ -549,6 +549,7 @@ class ProductByCategory(APIView):
                 return Response("No Avaiable Product")
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
 
 class GetAddtocart(APIView):
@@ -1598,15 +1599,15 @@ class GetDeliveryStoresHomepage(APIView):
             State=request.data.get("State")
             City=request.data.get("City")
             if Country:
-                Delivery = Stores.objects.filter(Order_Type="Delivery").filter(Country=Country)
-                DeliveryandPickup=Stores.objects.filter(Order_Type="Delivery and Pickup").filter(Country=Country)
+                Delivery = Stores.objects.filter(Order_Type="Delivery").filter(Status="Active").filter(Country=Country)
+                DeliveryandPickup=Stores.objects.filter(Order_Type="Delivery and Pickup").filter(Status="Active").filter(Country=Country)
                 User=Delivery or DeliveryandPickup
                 serialize=Serializer_Store(User,many=True)
-                return Response( serialize.data, status.HTTP_200_OK)
+
             elif State:
                 Delivery = Stores.objects.filter(Order_Type="Delivery").filter(State=State)
                 DeliveryandPickup=Stores.objects.filter(Order_Type="Delivery and Pickup").filter(State=State)
-                User=Delivery or DeliveryandPickup
+                User=Delivery or DeliveryandPickup              
                 serialize=Serializer_Store(User,many=True)
                 return Response( serialize.data, status.HTTP_200_OK)
             elif City:
@@ -1626,6 +1627,8 @@ class GetDeliveryStoresHomepage(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
        
 class GetPendingOrder(APIView):
     permission_classes = [IsAuthenticated]
@@ -2482,7 +2485,6 @@ class WeightFilter(APIView):
             z=[]
             store=request.data.get("store")
             weight=request.data.get("weight")
-            # for i in weight:
             product=Product.objects.filter(Store_id=store) 
             serialize=Serializer_Product(product,many=True).data
             for i in serialize:
@@ -2570,3 +2572,50 @@ class ProductListView(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error':str(e)},status=500)
+        
+class UnitFilter(APIView):
+    def post(self,request):
+        try:
+            a=[]
+            z=[]
+            store=request.data.get("store")
+            unit=request.data.get("unit")
+            product=Product.objects.filter(Store_id=store) 
+            serialize=Serializer_Product(product,many=True).data
+            for i in serialize:
+                for j in i["Prices"]:
+                    for k in j["Price"]:
+                        # for asd in unit:
+                            if unit==True:
+                                if k["Unit"]!=None and k["Unit"]!="" and k["Unit"]!=0:
+                                    response={"Product":i["id"],"Unit":k["Unit"]}
+                                    a.append(response)
+                                else:
+                                    return Response("No Unit in Product")
+                                
+            for l in a:
+                product=Product.objects.filter(id=l["Product"])
+                serialize=Serializer_Product(product,many=True).data
+                for m in serialize:
+                    z.append(m)
+            return Response(z)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+        
+class SearchProductbyBrand(APIView):
+    def post(self,request):
+        try:
+            brand=request.data.get("brand")
+            search=request.data.get("search")
+            product=Product.objects.filter(Brand_id=brand).filter(Product_Name__icontains=search)
+            serialize=Serializer_Product(product,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+# class ComboFilter(APIView):
+#     def post(self,request):
+#         try:
+            
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
