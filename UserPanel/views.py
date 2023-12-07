@@ -325,40 +325,22 @@ class ProductBySubCategory(APIView):
             Country=request.data.get("Country")
             State=request.data.get("State")
             City=request.data.get("City")
-            if Country:
-                user=Product.objects.filter(Sub_Category_id=id)
-                active=user.filter(Status="Active").filter(Store_id__Country=Country)
-                if active:
-                    serialize=Serializer_Product(active,many=True)
-                    return Response(serialize.data,status=status.HTTP_200_OK)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-            if State:
-                user=Product.objects.filter(Sub_Category_id=id)
-                active=user.filter(Status="Active").filter(Store_id__State=State)
-                if active:
-                    serialize=Serializer_Product(active,many=True)
-                    return Response(serialize.data,status=status.HTTP_200_OK)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-            if City:
-                user=Product.objects.filter(Sub_Category_id=id)
-                active=user.filter(Status="Active").filter(Store_id__City=City)
-                if active:
-                    serialize=Serializer_Product(active,many=True)
-                    return Response(serialize.data,status=status.HTTP_200_OK)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-            if Country and State and City:
-                user=Product.objects.filter(Sub_Category_id=id)
-                active=user.filter(Status="Active").filter(Store_id__City=City).filter(Store_id__State=State).filter(Store_id__Country=Country)
-                if active:
-                    serialize=Serializer_Product(active,many=True)
-                    return Response(serialize.data,status=status.HTTP_200_OK)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
+            if City or State or Country:
+                user=Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
+                serialize = Serializer_Product(user, many=True)
+                if len(user)==0:
+                    User1 = Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__State=State) 
+                    serialize1 = Serializer_Product(User1, many=True)
+                    if len(User1)==0:
+                        User2 = Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
+                        serialize2 = Serializer_Product(User2, many=True)
+                        return Response(serialize2.data)
+                    return Response(serialize1.data)
+                        
+                return Response(serialize.data)
             else:
-                return Response("No Product avaiable in Your region",status=status.HTTP_400_BAD_REQUEST)
+                return Response("No Product Found")
+                
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -513,42 +495,34 @@ class GetProductbyBrand(APIView):
 class ProductByCategory(APIView):
     def post(self,request,id=None):
         try:
+            
             Country=request.data.get("Country")
             State=request.data.get("State")
             City=request.data.get("City")        
-            if  City or State or Country:  
-                user= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
-                if user:
-                    serialize=Serializer_Product(user,many=True)
-                    return Response(serialize.data)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-            elif State:  
-                user= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__State=State)
-                if user:
-                    serialize=Serializer_Product(user,many=True)
-                    return Response(serialize.data)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-            if City:  
+            if City or State or Country: 
                 user= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__City=City)
-                if user:
+                if len(user)!=0:
                     serialize=Serializer_Product(user,many=True)
                     return Response(serialize.data)
                 else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
-                
-            if Country and State and City:  
-                user= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__Country=Country).filter(Store_id__State=State).filter(Store_id__City=City)
-                if user:
-                    serialize=Serializer_Product(user,many=True)
-                    return Response(serialize.data)
-                else:
-                    return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
+                    user1= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__State=State)
+                    if len(user1)!=0:
+                        serialize1=Serializer_Product(user1,many=True)
+                        return Response(serialize1.data)
+                    else:
+                        user2= Product.objects.filter(Sub_Category_id__category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
+                        if len(user2)!=0:
+                            serialize1=Serializer_Product(user1,many=True)
+                            return Response(serialize1.data)
+                        else:
+                            return Response("There is no Product")
             else:
-                return Response("No Avaiable Product")
+                return Response("No Product Found")
+                        
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
         
 
 
@@ -1709,147 +1683,147 @@ class AllUser(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
         
-class PromoCodeCheck(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self,request):
-        try:
-            Category=request.data.get("Category")
-            product=request.data.get("product")
-            Code=request.data.get("Code")
-            TotalPrice=request.data.get("TotalPrice")
-            CartQuantity=request.data.get("CartQuantity")
-            date=request.data.get("date")
-            coupoun=Coupoun.objects.filter(DiscountCode=Code).first() 
-            if coupoun.product :
-                    a=coupoun.product.all()
-                    for i in product:
-                        for j in a:
-                            if i==j.id:
-                                if coupoun :
-                                    if coupoun.NoMinimumRequirements==True:
-                                        if coupoun.LimitToOneUsePerCustomer==True:
-                                                for l in coupoun.AllCustomer:
-                                                    if l==request.user.id:
-                                                        if coupoun.PercentageAmount :
-                                                            percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                        elif coupoun.ValueAmount:
-                                                            valueAmount=TotalPrice-coupoun.ValueAmount
-                                                        coupoun.AllCustomer.remove(request.user.id)
-                                                    else:
-                                                        return Response("You Have Already Used This Coupoun")
-                                        elif coupoun.LimitNumberOfTime!=None:
-                                                if coupoun.PercentageAmount :
-                                                    percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                elif coupoun.ValueAmount:
-                                                    valueAmount=TotalPrice-coupoun.ValueAmount
-                                                coupoun.LimitNumberOfTime-1
+# class PromoCodeCheck(APIView):
+#     permission_classes = [IsAuthenticated]
+#     def post(self,request):
+#         try:
+#             Category=request.data.get("Category")
+#             product=request.data.get("product")
+#             Code=request.data.get("Code")
+#             TotalPrice=request.data.get("TotalPrice")
+#             CartQuantity=request.data.get("CartQuantity")
+#             date=request.data.get("date")
+#             coupoun=Coupoun.objects.filter(DiscountCode=Code).first() 
+#             if coupoun.product :
+#                     a=coupoun.product.all()
+#                     for i in product:
+#                         for j in a:
+#                             if i==j.id:
+#                                 if coupoun :
+#                                     if coupoun.NoMinimumRequirements==True:
+#                                         if coupoun.LimitToOneUsePerCustomer==True:
+#                                                 for l in coupoun.AllCustomer:
+#                                                     if l==request.user.id:
+#                                                         if coupoun.PercentageAmount :
+#                                                             percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                         elif coupoun.ValueAmount:
+#                                                             valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                         coupoun.AllCustomer.remove(request.user.id)
+#                                                     else:
+#                                                         return Response("You Have Already Used This Coupoun")
+#                                         elif coupoun.LimitNumberOfTime!=None:
+#                                                 if coupoun.PercentageAmount :
+#                                                     percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                 elif coupoun.ValueAmount:
+#                                                     valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                 coupoun.LimitNumberOfTime-1
                                                     
-                                    elif coupoun.MinimumPurchaseAmount<=TotalPrice:
-                                        if coupoun.LimitToOneUsePerCustomer==True:
-                                                for l in coupoun.AllCustomer:
-                                                    if l==request.user.id:
-                                                        if coupoun.PercentageAmount :
-                                                            percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                        elif coupoun.ValueAmount:
-                                                            valueAmount=TotalPrice-coupoun.ValueAmount
-                                                        coupoun.AllCustomer.remove(request.user.id)
-                                                    else:
-                                                        return Response("You Have Already Used This Coupoun")
-                                        elif coupoun.LimitNumberOfTime!=None:
-                                                if coupoun.PercentageAmount :
-                                                    percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                elif coupoun.ValueAmount:
-                                                    valueAmount=TotalPrice-coupoun.ValueAmount
-                                                coupoun.LimitNumberOfTime-1
+#                                     elif coupoun.MinimumPurchaseAmount<=TotalPrice:
+#                                         if coupoun.LimitToOneUsePerCustomer==True:
+#                                                 for l in coupoun.AllCustomer:
+#                                                     if l==request.user.id:
+#                                                         if coupoun.PercentageAmount :
+#                                                             percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                         elif coupoun.ValueAmount:
+#                                                             valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                         coupoun.AllCustomer.remove(request.user.id)
+#                                                     else:
+#                                                         return Response("You Have Already Used This Coupoun")
+#                                         elif coupoun.LimitNumberOfTime!=None:
+#                                                 if coupoun.PercentageAmount :
+#                                                     percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                 elif coupoun.ValueAmount:
+#                                                     valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                 coupoun.LimitNumberOfTime-1
                                                            
-                                    elif coupoun.MinimumQuantityofItem<=CartQuantity:
-                                        if coupoun.LimitToOneUsePerCustomer==True:
-                                                for l in coupoun.AllCustomer:
-                                                    if l==request.user.id:
-                                                        if coupoun.PercentageAmount :
-                                                            percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                        elif coupoun.ValueAmount:
-                                                            valueAmount=TotalPrice-coupoun.ValueAmount
-                                                        coupoun.AllCustomer.remove(request.user.id)
-                                                    else:
-                                                        return Response("You Have Already Used This Coupoun")
-                                        elif coupoun.LimitNumberOfTime!=None:
-                                                if coupoun.PercentageAmount :
-                                                    percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                elif coupoun.ValueAmount:
-                                                    valueAmount=TotalPrice-coupoun.ValueAmount
-                                                coupoun.LimitNumberOfTime-1    
-            elif coupoun.category :
-                    a=coupoun.category.all()
-                    for i in Category:
-                        for j in a:
-                            if i==j.id:
-                                if coupoun.NoMinimumRequirements==True:
-                                        if coupoun.AllCustomer!=[]:
-                                            if coupoun.LimitToOneUsePerCustomer==True:
-                                                for l in coupoun.AllCustomer:
-                                                    if l==request.user.id:
-                                                        if coupoun.PercentageAmount :
-                                                            percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                        elif coupoun.ValueAmount:
-                                                            valueAmount=TotalPrice-coupoun.ValueAmount
-                                                        coupoun.AllCustomer.remove(request.user.id)
-                                                    else:
-                                                        return Response("You Have Already Used This Coupoun")
-                                            elif coupoun.LimitNumberOfTime!=None:
-                                                if coupoun.PercentageAmount :
-                                                    percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                elif coupoun.ValueAmount:
-                                                    valueAmount=TotalPrice-coupoun.ValueAmount
-                                                coupoun.LimitNumberOfTime-1
+#                                     elif coupoun.MinimumQuantityofItem<=CartQuantity:
+#                                         if coupoun.LimitToOneUsePerCustomer==True:
+#                                                 for l in coupoun.AllCustomer:
+#                                                     if l==request.user.id:
+#                                                         if coupoun.PercentageAmount :
+#                                                             percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                         elif coupoun.ValueAmount:
+#                                                             valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                         coupoun.AllCustomer.remove(request.user.id)
+#                                                     else:
+#                                                         return Response("You Have Already Used This Coupoun")
+#                                         elif coupoun.LimitNumberOfTime!=None:
+#                                                 if coupoun.PercentageAmount :
+#                                                     percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                 elif coupoun.ValueAmount:
+#                                                     valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                 coupoun.LimitNumberOfTime-1    
+#             elif coupoun.category :
+#                     a=coupoun.category.all()
+#                     for i in Category:
+#                         for j in a:
+#                             if i==j.id:
+#                                 if coupoun.NoMinimumRequirements==True:
+#                                         if coupoun.AllCustomer!=[]:
+#                                             if coupoun.LimitToOneUsePerCustomer==True:
+#                                                 for l in coupoun.AllCustomer:
+#                                                     if l==request.user.id:
+#                                                         if coupoun.PercentageAmount :
+#                                                             percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                         elif coupoun.ValueAmount:
+#                                                             valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                         coupoun.AllCustomer.remove(request.user.id)
+#                                                     else:
+#                                                         return Response("You Have Already Used This Coupoun")
+#                                             elif coupoun.LimitNumberOfTime!=None:
+#                                                 if coupoun.PercentageAmount :
+#                                                     percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                 elif coupoun.ValueAmount:
+#                                                     valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                 coupoun.LimitNumberOfTime-1
                                                     
-                                elif coupoun.MinimumPurchaseAmount<=TotalPrice:
-                                    if coupoun.AllCustomer!=[]:
-                                        if coupoun.LimitToOneUsePerCustomer==True:
-                                            for l in coupoun.AllCustomer:
-                                                if l==request.user.id:
-                                                    if coupoun.PercentageAmount :
-                                                        percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                    elif coupoun.ValueAmount:
-                                                        valueAmount=TotalPrice-coupoun.ValueAmount
-                                                    coupoun.AllCustomer.remove(request.user.id)
-                                                else:
-                                                    return Response("You Have Already Used This Coupoun")
-                                        elif coupoun.LimitNumberOfTime!=None:
-                                            if coupoun.PercentageAmount :
-                                                percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                            elif coupoun.ValueAmount:
-                                                valueAmount=TotalPrice-coupoun.ValueAmount
-                                            coupoun.LimitNumberOfTime-1
+#                                 elif coupoun.MinimumPurchaseAmount<=TotalPrice:
+#                                     if coupoun.AllCustomer!=[]:
+#                                         if coupoun.LimitToOneUsePerCustomer==True:
+#                                             for l in coupoun.AllCustomer:
+#                                                 if l==request.user.id:
+#                                                     if coupoun.PercentageAmount :
+#                                                         percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                     elif coupoun.ValueAmount:
+#                                                         valueAmount=TotalPrice-coupoun.ValueAmount
+#                                                     coupoun.AllCustomer.remove(request.user.id)
+#                                                 else:
+#                                                     return Response("You Have Already Used This Coupoun")
+#                                         elif coupoun.LimitNumberOfTime!=None:
+#                                             if coupoun.PercentageAmount :
+#                                                 percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                             elif coupoun.ValueAmount:
+#                                                 valueAmount=TotalPrice-coupoun.ValueAmount
+#                                             coupoun.LimitNumberOfTime-1
                                                         
-                                    elif coupoun.SpecificCustomer != None:
-                                        for k in coupoun.SpecificCustomer:
-                                            if k['id']==request.user.id:
-                                                if coupoun.PercentageAmount :
-                                                    percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                elif coupoun.ValueAmount:
-                                                    valueAmount=TotalPrice-coupoun.ValueAmount 
+#                                     elif coupoun.SpecificCustomer != None:
+#                                         for k in coupoun.SpecificCustomer:
+#                                             if k['id']==request.user.id:
+#                                                 if coupoun.PercentageAmount :
+#                                                     percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                 elif coupoun.ValueAmount:
+#                                                     valueAmount=TotalPrice-coupoun.ValueAmount 
                                                     
-                                elif coupoun.MinimumQuantityofItem<=CartQuantity:
-                                        if coupoun.AllCustomer==True:
-                                            if coupoun.PercentageAmount :
-                                                percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                            elif coupoun.ValueAmount:
-                                                valueAmount=TotalPrice-coupoun.ValueAmount
-                                        elif coupoun.SpecificCustomer != None:
-                                            for k in coupoun.SpecificCustomer:
-                                                if k['id']==request.user.id:
-                                                    if coupoun.PercentageAmount :
-                                                        percentageAmount=TotalPrice*coupoun.PercentageAmount/100
-                                                    elif coupoun.ValueAmount:
-                                                        valueAmount=TotalPrice-coupoun.ValueAmount       
+#                                 elif coupoun.MinimumQuantityofItem<=CartQuantity:
+#                                         if coupoun.AllCustomer==True:
+#                                             if coupoun.PercentageAmount :
+#                                                 percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                             elif coupoun.ValueAmount:
+#                                                 valueAmount=TotalPrice-coupoun.ValueAmount
+#                                         elif coupoun.SpecificCustomer != None:
+#                                             for k in coupoun.SpecificCustomer:
+#                                                 if k['id']==request.user.id:
+#                                                     if coupoun.PercentageAmount :
+#                                                         percentageAmount=TotalPrice*coupoun.PercentageAmount/100
+#                                                     elif coupoun.ValueAmount:
+#                                                         valueAmount=TotalPrice-coupoun.ValueAmount       
 
                                         
-            else:
-                return Response("Not Applicable",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#             else:
+#                 return Response("Not Applicable",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                   
-        except Exception as e:
-                return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         except Exception as e:
+#                 return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             
 class GetDispensary_Product(APIView):
@@ -2619,3 +2593,10 @@ class SearchProductbyBrand(APIView):
             
 #         except Exception as e:
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PromoCodeCheck(APIView):
+    def post(self,request):
+        try:
+            pass
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

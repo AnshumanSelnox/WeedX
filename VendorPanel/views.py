@@ -824,10 +824,25 @@ class AddApplyCoupoun(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
+            a=request.data
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
                     serializer.save()
-                    
+                    if a.product!=[] or a.product!=None:
+                        for i in a.product:
+                            response={"ProductCoupoun":request.data}
+                            product=Product.objects.filter(id=i)
+                            serialize1=Serializer_Product(product,data=response,partial=True)
+                            if serialize1.is_valid():
+                                serialize1.save()
+                    elif a.category != [] or a.category != None:
+                        for i in a.category:
+                            response={"CategoryCoupoun":request.data}
+                            user= Product.objects.filter(Sub_Category_id__category_id=i)
+                            serialize1=Serializer_Product(user,data=response,partial=True)
+                            if serialize1.is_valid():
+                                serialize1.save()
+                            
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
