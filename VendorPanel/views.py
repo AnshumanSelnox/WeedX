@@ -828,16 +828,16 @@ class AddApplyCoupoun(APIView):
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
                     serializer.save()
-                    if a.product!=[] or a.product!=None:
-                        for i in a.product:
-                            response={"ProductCoupoun":request.data}
-                            product=Product.objects.filter(id=i)
+                    if a["product"]!=[] or a["product"]!=None:
+                        for i in a["product"]:
+                            response={"ProductCoupoun":[a]}
+                            product=Product.objects.get(id=i)
                             serialize1=Serializer_Product(product,data=response,partial=True)
                             if serialize1.is_valid():
-                                serialize1.save()
-                    elif a.category != [] or a.category != None:
-                        for i in a.category:
-                            response={"CategoryCoupoun":request.data}
+                                serialize1.save(modified_by=request.user.username)
+                    elif a["category"] != [] or a["category"] != None:
+                        for i in a["category"]:
+                            response={"CategoryCoupoun":[a]}
                             user= Product.objects.filter(Sub_Category_id__category_id=i)
                             serialize1=Serializer_Product(user,data=response,partial=True)
                             if serialize1.is_valid():
@@ -847,7 +847,7 @@ class AddApplyCoupoun(APIView):
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class UpdateApplyCoupoun(APIView):
     permission_classes = [IsAuthenticated]

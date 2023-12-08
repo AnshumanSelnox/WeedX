@@ -373,7 +373,7 @@ class Coupoun(models.Model):
     NoMinimumRequirements=models.BooleanField(null=True)
     MinimumPurchaseAmount=models.IntegerField(null=True)
     MinimumQuantityofItem=models.IntegerField(null=True)
-    AllCustomer=models.JSONField(default=list,null=True)
+    AllCustomer=models.BooleanField(null=True)
     SpecificCustomer=models.JSONField(null=True)
     Specific_customer_segments=models.JSONField(null=True)
     LimitNumberOfTime=models.IntegerField(null=True)

@@ -128,6 +128,7 @@ urlpatterns = [
     path('Add-ProductHelpfull/',AddProductHelpfull.as_view()),
     path('UnitFilter/',UnitFilter.as_view()),
     path('SearchProductbyBrand/',SearchProductbyBrand.as_view()),
+    path('GetallProductReviewbyStore/',GetallProductReviewbyStore.as_view()),
 
 
 ]

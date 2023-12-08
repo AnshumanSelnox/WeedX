@@ -58,7 +58,7 @@ class Review(models.Model):
     ReplyTime=models.CharField(max_length=500,default=None,null=True)
     VendorImage=models.CharField(max_length=9999,default=None,null=True)
     helpfull=models.JSONField(default=list,null=True)
-    count=models.IntegerField(default=0)
+    # count=models.IntegerField(default=0)
      
 class BlogComment(models.Model):
     Blog = models.ForeignKey(News, on_delete=models.CASCADE)

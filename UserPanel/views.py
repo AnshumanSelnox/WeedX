@@ -2600,3 +2600,14 @@ class PromoCodeCheck(APIView):
             pass
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class GetallProductReviewbyStore(APIView):
+    def post(self,request):
+        try:
+            store=request.data.get("store")
+            product=Review.objects.filter(product__Store_id=store)
+            serialize=ReviewSerializer(product,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error':str(e)},status=500) 
