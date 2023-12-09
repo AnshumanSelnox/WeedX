@@ -2611,3 +2611,13 @@ class GetallProductReviewbyStore(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error':str(e)},status=500) 
+        
+class GetProductReviewbyUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            product=Review.objects.filter(user=request.user)
+            serialize=ReviewSerializer(product,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error':str(e)},status=500) 

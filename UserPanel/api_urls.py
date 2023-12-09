@@ -129,7 +129,10 @@ urlpatterns = [
     path('UnitFilter/',UnitFilter.as_view()),
     path('SearchProductbyBrand/',SearchProductbyBrand.as_view()),
     path('GetallProductReviewbyStore/',GetallProductReviewbyStore.as_view()),
+    path('Get-ProductReviewbyUser/',GetProductReviewbyUser.as_view()),
+    
 
 
 ]
 
+#
