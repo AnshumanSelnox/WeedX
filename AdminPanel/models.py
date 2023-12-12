@@ -467,3 +467,12 @@ class StaticImages(models.Model):
     Hybrid=models.ImageField(upload_to='media/Strain')
     Sativa=models.ImageField(upload_to='media/Strain')
     CBD=models.ImageField(upload_to='media/Strain')
+    
+class BookTheDemo(models.Model):
+    FirstName=models.CharField(max_length=100,default=None)
+    LastName=models.CharField(max_length=100,default=None)
+    Email=models.EmailField()
+    MobileNumber=models.CharField(max_length=20,default=None)
+    Address=models.CharField(max_length=500,default=None)
+    SelectLicenseType=models.CharField(max_length=1000,choices=LicenseType)
+    Company=models.CharField(max_length=1000,default=None)

@@ -1577,6 +1577,7 @@ class GetDeliveryStoresHomepage(APIView):
                 DeliveryandPickup=Stores.objects.filter(Order_Type="Delivery and Pickup").filter(Status="Active").filter(Country=Country)
                 User=Delivery or DeliveryandPickup
                 serialize=Serializer_Store(User,many=True)
+                return Response( serialize.data, status.HTTP_200_OK)
 
             elif State:
                 Delivery = Stores.objects.filter(Order_Type="Delivery").filter(State=State)

@@ -824,22 +824,25 @@ class AddApplyCoupoun(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
+            z=[]
             a=request.data
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
                     serializer.save()
                     if a["product"]!=[] or a["product"]!=None:
                         for i in a["product"]:
-                            response={"ProductCoupoun":[a]}
+                            z.append(a)
+                            response={"ProductCoupoun":z}
                             product=Product.objects.get(id=i)
-                            serialize1=Serializer_Product(product,data=response,partial=True)
+                            serialize1=Serializer_product(product,data=response,partial=True)
                             if serialize1.is_valid():
                                 serialize1.save(modified_by=request.user.username)
                     elif a["category"] != [] or a["category"] != None:
                         for i in a["category"]:
-                            response={"CategoryCoupoun":[a]}
+                            z.append(a)
+                            response={"CategoryCoupoun":z}
                             user= Product.objects.filter(Sub_Category_id__category_id=i)
-                            serialize1=Serializer_Product(user,data=response,partial=True)
+                            serialize1=Serializer_product(user,data=response,partial=True)
                             if serialize1.is_valid():
                                 serialize1.save()
                             
@@ -1314,5 +1317,12 @@ class DeleteMultipleProduct(APIView):
                 User = get_object_or_404(Product, id=i)
                 User.delete()
             return Response({"status": "success", "data": "Deleted"})
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class BookDemo(APIView):
+    def post(self,request):
+        try:
+            pass
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

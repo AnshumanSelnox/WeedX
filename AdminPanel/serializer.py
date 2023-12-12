@@ -191,7 +191,7 @@ class Serializer_Product(serializers.ModelSerializer):
     
     class Meta:
         model = Product
-        fields = ['Product_Name','SubcategoryName','category_name','StoreAddress','Multiple_prices','category_id','username','StoreName','StoreDelivery','StorePickup','StoreCurbsidePickup','id','Sub_Category_id' ,'Store_id','Product_Description', 'Prices','images','Multiple_images','SKU','UPC','lab_Result','strain','Alt_Text','Brand_id','rating','THC', 'CBD' ,'CBN','Status','Brand_Name','Store_Country','Store_State','Store_City','Store_Type']
+        fields = ['Product_Name','SubcategoryName','category_name','StoreAddress','Multiple_prices','category_id','username','StoreName','StoreDelivery','StorePickup','StoreCurbsidePickup','id','Sub_Category_id' ,'Store_id','Product_Description', 'Prices','images','Multiple_images','SKU','UPC','lab_Result','strain','Alt_Text','Brand_id','rating','THC', 'CBD' ,'CBN','Status','Brand_Name','Store_Country','Store_State','Store_City','Store_Type','ProductCoupoun','CategoryCoupoun']
         extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
 
     def create(self, validated_data):
@@ -279,5 +279,15 @@ class Serializer_StaticImages(serializers.ModelSerializer):
 
 
 
+class Serializer_product(serializers.ModelSerializer):
+    class Meta:
+        model=Product
+        fields='__all__'
 
 
+
+
+class Serializer_BookTheDemo(serializers.ModelSerializer):
+    class Meta:
+        model=BookTheDemo
+        fields='__all__'
