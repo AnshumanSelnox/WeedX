@@ -22,7 +22,8 @@ class LoginSerializer(serializers.Serializer):
         attrs['Vendor'] = user
         return attrs
 
-
+class LoginSerializer1(serializers.Serializer):
+    email = serializers.EmailField()
 
 #Serializer to Get User Details using Django Token Authentication
 class UserSerializer(serializers.ModelSerializer):

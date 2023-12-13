@@ -130,6 +130,7 @@ urlpatterns = [
     path('SearchProductbyBrand/',SearchProductbyBrand.as_view()),
     path('GetallProductReviewbyStore/',GetallProductReviewbyStore.as_view()),
     path('Get-ProductReviewbyUser/',GetProductReviewbyUser.as_view()),
+    path('Get-StoreReviewbyUser/',GetStoreReviewbyUser.as_view()),
     
 
 

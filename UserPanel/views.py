@@ -2612,13 +2612,61 @@ class GetallProductReviewbyStore(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error':str(e)},status=500) 
-        
+
 class GetProductReviewbyUser(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
         try:
+            a=[]
+            s=[]
             product=Review.objects.filter(user=request.user)
-            serialize=ReviewSerializer(product,many=True)
-            return Response(serialize.data)
+            serialize=ReviewSerializer(product,many=True).data
+            for i in product:
+                z=Product.objects.filter(id=i.product.id)
+                serialize1=Serializer_Product(z,many=True).data
+                for k in serialize:
+                    for j in serialize1:
+                        d={"review":k,"Product":j}
+                        a.append(d) 
+            for l in a:
+                if l not in s:
+                    s.append(l)
+            return Response(s)
         except Exception as e:
             return Response({'error':str(e)},status=500) 
+        
+class GetStoreReviewbyUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+
+            product=StoreReview.objects.filter(user=request.user)
+            serialize=StoreRatingAndReviewSerializer(product,many=True).data
+
+            return Response(serialize)
+        except Exception as e:
+            return Response({'error':str(e)},status=500) 
+        
+class OrderSearch(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            search=request.data.get("search")
+            order=Order.objects.filter(OrderId__icontains=search).filter(created_by=request.user)
+            order1=Order.objects.filter(Store__Store_Name__icontains=search).filter(created_by=request.user)
+            order2=Order.objects.filter(Product__icontains=search).filter(created_by=request.user)
+            if order:
+                serialize=Serializer_Order(order,many=True).data
+                return Response(serialize)
+            elif order1:
+                serialize=Serializer_Order(order1,many=True).data
+                return Response(serialize)
+            elif order2:
+                serialize=Serializer_Order(order2,many=True).data
+                return Response(serialize)
+            else:
+                return Response('No Matching Data Found')
+            
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

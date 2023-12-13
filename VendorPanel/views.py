@@ -1326,3 +1326,27 @@ class BookDemo(APIView):
             pass
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class LoginResendOtpAPI(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        try:
+            email = request.data.get("email")
+            if email:
+                serializer = LoginSerializer1(data=request.data)
+                if serializer.is_valid():
+                    email = serializer.validated_data['email']
+                    send_OneToOneMail(
+                        from_email='smtpselnox@gmail.com', to_emails=email)
+                    return Response({
+                        'message': 'Email sent',
+                        'data': {"Otp_Sent_to": email}
+                    },status=status.HTTP_200_OK)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"error": "Enter the valid Email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
