@@ -127,13 +127,31 @@
 
 
 
-sub=[{"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":0,"Stock":"Out of Stock","Status":"Active"},{"id":2,"Weight":"2 g","Price":30,"Discount":5,"SalePrice":29,"Unit":0,"Quantity":5,"Stock":"Out of Stock","Status":"Active"}]    
-# z={"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":5,"Stock":"In Stock","Status":"Active"}
-# a=0
-cartquantity=1
-id=1
-for i in sub:
-    if i['id'] == id :
-        i.update({ "Quantity" : i["Quantity"] - cartquantity})
-        print( sub)
+# sub=[{"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":0,"Stock":"Out of Stock","Status":"Active"},{"id":2,"Weight":"2 g","Price":30,"Discount":5,"SalePrice":29,"Unit":0,"Quantity":5,"Stock":"Out of Stock","Status":"Active"}]    
+# # z={"id":1,"Weight":"1 g","Price":20,"Discount":5,"SalePrice":19,"Unit":0,"Quantity":5,"Stock":"In Stock","Status":"Active"}
+# # a=0
+# cartquantity=1
+# id=1
+# for i in sub:
+#     if i['id'] == id :
+#         i.update({ "Quantity" : i["Quantity"] - cartquantity})
+#         print( sub)
         
+# l=[]    
+a=[{"DiscountType": "Amount off Products", "ProLocationOnly": False, "AllCustomer": True, "DiscountCode": "x8ss9k3451121a", "AutomaticDiscount": None, "EndDate": None, "EndTime": None, "LimitNumberOfTime": None, "LimitToOneUsePerCustomer": True, "MinimumPurchaseAmount": None, "MinimumQuantityofItem":None, "NoMinimumRequirements": True, "PercentageAmount": "222", "SpecificCustomer": None, "Specific_customer_segments": None, "StartDate": "2023-12-08", "StartTime": "00:00", "ValueAmount": None, "category":[], "product": [46, 47, 48, 49], "CombinationProduct": False, "CombinationDiscount": False, "CustomerBuys": None, "CustomerSpends": None, "CustomerGets": None, "Free": False, "status": "Active"},
+{"DiscountType": "Amount off Products", "ProLocationOnly": False, "AllCustomer": True, "DiscountCode": "x8ss9k3451121aaa", "AutomaticDiscount": None, "EndDate": None, "EndTime": None, "LimitNumberOfTime": None, "LimitToOneUsePerCustomer": True, "MinimumPurchaseAmount": None, "MinimumQuantityofItem":None, "NoMinimumRequirements": True, "PercentageAmount": "222", "SpecificCustomer": None, "Specific_customer_segments": None, "StartDate": "2023-12-08", "StartTime": "00:00", "ValueAmount": None, "category":[], "product": [46, 47, 48, 49], "CombinationProduct": False, "CombinationDiscount": False, "CustomerBuys": None, "CustomerSpends": None, "CustomerGets": None, "Free": False, "status": "Active"}]
+# for i in a:
+#     z=list(i)
+#     if i["DiscountCode"]=="x8ss9k3451121a":
+#         z.remove("DiscountCode")
+#         # l.append(z)
+# print(z)
+# l=a.keys()
+# l.remove("DiscountCode")
+# print(l)
+# print("AAA",a)
+
+for i in range(len(a)):
+    if a[i]['DiscountCode'] == "x8ss9k3451121aaa":
+        del a[i]
+print(a)

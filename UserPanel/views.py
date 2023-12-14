@@ -167,6 +167,19 @@ class UserAPI(generics.RetrieveAPIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class UserAlreadyExist(APIView):
+    def post(self,request):
+        try:
+            email = request.data.get("email")
+            if email:
+                user=User.objects.filter(email=email)
+                if user.exists():
+                    return Response({"email": "Email is already Registered"})
+                else:
+                    return Response({"email": "Email is Not Registered"})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
 # Class based view to register user
 class RegisterAPI(generics.GenericAPIView):
@@ -2655,6 +2668,7 @@ class OrderSearch(APIView):
             order=Order.objects.filter(OrderId__icontains=search).filter(created_by=request.user)
             order1=Order.objects.filter(Store__Store_Name__icontains=search).filter(created_by=request.user)
             order2=Order.objects.filter(Product__icontains=search).filter(created_by=request.user)
+            order3=Order.objects.filter(Store__created_by__Name__icontains=search).filter(created_by=request.user)
             if order:
                 serialize=Serializer_Order(order,many=True).data
                 return Response(serialize)
@@ -2664,9 +2678,13 @@ class OrderSearch(APIView):
             elif order2:
                 serialize=Serializer_Order(order2,many=True).data
                 return Response(serialize)
+            elif order3:
+                serialize=Serializer_Order(order3,many=True).data
+                return Response(serialize)
             else:
                 return Response('No Matching Data Found')
             
             
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

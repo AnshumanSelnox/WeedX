@@ -824,23 +824,23 @@ class AddApplyCoupoun(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
-            z=[]
+            # z=[]
             a=request.data
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(created_by=request.user)
                     if a["product"]!=[] or a["product"]!=None:
                         for i in a["product"]:
-                            z.append(a)
-                            response={"ProductCoupoun":z}
+                            # z.append(a)
+                            response={"ProductCoupoun":[a]}
                             product=Product.objects.get(id=i)
                             serialize1=Serializer_product(product,data=response,partial=True)
                             if serialize1.is_valid():
                                 serialize1.save(modified_by=request.user.username)
                     elif a["category"] != [] or a["category"] != None:
                         for i in a["category"]:
-                            z.append(a)
-                            response={"CategoryCoupoun":z}
+                            # z.append(a)
+                            response={"CategoryCoupoun":[a]}
                             user= Product.objects.filter(Sub_Category_id__category_id=i)
                             serialize1=Serializer_product(user,data=response,partial=True)
                             if serialize1.is_valid():
@@ -874,9 +874,34 @@ class DeleteApplyCoupoun(APIView):
 
     def delete(self, request, id=None):
         try:
-            User = get_object_or_404(Serializer_Coupoun, id=id)
-            User.delete()
-            return Response({"status": "success", "data": "Deleted"})
+            User=Coupoun.objects.get(id=id)
+            if User:
+                for i in User.product.all():
+                    Coupounproduct=Product.objects.filter(id=i.id).first()
+                    if Coupounproduct.ProductCoupoun:
+                            for j in range(len(Coupounproduct.ProductCoupoun)):
+                                if Coupounproduct.ProductCoupoun[j]['DiscountCode'] == User.DiscountCode:
+                                    
+                                    del Coupounproduct.ProductCoupoun[j]
+                                    break
+                        
+                                elif  Coupounproduct.ProductCoupoun[j]['AutomaticDiscount']== User.AutomaticDiscount:
+                                    del Coupounproduct.ProductCoupoun[j]
+                                    break
+                    elif Coupounproduct.CategoryCoupoun:
+                        for j in range(len(Coupounproduct.CategoryCoupoun)):
+                                if Coupounproduct.CategoryCoupoun[j]['DiscountCode'] == User.DiscountCode:
+                                    del Coupounproduct.CategoryCoupoun[j]
+                                    break
+                        
+                                elif  Coupounproduct.CategoryCoupoun[j]['AutomaticDiscount']== User.AutomaticDiscount:
+                                    del Coupounproduct.CategoryCoupoun[j]
+                                    break
+                
+                User.delete()
+                return Response({"status": "success", "data": "Deleted"})
+            else:
+                return Response("Already Deleted",status=400)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
@@ -1350,3 +1375,4 @@ class LoginResendOtpAPI(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

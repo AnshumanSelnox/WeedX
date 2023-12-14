@@ -63,7 +63,7 @@ class Serializer_Order(serializers.ModelSerializer):
     fields='__all__'
     extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
 
-
+  
 
 
 from django.contrib.auth import authenticate   
