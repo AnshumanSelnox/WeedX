@@ -405,6 +405,8 @@ class GetAllDispensaries(APIView):
                         return Response(serialize2.data,status=status.HTTP_200_OK)
                     return Response(serialize1.data,status=status.HTTP_200_OK)
                 return Response(serialize.data,status=status.HTTP_200_OK)
+            else:
+                return Response("No Dispensary in your area")
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -764,32 +766,11 @@ class GetDeliveryStores(APIView):
             State=request.data.get("State")
             City=request.data.get("City")
             a=[] 
-            if Country:
+            if Country or State or City:
                 Delivery = Stores.objects.filter(Order_Type="Delivery")
                 DeliveryandPickup=Stores.objects.filter(Store_Type="Delivery and Pickup")
                 User=Delivery or DeliveryandPickup
-                addressCheck=User.filter(Country=Country)
-                serialize=Serializer_Store(addressCheck,many=True).data 
-                for i in serialize:
-                    product=Product.objects.filter(Store_id=i["id"])
-                    for j in product:
-                        Subcategory=SubCategory.objects.filter(id=j.Sub_Category_id_id)
-                        for k in Subcategory:
-                            category=Category.objects.filter(id=k.category_id_id)
-                            serialize1=Serializer_Category(category,many =True).data
-                            for l in serialize1:
-                                for m in category:
-                                    productCount=Product.objects.filter(Sub_Category_id__category_id_id=m.id).filter(Store_id=i["id"]).count()
-                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"],"email":i["StoreEmail"]}
-                                    a.append(response)
-                if a:
-                    a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
-                return Response(a)
-            elif State:
-                Delivery = Stores.objects.filter(Order_Type="Delivery")
-                DeliveryandPickup=Stores.objects.filter(Store_Type="Delivery and Pickup")
-                User=Delivery or DeliveryandPickup
-                addressCheck=User.filter(State=State)
+                addressCheck=User.filter(City=City) or User.filter(Country=Country) or User.filter(State=State)
                 serialize=Serializer_Store(addressCheck,many=True).data 
                 for i in serialize:
                     product=Product.objects.filter(Store_id=i["id"])
@@ -805,70 +786,8 @@ class GetDeliveryStores(APIView):
                                     a.append(response)
                 if a:
                     a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
-                return Response(a)
-            elif State:
-                Delivery = Stores.objects.filter(Order_Type="Delivery")
-                DeliveryandPickup=Stores.objects.filter(Store_Type="Delivery and Pickup")
-                User=Delivery or DeliveryandPickup
-                addressCheck=User.filter(City=City)
-                serialize=Serializer_Store(addressCheck,many=True).data 
-                for i in serialize:
-                    product=Product.objects.filter(Store_id=i["id"])
-                    for j in product:
-                        Subcategory=SubCategory.objects.filter(id=j.Sub_Category_id_id)
-                        for k in Subcategory:
-                            category=Category.objects.filter(id=k.category_id_id)
-                            serialize1=Serializer_Category(category,many =True).data
-                            for l in serialize1:
-                                for m in category:
-                                    productCount=Product.objects.filter(Sub_Category_id__category_id_id=m.id).filter(Store_id=i["id"]).count()
-                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"]}
-                                    a.append(response)
-                if a:
-                    a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
-                return Response(a)
-            elif City:
-                Delivery = Stores.objects.filter(Order_Type="Delivery")
-                DeliveryandPickup=Stores.objects.filter(Store_Type="Delivery and Pickup")
-                User=Delivery or DeliveryandPickup
-                addressCheck=User.filter(City=City)
-                serialize=Serializer_Store(addressCheck,many=True).data 
-                for i in serialize:
-                    product=Product.objects.filter(Store_id=i["id"])
-                    for j in product:
-                        Subcategory=SubCategory.objects.filter(id=j.Sub_Category_id_id)
-                        for k in Subcategory:
-                            category=Category.objects.filter(id=k.category_id_id)
-                            serialize1=Serializer_Category(category,many =True).data
-                            for l in serialize1:
-                                for m in category:
-                                    productCount=Product.objects.filter(Sub_Category_id__category_id_id=m.id).filter(Store_id=i["id"]).count()
-                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"]}
-                                    a.append(response)
-                if a:
-                    a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
-                return Response(a)            
-            elif Country and State and City:
-                Delivery = Stores.objects.filter(Order_Type="Delivery")
-                DeliveryandPickup=Stores.objects.filter(Store_Type="Delivery and Pickup")
-                User=Delivery or DeliveryandPickup
-                addressCheck=User.filter(City=City).filter(Country=Country).filter(State=State)
-                serialize=Serializer_Store(addressCheck,many=True).data 
-                for i in serialize:
-                    product=Product.objects.filter(Store_id=i["id"])
-                    for j in product:
-                        Subcategory=SubCategory.objects.filter(id=j.Sub_Category_id_id)
-                        for k in Subcategory:
-                            category=Category.objects.filter(id=k.category_id_id)
-                            serialize1=Serializer_Category(category,many =True).data
-                            for l in serialize1:
-                                for m in category:
-                                    productCount=Product.objects.filter(Sub_Category_id__category_id_id=m.id).filter(Store_id=i["id"]).count()
-                                    response={"Store_Name":i["Store_Name"],"TotalRating":i["TotalRating"],"rating":i["rating"],"id":i["id"],"Category":l["name"],"ProductCount":productCount,"Store_Image":i["Store_Image"],"Store_Address":i["Store_Address"]}
-                                    a.append(response)
-                if a:
-                    a= { each['Store_Name'] + each['Category'] : each for each in a }.values()
-                return Response(a)            
+                return Response(a)    
+
             else:
                 return Response({"message":"No Delivery Found in your Area"})
         except Exception as e:
@@ -1591,7 +1510,6 @@ class GetDeliveryStoresHomepage(APIView):
                 User=Delivery or DeliveryandPickup
                 serialize=Serializer_Store(User,many=True)
                 return Response( serialize.data, status.HTTP_200_OK)
-
             elif State:
                 Delivery = Stores.objects.filter(Order_Type="Delivery").filter(State=State)
                 DeliveryandPickup=Stores.objects.filter(Order_Type="Delivery and Pickup").filter(State=State)

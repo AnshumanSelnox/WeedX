@@ -221,3 +221,10 @@ class Serializer_test(serializers.ModelSerializer):
   class Meta:
     model=Test
     fields='__all__'
+    
+class Serializer_UserNotification(serializers.ModelSerializer):
+  BlogTittle=serializers.ReadOnlyField(source='Blog.Title')
+  class Meta:
+    model=UserNotification
+    fields='__all__'
+    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}

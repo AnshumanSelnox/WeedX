@@ -139,3 +139,18 @@ class SiteMap(models.Model):
     
 class Test(models.Model):
     file=models.FileField(upload_to='media/test')
+    
+    
+
+import datetime
+    
+class UserNotification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    Blog= models.ForeignKey(News, on_delete=models.CASCADE,null=True)
+    coupoun=models.ForeignKey(Coupoun,on_delete=models.CASCADE,null=True)
+    ProductReview=models.ForeignKey(Review ,on_delete=models.CASCADE,null=True)
+    storeReview=models.ForeignKey(StoreReview,on_delete=models.CASCADE,null=True)
+    OrderStausUpdate=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
+    Instock=models.ForeignKey(Product,on_delete=models.CASCADE,related_name="InstockNotify",null=True)
+    created_at=models.DateField(auto_now=True)
+    days=datetime.timedelta(days=30)
