@@ -1,3 +1,4 @@
+#gunicorn --bind 0.0.0.0:8000 Ecommerce.wsgi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics, permissions
@@ -1257,7 +1258,7 @@ class AddComment(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class UpdateCommsouent(APIView):
+class UpdateComment(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, id=None):
@@ -2179,16 +2180,19 @@ class UpdateSiteMap(APIView):
     def post(self, request, id=None):
         try:
             j=request.data.get("j")
-            User = SiteMap.objects.filter(id=id).first()
-            if j not in User.Xml:
-                        User.Xml.append(j)
-            asd={"Xml":User.Xml}
-            serializer = Serializer_SiteMap(User,data=asd, partial=True)    
-            if serializer.is_valid():
-                serializer.save(modified_by=request.user.username)
-                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+            if j!=None:
+                User = SiteMap.objects.filter(id=id).first()
+                if j not in User.Xml:
+                            User.Xml.append(j)
+                asd={"Xml":User.Xml}
+                serializer = Serializer_SiteMap(User,data=asd, partial=True)    
+                if serializer.is_valid():
+                    serializer.save(modified_by=request.user.username)
+                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+                else:
+                    return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                return Response("")
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -2606,3 +2610,45 @@ class OrderSearch(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+from datetime import datetime
+
+class GetUserNotification(APIView):
+    def get(self,request):
+        try:
+            a=[]
+            z=[]
+            noti=UserNotification.objects.all()
+            for i in noti:
+                if i.Blog:
+                    if i.lastday == None:
+                        d=i.created_at + i.days
+                        lastday={"lastday":d}
+                        l=UserNotification.objects.filter(id=i.id).first()
+                        serialize1=Serializer_UserNotification(l,data=lastday,partial=True)
+                        if serialize1.is_valid():
+                            serialize1.save()
+                    if i.lastday==datetime.now():
+                        blog=UserNotification.objects.filter(Blog=i.Blog_id).first()    
+                        blog.delete()
+                    blog=News.objects.filter(id=i.Blog_id)
+                    serialize=Serializer_News(blog,many=True).data
+                    a.append(serialize)
+            for j in a:
+                for k in j:
+                    z.append(k)
+            return Response({"Blog":z})  
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class GetUserNotificationByLogin(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            noti=UserNotification.objects.filter(user=request.user)
+            for i in noti:
+                a=Review.objects.filter(id=i.ProductReview).first()
+                        
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+    

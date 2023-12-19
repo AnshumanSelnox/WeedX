@@ -133,6 +133,7 @@ urlpatterns = [
     path('Get-StoreReviewbyUser/',GetStoreReviewbyUser.as_view()),
     path('OrderSearch/',OrderSearch.as_view()),
     path('UserAlreadyExist/',UserAlreadyExist.as_view()),
+    path('GetUserNotification/',GetUserNotification.as_view()),
 
 
 ]

@@ -14,7 +14,7 @@ from .models import *
 from UserPanel.models import *
 from UserPanel.serializer import *
 from .serializer import *
-
+from UserPanel.serializer import *
 
 def send_OneToOneMail(from_email='', to_emails=''):
     Otp = random.randint(1000, 9999)
@@ -1312,6 +1312,12 @@ class ReplyProductReview(APIView):
             serializer = ReviewSerializer(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
+                a=Review.objects.get(id=id)
+                if a.Reply != None:
+                    ProductReview={"ProductReview":a.id,"user":request.user}
+                    s=Serializer_UserNotification(data=ProductReview,partial=True)
+                    if s.is_valid():
+                        s.save()
                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
             else:
                 return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)

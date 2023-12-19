@@ -16,6 +16,7 @@ from rest_framework import  status
 from Ecommerce.settings import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,EMAIL_PORT
 import smtplib
 import random
+from UserPanel.serializer import *
 # Class based view to Get User Details using Token Authentication
 def send_OneToOneMail(from_email='',to_emails=''):
     Otp=random.randint(1000, 9999)
@@ -862,6 +863,13 @@ class AddNews(APIView):
                 serializer = Serializer_News(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save(created_by=user)
+                    blog=News.objects.all().last()
+                    lastblog=blog.id
+                    Blog={"Blog":lastblog}
+                
+                    serializer1=Serializer_UserNotification(data=Blog,partial=True)
+                    if serializer1.is_valid():
+                        noti=serializer1.save()
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)

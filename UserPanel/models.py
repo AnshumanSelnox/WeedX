@@ -143,7 +143,7 @@ class Test(models.Model):
     
 
 import datetime
-    
+# from datetime import datetime
 class UserNotification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     Blog= models.ForeignKey(News, on_delete=models.CASCADE,null=True)
@@ -153,4 +153,12 @@ class UserNotification(models.Model):
     OrderStausUpdate=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
     Instock=models.ForeignKey(Product,on_delete=models.CASCADE,related_name="InstockNotify",null=True)
     created_at=models.DateField(auto_now=True)
-    days=datetime.timedelta(days=30)
+    days=datetime.timedelta(days=1)
+    lastday=models.DateField(null=True)
+    
+    # def get_lastday(self):
+    #     return round(self.created_at + self.days)
+
+    # def save(self, *args, **kwargs):
+    #     self.lastday = self.get_lastday()
+    #     super().save(*args, **kwargs) 
