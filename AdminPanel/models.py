@@ -273,8 +273,8 @@ class Product(models.Model):                #Product
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     rating=models.IntegerField(default=None,null=True)
     WishList=models.BooleanField(default=False)
-    ProductCoupoun=models.JSONField(default=list,null=True)
-    CategoryCoupoun=models.JSONField (default=list,null=True)
+    # ProductCoupoun=models.JSONField(default=list,null=True)
+    # CategoryCoupoun=models.JSONField (default=list,null=True)
 
  
     def __str__(self):
@@ -367,9 +367,10 @@ class Coupoun(models.Model):
     AutomaticDiscount=models.CharField(max_length=100,default=None,null=True,unique=True)
     PercentageAmount=models.IntegerField(null=True)
     ValueAmount=models.IntegerField(null=True)
-    status=models.CharField(max_length=500,choices=Status)   
-    product=models.ManyToManyField(Product,blank=True)  
-    category=models.ManyToManyField(Category,blank=True)
+    status=models.CharField(max_length=500,choices=Status)
+    product=models.JSONField() 
+    # product=models.ManyToManyField(Product,blank=True)  
+    # category=models.ManyToManyField(Category,blank=True)
     NoMinimumRequirements=models.BooleanField(null=True)
     MinimumPurchaseAmount=models.IntegerField(null=True)
     MinimumQuantityofItem=models.IntegerField(null=True)

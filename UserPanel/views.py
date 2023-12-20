@@ -549,7 +549,6 @@ class GetAddtocart(APIView):
         try:
             User = AddtoCart.objects.filter(created_by=request.user)
             serialize = Serializer_AddtoCart(User, many=True)
-            print(serialize.data)
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
@@ -687,6 +686,10 @@ class AddOrder(APIView):
             if serializer.is_valid():
                 serializer.save(created_by=request.user)
                 a=Order.objects.filter(created_by=request.user).last()
+                noti={"OrderStausUpdate":a.id}
+                notiserialize=Serializer_UserNotification(a,data=noti,partial=True)
+                if notiserialize.is_valid():
+                    notiserialize.save()
                 AddtoCart.objects.filter(created_by=request.user).delete()
                 User=Order.objects.filter(created_by=request.user).filter(Store=Store).first()
                 Customer=User.created_by.email
@@ -2433,6 +2436,10 @@ class AddHelpfull(APIView):
             serialize=StoreRatingAndReviewSerializer(a,data=response,partial=True)
             if serialize.is_valid():
                 serialize.save()
+                storeReview={"storeReview":a.id,"user":request.user}
+                s=Serializer_UserNotification(data=storeReview,partial=True)
+                if s.is_valid():
+                    s.save()
             return Response(serialize.data,status=201)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
@@ -2644,11 +2651,64 @@ class GetUserNotificationByLogin(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
         try:
-            noti=UserNotification.objects.filter(user=request.user)
+            z=[]
+            q=[]
+            noti=UserNotification.objects.all()
             for i in noti:
-                a=Review.objects.filter(id=i.ProductReview).first()
-                        
+                if i.lastday == None:
+                    d=i.created_at + i.days
+                    lastday={"lastday":d}
+                    l=UserNotification.objects.filter(id=i.id).first()
+                    serialize1=Serializer_UserNotification(l,data=lastday,partial=True)
+                    if serialize1.is_valid():
+                        serialize1.save()
+                if i.lastday==datetime.now():
+                    blog=UserNotification.objects.filter(ProductReview=i.ProductReview).first()    
+                    blog.delete()
+                a=Review.objects.filter(id=i.ProductReview).filter(user=request.user).first()
+                if a:
+                    if a.Reply != None:
+                        seraialize=ReviewSerializer(a,many=True).data
+                else:
+                    seraialize=[]
+                if a:
+                    if len(a.helpfull) >3:
+                        seraialize3=ReviewSerializer(a,many=True).data
+                else:
+                    seraialize3=[]
+                    
+                if i.lastday==datetime.now():
+                    blog=UserNotification.objects.filter(storeReview=i.storeReview).filter(user=request.user).first()    
+                    blog.delete()
+                s=StoreReview.objects.filter(id=i.storeReview).first()
+                if s:
+                    if s.Reply != None:
+                        seraialize4=StoreRatingAndReviewSerializer(s,many=True).data
+                else:
+                    seraialize4=[]
+                if s:
+                    
+                    if len(s.helpfull) >3:
+                        seraialize5=StoreRatingAndReviewSerializer(s,many=True).data
+                else:
+                    seraialize5=[]
+                if i.lastday==datetime.now():
+                        blog=UserNotification.objects.filter(Blog=i.Blog_id).first()    
+                        blog.delete()
+                blog=News.objects.filter(id=i.Blog_id)
+                serialize2=Serializer_News(blog,many=True).data
+                if i.lastday==datetime.now():
+                        blog=UserNotification.objects.filter(OrderStausUpdate=i.OrderStausUpdate).first()    
+                        blog.delete()
+                order=Order.objects.filter(OrderId=i.OrderStausUpdate)
+                serialize6=Serializer_Order(order,many=True).data
+                response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6}
+                z.append(response)
+            for c in z:
+                if c not in q:
+                    q.append(c)
+            return Response(q)     
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-    
+  

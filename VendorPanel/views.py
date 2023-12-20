@@ -824,28 +824,23 @@ class AddApplyCoupoun(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
-            # z=[]
+            q=[]
             a=request.data
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
                     serializer.save(created_by=request.user)
-                    if a["product"]!=[] or a["product"]!=None:
-                        for i in a["product"]:
-                            # z.append(a)
-                            response={"ProductCoupoun":[a]}
-                            product=Product.objects.get(id=i)
-                            serialize1=Serializer_product(product,data=response,partial=True)
-                            if serialize1.is_valid():
-                                serialize1.save(modified_by=request.user.username)
-                    elif a["category"] != [] or a["category"] != None:
-                        for i in a["category"]:
-                            # z.append(a)
-                            response={"CategoryCoupoun":[a]}
-                            user= Product.objects.filter(Sub_Category_id__category_id=i)
-                            serialize1=Serializer_product(user,data=response,partial=True)
-                            if serialize1.is_valid():
-                                serialize1.save()
-                            
+                    s=Coupoun.objects.filter(created_by=request.user).last()
+                    for i in s.product:
+                        z=ProductWeight.objects.filter(product_id=i["Product_Id"]).first()
+                        for j in z.Price:
+                            if j["id"]==i["Price_Id"]:
+                                x={"Coupoun":request.data}
+                                j.update(x)
+                                q.append(j)
+                                response={"Price":q}
+                                a=ProductWeightSerializer(z,data=response,partial=True)
+                                if a.is_valid():
+                                    a.save()
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)

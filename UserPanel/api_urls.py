@@ -134,6 +134,7 @@ urlpatterns = [
     path('OrderSearch/',OrderSearch.as_view()),
     path('UserAlreadyExist/',UserAlreadyExist.as_view()),
     path('GetUserNotification/',GetUserNotification.as_view()),
+    path('GetUserNotificationByLogin/',GetUserNotificationByLogin.as_view()),
 
 
 ]
