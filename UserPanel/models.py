@@ -37,7 +37,7 @@ class Order(models.Model):
     Address=models.CharField(max_length=5000,null=True,blank=True)
     Store=models.ForeignKey(Stores,on_delete=models.CASCADE)
     Product=models.JSONField(null=True)
-    OrderDate=models.DateField(auto_now=True)
+    OrderDate=models.DateTimeField(auto_now_add=True)
     Order_Type=models.CharField(choices=OrderType,max_length=100,default="Delivery")
 
 class Wishlist(models.Model):
@@ -58,7 +58,7 @@ class Review(models.Model):
     ReplyTime=models.CharField(max_length=500,default=None,null=True)
     VendorImage=models.CharField(max_length=9999,default=None,null=True)
     helpfull=models.JSONField(default=list,null=True)
-    # count=models.IntegerField(default=0)
+    count=models.IntegerField(default=0)
      
 class BlogComment(models.Model):
     Blog = models.ForeignKey(News, on_delete=models.CASCADE)

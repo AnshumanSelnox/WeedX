@@ -554,13 +554,43 @@ class GetAddtocart(APIView):
                 product=ProductWeight.objects.filter(product_id=i.Product_id).first()
                 for j in product.Price:
                     if j["id"]==i.Price["id"]:
-                        response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
-                                  "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
-                                  "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
-                                  "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                  "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
-                        a.append(response)
-                return Response(a)
+                        if i.Brand_Id !=None and i.Image_id != None:
+                            response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                    "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                    "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                    "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id}
+                            a.append(response)
+                        elif i.Brand_Id ==None:
+                            response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                    "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                    "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                    "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
+                            a.append(response)
+                        elif i.Image_id == None:
+                            response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                    "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                    "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                    "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id}
+                            a.append(response)
+                        elif i.Brand_Id ==None and i.Image_id == None:
+                            response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                    "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                    "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                    "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
+                            a.append(response)
+                        else:
+                            response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                    "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                    "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                    "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":"",
+                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id}
+                            a.append(response)
+
+            return Response(a)
 
         except Exception as e:
             return Response({'error' : str(e)},status=500)
@@ -698,8 +728,8 @@ class AddOrder(APIView):
             if serializer.is_valid():
                 serializer.save(created_by=request.user)
                 a=Order.objects.filter(created_by=request.user).last()
-                noti={"OrderStausUpdate":a.id}
-                notiserialize=Serializer_UserNotification(a,data=noti,partial=True)
+                noti={"OrderStausUpdate":a.OrderId}
+                notiserialize=Serializer_UserNotification(data=noti,partial=True)
                 if notiserialize.is_valid():
                     notiserialize.save()
                 AddtoCart.objects.filter(created_by=request.user).delete()
@@ -1191,6 +1221,11 @@ class AddReview(APIView):
                 serializer = ReviewSerializer(product, data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
+                    x = Review.objects.filter(user=request.user.id).last()
+                    a={"ProductReview":x.id}
+                    z=Serializer_UserNotification(data=a,partial=True)
+                    if z.is_valid():
+                        z.save()
                     return Response({"status": "update", "data": serializer.data}, status.HTTP_200_OK)
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -1198,6 +1233,11 @@ class AddReview(APIView):
                 serializer = ReviewSerializer(data=request.data,partial=True)
                 if serializer.is_valid():
                     serializer.save(user=request.user)
+                    x = Review.objects.filter(user=request.user.id).last()
+                    a={"ProductReview":x.id}
+                    z=Serializer_UserNotification(data=a,partial=True)
+                    if z.is_valid():
+                        z.save()
                     return Response({"status": "success","data": serializer.data},status=status.HTTP_200_OK)
                 else:
                     return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)             
@@ -1996,6 +2036,7 @@ class HighPriceToLowPrice(APIView):
         try:
             a=[]
             z=[]
+            q=[]
             product=Product.objects.filter(Store_id=id)
             serialize=Serializer_Product(product,many=True).data
             for i in serialize:
@@ -2009,7 +2050,10 @@ class HighPriceToLowPrice(APIView):
                 product=Product.objects.filter(id=m["Product"])
                 serialize=Serializer_Product(product,many=True).data
                 z.append(serialize)
-            return Response(z)
+            for x in z:
+                if x not in q:
+                    q.append(x)
+            return Response(q)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -2408,6 +2452,7 @@ class WeightFilter(APIView):
         try:
             a=[]
             z=[]
+            q=[]
             store=request.data.get("store")
             weight=request.data.get("weight")
             product=Product.objects.filter(Store_id=store) 
@@ -2425,7 +2470,10 @@ class WeightFilter(APIView):
                 serialize=Serializer_Product(product,many=True).data
                 for m in serialize:
                     z.append(m)
-            return Response(z)
+            for o in z:
+                if o not in q:
+                    q.append(o)
+            return Response(q)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
@@ -2677,10 +2725,10 @@ class GetUserNotificationByLogin(APIView):
                 if i.lastday==datetime.now():
                     blog=UserNotification.objects.filter(ProductReview=i.ProductReview).first()    
                     blog.delete()
-                a=Review.objects.filter(id=i.ProductReview).filter(user=request.user).first()
+                a=Review.objects.filter(id=i.ProductReview_id).filter(user=request.user).first()
                 if a:
                     if a.Reply != None:
-                        seraialize=ReviewSerializer(a,many=True).data
+                        seraialize=ReviewSerializer(a).data
                 else:
                     seraialize=[]
                 if a:
@@ -2712,7 +2760,7 @@ class GetUserNotificationByLogin(APIView):
                 if i.lastday==datetime.now():
                         blog=UserNotification.objects.filter(OrderStausUpdate=i.OrderStausUpdate).first()    
                         blog.delete()
-                order=Order.objects.filter(OrderId=i.OrderStausUpdate)
+                order=Order.objects.filter(OrderId=i.OrderStausUpdate_id)
                 serialize6=Serializer_Order(order,many=True).data
                 response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6}
                 z.append(response)

@@ -273,8 +273,8 @@ class Product(models.Model):                #Product
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     rating=models.IntegerField(default=None,null=True)
     WishList=models.BooleanField(default=False)
-    # ProductCoupoun=models.JSONField(default=list,null=True)
-    # CategoryCoupoun=models.JSONField (default=list,null=True)
+    ProductCoupoun=models.JSONField(default=list,null=True)
+    CategoryCoupoun=models.JSONField (default=list,null=True)
 
  
     def __str__(self):
