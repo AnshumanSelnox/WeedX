@@ -825,6 +825,7 @@ class AddApplyCoupoun(APIView):
     def post(self, request):
         try:
             q=[]
+            
             a=request.data
             serializer = Serializer_Coupoun(data=request.data, partial=True)
             if serializer.is_valid():
@@ -834,13 +835,13 @@ class AddApplyCoupoun(APIView):
                         z=ProductWeight.objects.filter(product_id=i["Product_Id"]).first()
                         for j in z.Price:
                             if j["id"]==i["Price_Id"]:
-                                x={"Coupoun":request.data}
-                                j.update(x)
-                                q.append(j)
-                                response={"Price":q}
-                                a=ProductWeightSerializer(z,data=response,partial=True)
-                                if a.is_valid():
-                                    a.save()
+                        
+                                j["Coupoun"].append(request.data)
+                                q.append({"Price":z.Price}) 
+                        for n in q:
+                            a=ProductWeightSerializer(z,data=n,partial=True)
+                            if a.is_valid():
+                                a.save()
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -869,34 +870,22 @@ class DeleteApplyCoupoun(APIView):
 
     def delete(self, request, id=None):
         try:
-            User=Coupoun.objects.get(id=id)
-            if User:
-                for i in User.product.all():
-                    Coupounproduct=Product.objects.filter(id=i.id).first()
-                    if Coupounproduct.ProductCoupoun:
-                            for j in range(len(Coupounproduct.ProductCoupoun)):
-                                if Coupounproduct.ProductCoupoun[j]['DiscountCode'] == User.DiscountCode:
-                                    
-                                    del Coupounproduct.ProductCoupoun[j]
-                                    break
+            q=[]
+            User=Coupoun.objects.filter(id=id).first()
+            for i in User.product:
+                a=ProductWeight.objects.filter(product=i["Product_Id"]).first()
+                for j in a.Price:
+                    for l in j["Coupoun"]:
                         
-                                elif  Coupounproduct.ProductCoupoun[j]['AutomaticDiscount']== User.AutomaticDiscount:
-                                    del Coupounproduct.ProductCoupoun[j]
-                                    break
-                    elif Coupounproduct.CategoryCoupoun:
-                        for j in range(len(Coupounproduct.CategoryCoupoun)):
-                                if Coupounproduct.CategoryCoupoun[j]['DiscountCode'] == User.DiscountCode:
-                                    del Coupounproduct.CategoryCoupoun[j]
-                                    break
-                        
-                                elif  Coupounproduct.CategoryCoupoun[j]['AutomaticDiscount']== User.AutomaticDiscount:
-                                    del Coupounproduct.CategoryCoupoun[j]
-                                    break
-                
-                User.delete()
-                return Response({"status": "success", "data": "Deleted"})
-            else:
-                return Response("Already Deleted",status=400)
+                        if User.DiscountCode==l["DiscountCode"]:
+                            j["Coupoun"].remove(l)
+                            q.append({"Price":a.Price})
+                    for n in q:
+                            z=ProductWeightSerializer(a,data=n,partial=True)
+                            if z.is_valid():
+                                z.save()
+            User.delete()
+            return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 

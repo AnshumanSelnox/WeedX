@@ -547,9 +547,21 @@ class GetAddtocart(APIView):
 
     def get(self, request, format=None):
         try:
+            a=[]
             User = AddtoCart.objects.filter(created_by=request.user)
-            serialize = Serializer_AddtoCart(User, many=True)
-            return Response(serialize.data)
+            for i in User:
+                image=ProductImage.objects.filter(product=i.Product_id).first()
+                product=ProductWeight.objects.filter(product_id=i.Product_id).first()
+                for j in product.Price:
+                    if j["id"]==i.Price["id"]:
+                        response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
+                                  "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
+                                  "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
+                                  "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
+                                  "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
+                        a.append(response)
+                return Response(a)
+
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
