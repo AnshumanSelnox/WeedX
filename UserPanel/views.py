@@ -2760,7 +2760,7 @@ class GetUserNotificationByLogin(APIView):
                 if i.lastday==datetime.now():
                         blog=UserNotification.objects.filter(OrderStausUpdate=i.OrderStausUpdate).first()    
                         blog.delete()
-                order=Order.objects.filter(OrderId=i.OrderStausUpdate_id)
+                order=Order.objects.filter(OrderId=i.OrderStausUpdate_id).filter(created_by=request.user)
                 serialize6=Serializer_Order(order,many=True).data
                 response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6}
                 z.append(response)
