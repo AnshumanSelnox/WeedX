@@ -2598,9 +2598,20 @@ class SearchProductbyBrand(APIView):
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PromoCodeCheck(APIView):
+    permission_classes=[IsAuthenticated]
     def post(self,request):
         try:
-            pass
+            PromoCode=request.data.get("PromoCode")
+            coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+            if coupoun:
+                if coupoun.EndDate == None:
+                    # if datetime.now().date()<=coupoun.EndDate:
+                        cart=AddtoCart.objects.filter(created_by=request.user)
+                        for i in cart:
+                            if i.CoupounField !=None:
+                                if i.CoupounField["DiscountCode"]==coupoun.DiscountCode:
+                                    pass
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -2771,4 +2782,4 @@ class GetUserNotificationByLogin(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-  
+
