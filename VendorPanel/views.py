@@ -820,6 +820,9 @@ class GetApplyCoupoun(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
+def Merge(dict1, dict2):
+    res = {**dict1, **dict2}
+    return res
 class AddApplyCoupoun(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
@@ -835,36 +838,38 @@ class AddApplyCoupoun(APIView):
                         z=ProductWeight.objects.filter(product_id=i["Product_Id"]).first()
                         for j in z.Price:
                             if j["id"]==i["Price_Id"]:
-                                result={
-                                "DiscountType": s.DiscountType ,
-                                "ProLocationOnly":s.ProLocationOnly ,
-                                "AllCustomer": s.AllCustomer ,
-                                "DiscountCode": s.DiscountCode ,
-                                "AutomaticDiscount": s.AutomaticDiscount ,
-                                "EndDate": s.EndDate ,
-                                "EndTime": s.EndTime ,
-                                "LimitNumberOfTime": s.LimitNumberOfTime ,
-                                "LimitToOneUsePerCustomer": s.LimitToOneUsePerCustomer ,
-                                "MinimumPurchaseAmount": s.MinimumPurchaseAmount ,
-                                "MinimumQuantityofItem": s.MinimumQuantityofItem ,
-                                "NoMinimumRequirements": s.NoMinimumRequirements ,
-                                "PercentageAmount": s.PercentageAmount ,
-                                "SpecificCustomer": s.SpecificCustomer ,
-                                "Specific_customer_segments": s.Specific_customer_segments ,
-                                "StartDate": s.StartDate ,
-                                "StartTime": s.StartTime ,
-                                "ValueAmount": s.ValueAmount ,
-                                "product": s.product ,
-                                "CombinationProduct": s.CombinationProduct ,
-                                "CombinationDiscount": s.CombinationDiscount ,
-                                "CustomerBuys": s.CustomerBuys ,
-                                "CustomerSpends": s.CustomerSpends ,
-                                "CustomerGets": s.CustomerGets ,
-                                "Free": s.free ,
-                                "status": s.status ,
-                                "id":s.id
+                            #     result={
+                            #     "DiscountType": s.DiscountType ,
+                            #     "ProLocationOnly":s.ProLocationOnly ,
+                            #     "AllCustomer": s.AllCustomer ,
+                            #     "DiscountCode": s.DiscountCode ,
+                            #     "AutomaticDiscount": s.AutomaticDiscount ,
+                            #     "EndDate": s.EndDate ,
+                            #     "EndTime": s.EndTime ,
+                            #     "LimitNumberOfTime": s.LimitNumberOfTime ,
+                            #     "LimitToOneUsePerCustomer": s.LimitToOneUsePerCustomer ,
+                            #     "MinimumPurchaseAmount": s.MinimumPurchaseAmount ,
+                            #     "MinimumQuantityofItem": s.MinimumQuantityofItem ,
+                            #     "NoMinimumRequirements": s.NoMinimumRequirements ,
+                            #     "PercentageAmount": s.PercentageAmount ,
+                            #     "SpecificCustomer": s.SpecificCustomer ,
+                            #     "Specific_customer_segments": s.Specific_customer_segments ,
+                            #     "StartDate": s.StartDate ,
+                            #     "StartTime": s.StartTime ,
+                            #     "ValueAmount": s.ValueAmount ,
+                            #     "product": s.product ,
+                            #     "CombinationProduct": s.CombinationProduct ,
+                            #     "CombinationDiscount": s.CombinationDiscount ,
+                            #     "CustomerBuys": s.CustomerBuys ,
+                            #     "CustomerSpends": s.CustomerSpends ,
+                            #     "CustomerGets": s.CustomerGets ,
+                            #     "Free": s.free ,
+                            #     "status": s.status ,
+                            #     "id":s.id
                                 
-                            }
+                            # }
+                                asd={"id":s.id}
+                                result=(Merge(a,asd))
                         
                                 j["Coupoun"].append(result)
                                 q.append({"Price":z.Price}) 
