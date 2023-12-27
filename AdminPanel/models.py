@@ -477,3 +477,9 @@ class BookTheDemo(models.Model):
     Address=models.CharField(max_length=500,default=None)
     SelectLicenseType=models.CharField(max_length=1000,choices=LicenseType)
     Company=models.CharField(max_length=1000,default=None)
+
+class RolesandPermissions(models.Model):    
+    Title=models.CharField(max_length=100,default=None)
+    Description=models.CharField(max_length=1000,default=None)
+    
+    

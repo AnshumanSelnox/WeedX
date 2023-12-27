@@ -559,35 +559,35 @@ class GetAddtocart(APIView):
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
                             a.append(response)
                         elif i.Brand_Id ==None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
                             a.append(response)
                         elif i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
                             a.append(response)
                         elif i.Brand_Id ==None and i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
                             a.append(response)
                         else:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":"",
-                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id}
+                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
                             a.append(response)
 
             return Response(a)
@@ -604,6 +604,7 @@ class AddAddtoCart(APIView):
             Store_id=request.data.get('Store_id')
             Product_id=request.data.get('Product_id')
             PriceId=request.data.get('PriceId')
+            PromoCode=request.data.get("PromoCode")
             serializer = Serializer_AddtoCart(data=request.data, partial=True)
             if serializer.is_valid():
                 User = AddtoCart.objects.filter(created_by=request.user)    
@@ -623,6 +624,72 @@ class AddAddtoCart(APIView):
                                         serialize=Serializer_AddtoCart(User,data=data,partial=True)
                                         if serialize.is_valid():
                                             serialize.save(update_fields=[{"Cart_Quantity": data}]) 
+                                            coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                            if coupoun:
+                                                if coupoun.EndDate == None:
+                                                    # if datetime.now().date()<=coupoun.EndDate:
+                                                        cart=AddtoCart.objects.filter(created_by=request.user)
+                                                        
+                                                        for i in cart:
+                                                            if i.CoupounField==None:
+                                                        
+                                                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                                for j in a.Price:
+                                                                    for l in j["Coupoun"]:
+                                                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                            if coupoun.PercentageAmount:
+                                                                                
+                                                                                    CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                                    if addtocartupdate.is_valid():
+                                                                                        addtocartupdate.save()
+                                                                            elif coupoun.ValueAmount:
+                                                                                CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                                if addtocartupdate.is_valid():
+                                                                                    addtocartupdate.save()
+                                                            else:
+                                                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                                CoupounField={"CoupounField":None}
+                                                                addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                if addtocartupdate.is_valid():
+                                                                    addtocartupdate.save()
+                                                                for j in a.Price:
+                                                                    for l in j["Coupoun"]:
+                                                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                            if coupoun.PercentageAmount:
+                                                                                if i.CoupounField == None:
+                                                                                    CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                                    if addtocartupdate.is_valid():
+                                                                                        addtocartupdate.save()
+                                                                                elif coupoun.ValueAmount:
+                                                                                    CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                                    if addtocartupdate.is_valid():
+                                                                                        addtocartupdate.save()
+                                                elif coupoun.EndDate != None:
+                                                    if datetime.now().date()<=coupoun.EndDate:
+                                                        cart=AddtoCart.objects.filter(created_by=request.user)
+                                                        for i in cart:
+                                                            if i.CoupounField !=None:
+                                                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                                for j in a.Price:
+                                                                    for l in j["Coupoun"]:
+                                                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                            if coupoun.PercentageAmount:
+                                                                                result={"CoupounField":{"Product": i.Product_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                                if addtocartupdate.is_valid():
+                                                                                    addtocartupdate.save()
+                                                                            elif coupoun.ValueAmount:
+                                                                                result={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                                addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                                if addtocartupdate.is_valid():
+                                                                                    addtocartupdate.save()
+
+                        
+                                            
                                             return Response({"status": "Update success", "data": serializer.data}, status=status.HTTP_200_OK)
                                         else:
                                             return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -630,14 +697,207 @@ class AddAddtoCart(APIView):
                                         return Response({"Out of Stock"},status=status.HTTP_406_NOT_ACCEPTABLE)
                                 else:
                                     serializer.save(created_by=request.user)
+                                    coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                    if coupoun:
+                                        if coupoun.EndDate == None:
+                                            # if datetime.now().date()<=coupoun.EndDate:
+                                                cart=AddtoCart.objects.filter(created_by=request.user)
+                                                
+                                                for i in cart:
+                                                    if i.CoupounField==None:
+                                                
+                                                        a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                        for j in a.Price:
+                                                            for l in j["Coupoun"]:
+                                                                if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                    if coupoun.PercentageAmount:
+                                                                        
+                                                                            CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                            addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                            if addtocartupdate.is_valid():
+                                                                                addtocartupdate.save()
+                                                                    elif coupoun.ValueAmount:
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                    else:
+                                                        a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                        CoupounField={"CoupounField":None}
+                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                        if addtocartupdate.is_valid():
+                                                            addtocartupdate.save()
+                                                        for j in a.Price:
+                                                            for l in j["Coupoun"]:
+                                                                if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                    if coupoun.PercentageAmount:
+                                                                        if i.CoupounField == None:
+                                                                            CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                            addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                            if addtocartupdate.is_valid():
+                                                                                addtocartupdate.save()
+                                                                        elif coupoun.ValueAmount:
+                                                                            CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                            addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                            if addtocartupdate.is_valid():
+                                                                                addtocartupdate.save()
+
+                                        elif coupoun.EndDate != None:
+                                            if datetime.now().date()<=coupoun.EndDate:
+                                                cart=AddtoCart.objects.filter(created_by=request.user)
+                                                for i in cart:
+                                                    if i.CoupounField !=None:
+                                                        a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                        for j in a.Price:
+                                                            for l in j["Coupoun"]:
+                                                                if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                    if coupoun.PercentageAmount:
+                                                                        result={"CoupounField":{"Product": i.Product_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                                    elif coupoun.ValueAmount:
+                                                                        result={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+
                                     return Response({"status": "New Add to cart","data": serializer.data}, status=status.HTTP_200_OK)                  
                             else:
                                 serializer.save(created_by=request.user)
+                                coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                if coupoun:
+                                    if coupoun.EndDate == None:
+                                        # if datetime.now().date()<=coupoun.EndDate:
+                                            cart=AddtoCart.objects.filter(created_by=request.user)
+                                            
+                                            for i in cart:
+                                                if i.CoupounField==None:
+                                            
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                                elif coupoun.ValueAmount:
+                                                                    CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
+                                                else:
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    CoupounField={"CoupounField":None}
+                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    if i.CoupounField == None:
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                                    elif coupoun.ValueAmount:
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+
+                                    elif coupoun.EndDate != None:
+                                        if datetime.now().date()<=coupoun.EndDate:
+                                            cart=AddtoCart.objects.filter(created_by=request.user)
+                                            for i in cart:
+                                                if i.CoupounField !=None:
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    result={"CoupounField":{"Product": i.Product_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
+                                                                elif coupoun.ValueAmount:
+                                                                    result={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
                                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_200_OK)
                         else:
                             return Response('Empty Add to Cart',status=status.HTTP_201_CREATED) 
                 else:
                     serializer.save(created_by=request.user)
+                    coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                    if coupoun:
+                                    if coupoun.EndDate == None:
+                                        # if datetime.now().date()<=coupoun.EndDate:
+                                            cart=AddtoCart.objects.filter(created_by=request.user)
+                                            
+                                            for i in cart:
+                                                if i.CoupounField==None:
+                                            
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                                elif coupoun.ValueAmount:
+                                                                    CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
+                                                else:
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    CoupounField={"CoupounField":None}
+                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    if i.CoupounField == None:
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+                                                                    elif coupoun.ValueAmount:
+                                                                        CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                        addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                                        if addtocartupdate.is_valid():
+                                                                            addtocartupdate.save()
+
+                                    elif coupoun.EndDate != None:
+                                        if datetime.now().date()<=coupoun.EndDate:
+                                            cart=AddtoCart.objects.filter(created_by=request.user)
+                                            for i in cart:
+                                                if i.CoupounField !=None:
+                                                    a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                                    for j in a.Price:
+                                                        for l in j["Coupoun"]:
+                                                            if l["DiscountCode"]==coupoun.DiscountCode:
+                                                                if coupoun.PercentageAmount:
+                                                                    result={"CoupounField":{"Product": i.Product_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
+                                                                elif coupoun.ValueAmount:
+                                                                    result={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                                    addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
                     return Response({"status": "New Add to Cart","data": serializer.data},status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
@@ -2607,10 +2867,74 @@ class PromoCodeCheck(APIView):
                 if coupoun.EndDate == None:
                     # if datetime.now().date()<=coupoun.EndDate:
                         cart=AddtoCart.objects.filter(created_by=request.user)
+                        
+                        for i in cart:
+                            if i.CoupounField==None:
+                           
+                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                for j in a.Price:
+                                    for l in j["Coupoun"]:
+                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                            if coupoun.PercentageAmount:
+                                                
+                                                    CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
+                                            elif coupoun.ValueAmount:
+                                                CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                if addtocartupdate.is_valid():
+                                                    addtocartupdate.save()
+                            else:
+                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                CoupounField={"CoupounField":None}
+                                addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                if addtocartupdate.is_valid():
+                                    addtocartupdate.save()
+                                for j in a.Price:
+                                    for l in j["Coupoun"]:
+                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                            if coupoun.PercentageAmount:
+                                                if i.CoupounField == None:
+                                                    CoupounField={"CoupounField":{"Product": i.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
+                                                elif coupoun.ValueAmount:
+                                                    CoupounField={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                    addtocartupdate=Serializer_AddtoCart(i,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
+                                
+                                                        
+                        return Response("Success")
+                elif coupoun.EndDate != None:
+                    if datetime.now().date()<=coupoun.EndDate:
+                        cart=AddtoCart.objects.filter(created_by=request.user)
                         for i in cart:
                             if i.CoupounField !=None:
-                                if i.CoupounField["DiscountCode"]==coupoun.DiscountCode:
-                                    pass
+                                a=ProductWeight.objects.filter(product=i.Product_id_id).first()
+                                for j in a.Price:
+                                    for l in j["Coupoun"]:
+                                        if l["DiscountCode"]==coupoun.DiscountCode:
+                                            if coupoun.PercentageAmount:
+                                                result={"CoupounField":{"Product": i.Product_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                if addtocartupdate.is_valid():
+                                                    addtocartupdate.save()
+                                            elif coupoun.ValueAmount:
+                                                result={"CoupounField":{"Product": i.Product_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "DiscountCode": coupoun.DiscountCode}}
+                                                addtocartupdate=Serializer_AddtoCart(cart,data=result,partial=True)
+                                                if addtocartupdate.is_valid():
+                                                    addtocartupdate.save()
+                        return Response("Success")
+            
+            else:
+                return Response({"Error":"Invalid Code"},status=406)
+                                    
+                                
+                              
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

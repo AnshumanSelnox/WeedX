@@ -835,13 +835,43 @@ class AddApplyCoupoun(APIView):
                         z=ProductWeight.objects.filter(product_id=i["Product_Id"]).first()
                         for j in z.Price:
                             if j["id"]==i["Price_Id"]:
+                                result={
+                                "DiscountType": s.DiscountType ,
+                                "ProLocationOnly":s.ProLocationOnly ,
+                                "AllCustomer": s.AllCustomer ,
+                                "DiscountCode": s.DiscountCode ,
+                                "AutomaticDiscount": s.AutomaticDiscount ,
+                                "EndDate": s.EndDate ,
+                                "EndTime": s.EndTime ,
+                                "LimitNumberOfTime": s.LimitNumberOfTime ,
+                                "LimitToOneUsePerCustomer": s.LimitToOneUsePerCustomer ,
+                                "MinimumPurchaseAmount": s.MinimumPurchaseAmount ,
+                                "MinimumQuantityofItem": s.MinimumQuantityofItem ,
+                                "NoMinimumRequirements": s.NoMinimumRequirements ,
+                                "PercentageAmount": s.PercentageAmount ,
+                                "SpecificCustomer": s.SpecificCustomer ,
+                                "Specific_customer_segments": s.Specific_customer_segments ,
+                                "StartDate": s.StartDate ,
+                                "StartTime": s.StartTime ,
+                                "ValueAmount": s.ValueAmount ,
+                                "product": s.product ,
+                                "CombinationProduct": s.CombinationProduct ,
+                                "CombinationDiscount": s.CombinationDiscount ,
+                                "CustomerBuys": s.CustomerBuys ,
+                                "CustomerSpends": s.CustomerSpends ,
+                                "CustomerGets": s.CustomerGets ,
+                                "Free": s.free ,
+                                "status": s.status ,
+                                "id":s.id
+                                
+                            }
                         
-                                j["Coupoun"].append(request.data)
+                                j["Coupoun"].append(result)
                                 q.append({"Price":z.Price}) 
                         for n in q:
-                            a=ProductWeightSerializer(z,data=n,partial=True)
-                            if a.is_valid():
-                                a.save()
+                            weight=ProductWeightSerializer(z,data=n,partial=True)
+                            if weight.is_valid():
+                                weight.save()
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
