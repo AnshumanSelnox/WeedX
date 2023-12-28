@@ -604,7 +604,7 @@ class AddAddtoCart(APIView):
             Store_id=request.data.get('Store_id')
             Product_id=request.data.get('Product_id')
             PriceId=request.data.get('PriceId')
-            PromoCode=request.data.get("PromoCode")
+            PromoCodeid=request.data.get("PromoCodeid")
             serializer = Serializer_AddtoCart(data=request.data, partial=True)
             if serializer.is_valid():
                 User = AddtoCart.objects.filter(created_by=request.user)    
@@ -624,7 +624,7 @@ class AddAddtoCart(APIView):
                                         serialize=Serializer_AddtoCart(User,data=data,partial=True)
                                         if serialize.is_valid():
                                             serialize.save(update_fields=[{"Cart_Quantity": data}]) 
-                                            coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                            coupoun=Coupoun.objects.filter(id=PromoCodeid).first()
                                             if coupoun:
                                                 if coupoun.EndDate == None:
                                                     # if datetime.now().date()<=coupoun.EndDate:
@@ -697,7 +697,7 @@ class AddAddtoCart(APIView):
                                         return Response({"Out of Stock"},status=status.HTTP_406_NOT_ACCEPTABLE)
                                 else:
                                     serializer.save(created_by=request.user)
-                                    coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                    coupoun=Coupoun.objects.filter(id=PromoCodeid).first()
                                     if coupoun:
                                         if coupoun.EndDate == None:
                                             # if datetime.now().date()<=coupoun.EndDate:
@@ -765,7 +765,7 @@ class AddAddtoCart(APIView):
                                     return Response({"status": "New Add to cart","data": serializer.data}, status=status.HTTP_200_OK)                  
                             else:
                                 serializer.save(created_by=request.user)
-                                coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                                coupoun=Coupoun.objects.filter(id=PromoCodeid).first()
                                 if coupoun:
                                     if coupoun.EndDate == None:
                                         # if datetime.now().date()<=coupoun.EndDate:
@@ -834,7 +834,7 @@ class AddAddtoCart(APIView):
                             return Response('Empty Add to Cart',status=status.HTTP_201_CREATED) 
                 else:
                     serializer.save(created_by=request.user)
-                    coupoun=Coupoun.objects.filter(DiscountCode=PromoCode).first()
+                    coupoun=Coupoun.objects.filter(id=PromoCodeid).first()
                     if coupoun:
                                     if coupoun.EndDate == None:
                                         # if datetime.now().date()<=coupoun.EndDate:
