@@ -155,6 +155,162 @@
 #     if a[i]['DiscountCode'] == "x8ss9k3451121aaa":
 #         del a[i]
 # print(a)
-a=[{"id": 1, "Weight": "", "Price": 40, "Discount": 8, "SalePrice": 36.8, "Unit": 1, "Quantity": -3, "Stock": "Out of Stock", "Status": "Active"}]
+# a=[{"id": 1, "Weight": "", "Price": 40, "Discount": 8, "SalePrice": 36.8, "Unit": 1, "Quantity": -3, "Stock": "Out of Stock", "Status": "Active"}]
 
-[{"Product_Id": 46, "Price_Id": 2}, {"Product_Id": 47, "Price_Id": 1}, {"Product_Id": 49, "Price_Id": 1}, {"Product_Id": 50, "Price_Id": 1}, {"Product_Id": 50, "Price_Id": 2}, {"Product_Id": 50, "Price_Id": 3}, {"Product_Id": 50, "Price_Id": 4}, {"Product_Id": 51, "Price_Id": 1}]
+# [{"Product_Id": 46, "Price_Id": 2}, {"Product_Id": 47, "Price_Id": 1}, {"Product_Id": 49, "Price_Id": 1}, {"Product_Id": 50, "Price_Id": 1}, {"Product_Id": 50, "Price_Id": 2}, {"Product_Id": 50, "Price_Id": 3}, {"Product_Id": 50, "Price_Id": 4}, {"Product_Id": 51, "Price_Id": 1}]
+
+
+# a={"s":123}
+# b={"d":456}
+# a.update(b)
+# print(a)
+
+
+# [
+#     {
+#         "Product_Name": "Sour Jack 3.5g Sativa",
+#         "Prices": [
+#             {
+#                 "Price": [
+#                     {
+#                         "id": 1,
+#                         "Weight": "",
+#                         "Price": 40,
+#                         "Discount": 8,
+#                         "SalePrice": 36.8,
+#                         "Unit": 1,
+#                         "Quantity": 3,
+#                         "Stock": "Out of Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":10,
+#                     }
+#                 ],
+#                 "id": 1
+#             }
+#         ],
+
+#     },
+#     {
+#         "Product_Name": "Bolo Runtz",
+#         "Prices": [
+#             {
+#                 "Price": [
+#                     {
+#                         "id": 1,
+#                         "Weight": "1 g",
+#                         "Price": 65,
+#                         "Discount": 0,
+#                         "SalePrice": 65,
+#                         "Unit": "",
+#                         "Quantity": 4,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":20,
+                        
+#                     },
+#                     {
+#                         "id": 2,
+#                         "Weight": "1/8 oz",
+#                         "Price": 130,
+#                         "Discount": 0,
+#                         "SalePrice": 130,
+#                         "Unit": "",
+#                         "Quantity": 1,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":50
+#                     },
+#                     {
+#                         "id": 3,
+#                         "Weight": "1/4 oz",
+#                         "Price": 195,
+#                         "Discount": 0,
+#                         "SalePrice": 195,
+#                         "Unit": "",
+#                         "Quantity": 1,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":100
+#                     },
+#                     {
+#                         "id": 4,
+#                         "Weight": "1/2 oz",
+#                         "Price": 260,
+#                         "Discount": 0,
+#                         "SalePrice": 260,
+#                         "Unit": "",
+#                         "Quantity": 1,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":100
+#                     },
+#                     {
+#                         "id": 5,
+#                         "Weight": "1 oz",
+#                         "Price": 325,
+#                         "Discount": 0,
+#                         "SalePrice": 325,
+#                         "Unit": "",
+#                         "Quantity": 1,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":100
+#                     },
+#                     {
+#                         "id": 6,
+#                         "Weight": "Pre-Roll 0.5g",
+#                         "Price": 10,
+#                         "Discount": 0,
+#                         "SalePrice": 10,
+#                         "Unit": "",
+#                         "Quantity": 50,
+#                         "Stock": "IN Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":5
+#                     }
+#                 ],
+#                 "id": 12
+#             }
+#         ],
+        
+#     },
+#     {
+#         "Product_Name": "Pink Pez",
+        
+#         "Prices": [
+#             {
+#                 "Price": [
+#                     {
+#                         "id": 1,
+#                         "Weight": "1 g",
+#                         "Price": 70,
+#                         "Discount": 0,
+#                         "SalePrice": 70,
+#                         "Unit": 1,
+#                         "Quantity": 0,
+#                         "Stock": "Out of Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":30,
+#                     },
+#                     {
+#                         "id": 2,
+#                         "Weight": "",
+#                         "Price": 140,
+#                         "Discount": 0,
+#                         "SalePrice": 140,
+#                         "Unit": 2,
+#                         "Quantity": 0,
+#                         "Stock": "Out of Stock",
+#                         "Status": "Active",
+#                         "CostOfGoods":50,
+#                     },
+                    
+#                 ],
+#                 "id": 13
+#             }
+#         ],
+        
+#     }
+# ]
+
+# import 

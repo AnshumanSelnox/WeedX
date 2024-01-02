@@ -170,7 +170,7 @@ class Stores(models.Model):
     Meta_Description=models.CharField(max_length=160,default=None,blank=False,null=True)
     Url_slug=models.CharField(max_length=2048,default=None,blank=True,null=True)
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
-    rating=models.IntegerField(default=None,null=True)
+    rating=models.FloatField(default=None,null=True)
     Order_Type=models.CharField(max_length=50,choices=OrderType,default="Delivery")
     Dogs_allowed=models.BooleanField(default=False,null=True)
     Has_gender_neutral_toilets=models.BooleanField(default=False,null=True)
@@ -246,9 +246,11 @@ class Net_Weight(models.Model):                 #Net Weight
     #created_by=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return self.Weight
-
+    
+import uuid
 class Product(models.Model):                #Product
     id=models.AutoField(primary_key=True)
+    Specialid=models.UUIDField(unique=True,default=uuid.uuid4, editable=False)
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
     Product_Name=models.CharField(max_length=100)   
@@ -381,7 +383,7 @@ class Coupoun(models.Model):
     LimitToOneUsePerCustomer=models.BooleanField(null=True)
     CombinationProduct=models.BooleanField(null=True)
     CombinationDiscount=models.BooleanField(null=True)
-    CustomerBuys=models.JSONField(null=True)
+    CustomerBuys=models.IntegerField(null=True)
     CustomerGets=models.JSONField(null=True)
     MaximumUsesPerOrder=models.IntegerField(null=True)
     DiscountType=models.CharField(choices=discountType,max_length=10000,null=True,blank=True)

@@ -921,6 +921,7 @@ class VendorCardDashBoard(APIView):
     def get(self,request,format=None):
         try:
             d=[]
+            z=[]
             a=Stores.objects.filter(created_by=request.user).first()
             s=Order.objects.filter(Store=a) 
             product=Product.objects.filter(created_by=request.user)
@@ -932,11 +933,20 @@ class VendorCardDashBoard(APIView):
             f=sum(d)    
             PendingOrder=s.filter(Order_Status="Pending").count()
              
-            # CancelOrder=s.filter(Order_Status="Cancel").count()  
+            CancelOrder=s.filter(Order_Status="Cancel").count()  
+            OrderComplete=s.filter(Order_Status="Delivered").count()
+            for l in product:
+                weight=ProductWeight.objects.filter(product=l.id).first()
+                for m in weight.Price:
+                    if m["Stock"]=="Out Stock":
+                        z.append(m)
             return Response([{"title":"TotalProduct","total":TotalProduct},
                                     {"title":"ActiveProduct","total":ActiveProduct},
                                     {"title":"RecentOrder","total":PendingOrder},
-                                    {"title":"TotalIncome","total":f}])
+                                    {"title":"TotalIncome","total":f},
+                                    {"title":"CancelOrder","total":CancelOrder},
+                                    {"title":"OrderComplete","total":OrderComplete},
+                                    {"title":"OutOfStock","total":len(z)}])
         except Exception as e:
             return Response({'error' : str(e)},status=500)  
 
@@ -1370,3 +1380,29 @@ class LoginResendOtpAPI(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+from datetime import datetime,timedelta
+
+class SalesPerformancePieChart(APIView):
+    # permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            Today=request.data.get("Today",None)
+            ThisWeek=request.data.get("ThisWeek",None)
+            ThisMonth=request.data.get("ThisMonth",None)
+            ThisYear=request.data.get("ThisYear",None)
+            if Today:
+                date=datetime.now()
+                order=Order.objects.filter(OrderDate=date).filter(Order_Status="Pending" and "Processing")
+                serialize=Serializer_Order(order,many=True)
+                return Response(serialize.data)
+            if ThisWeek:
+                date=datetime.now() 
+                week=datetime.now()+timedelta(days=7-datetime.today().weekday())
+                
+
+                order=Order.objects.filter(OrderDate=week).filter(Order_Status="Pending" and "Processing")
+                serialize=Serializer_Order(order,many=True)
+                return Response(serialize.data)
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

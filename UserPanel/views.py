@@ -301,13 +301,13 @@ class GetAllProduct(APIView):
             State=request.data.get("State")
             City=request.data.get("City")
             if City or State or Country:
-                User = Product.objects.filter(Status="Active").filter(Store_id__City=City) 
+                User = Product.objects.filter(Status="Active").filter(Store_id__City=City).order_by('-created_by')
                 serialize = Serializer_Product(User, many=True)
                 if len(User)==0:
-                    User1 = Product.objects.filter(Status="Active").filter(Store_id__State=State) 
+                    User1 = Product.objects.filter(Status="Active").filter(Store_id__State=State).order_by('-created_by')
                     serialize1 = Serializer_Product(User1, many=True)
                     if len(User1)==0:
-                        User2 = Product.objects.filter(Status="Active").filter(Store_id__Country=Country)
+                        User2 = Product.objects.filter(Status="Active").filter(Store_id__Country=Country).order_by('-created_by')
                         serialize2 = Serializer_Product(User2, many=True)
                         return Response(serialize2.data)
                     return Response(serialize1.data)
@@ -559,35 +559,35 @@ class GetAddtocart(APIView):
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
                             a.append(response)
                         elif i.Brand_Id ==None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
                             a.append(response)
                         elif i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
                             a.append(response)
                         elif i.Brand_Id ==None and i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
                             a.append(response)
                         else:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":"",
-                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField}
+                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
                             a.append(response)
 
             return Response(a)
@@ -615,11 +615,9 @@ class AddAddtoCart(APIView):
                             if s:
                                 d=s.filter(Price__id=PriceId)
                                 if d:
-                                    
                                     User = d.first()
                                     a=User.Cart_Quantity+request.data.get("Cart_Quantity")
                                     if User.Price["Quantity"]>= a:
-                                    
                                         data = {"Cart_Quantity": a} 
                                         serialize=Serializer_AddtoCart(User,data=data,partial=True)
                                         if serialize.is_valid():
@@ -630,7 +628,7 @@ class AddAddtoCart(APIView):
                                                 if cart:
                                                     for q in cart:
                                                         if q.CoupounField !=None:
-                                                            for o in q.Price["Coupoun"]:
+                                                            for o in q.Price["Coupoun"]:       
                                                                 if PromoCodeid==o["id"]:
                                                                     if PromoCodeid==q.CoupounField["id"]:
                                                                         pass
@@ -639,6 +637,11 @@ class AddAddtoCart(APIView):
                                                                         addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
                                                                         if addtocartupdate.is_valid():
                                                                             addtocartupdate.save()
+                                                                else:
+                                                                    CoupounField={"CoupounField":None}
+                                                                    addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
                                                         else:
                                                             for o in q.Price["Coupoun"]:
                                                                 if PromoCodeid==o["id"]:
@@ -653,7 +656,10 @@ class AddAddtoCart(APIView):
                                                                         if addtocartupdate.is_valid():
                                                                             addtocartupdate.save()
                                                                 else:
-                                                                    pass
+                                                                    CoupounField={"CoupounField":None}
+                                                                    addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                                    if addtocartupdate.is_valid():
+                                                                        addtocartupdate.save()
     
                                             return Response({"status": "Update success", "data": serializer.data}, status=status.HTTP_200_OK)
                                         else:
@@ -677,6 +683,11 @@ class AddAddtoCart(APIView):
                                                                 addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
                                                                 if addtocartupdate.is_valid():
                                                                     addtocartupdate.save()
+                                                        else:
+                                                            CoupounField={"CoupounField":None}
+                                                            addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                            if addtocartupdate.is_valid():
+                                                                addtocartupdate.save()
                                                 else:
                                                     for o in q.Price["Coupoun"]:
                                                         if PromoCodeid==o["id"]:
@@ -691,7 +702,15 @@ class AddAddtoCart(APIView):
                                                                 if addtocartupdate.is_valid():
                                                                     addtocartupdate.save()
                                                         else:
-                                                            pass
+                                                            CoupounField={"CoupounField":None}
+                                                            addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                            if addtocartupdate.is_valid():
+                                                                addtocartupdate.save()
+                                    else:
+                                        CoupounField={"CoupounField":None}
+                                        addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                        if addtocartupdate.is_valid():
+                                            addtocartupdate.save()
                                     return Response({"status": "New Add to cart","data": serializer.data}, status=status.HTTP_200_OK)                  
                             else:
                                 
@@ -711,6 +730,11 @@ class AddAddtoCart(APIView):
                                                             addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
                                                             if addtocartupdate.is_valid():
                                                                 addtocartupdate.save()
+                                                    else:
+                                                        CoupounField={"CoupounField":None}
+                                                        addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                        if addtocartupdate.is_valid():
+                                                            addtocartupdate.save()
                                             else:
                                                 for o in q.Price["Coupoun"]:
                                                     if PromoCodeid==o["id"]:
@@ -725,7 +749,10 @@ class AddAddtoCart(APIView):
                                                             if addtocartupdate.is_valid():
                                                                 addtocartupdate.save()
                                                     else:
-                                                        pass
+                                                        CoupounField={"CoupounField":None}
+                                                        addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                        if addtocartupdate.is_valid():
+                                                            addtocartupdate.save()
 
                                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_200_OK)
                         else:
@@ -740,13 +767,32 @@ class AddAddtoCart(APIView):
                                 if q.CoupounField !=None:
                                     for o in q.Price["Coupoun"]:
                                         if PromoCodeid==o["id"]:
-                                            if PromoCodeid==q.CoupounField["id"]:
-                                                pass
+                                            if q.CoupounField !=None:
+                                                if PromoCodeid==q.CoupounField["id"]:
+                                                    pass
+                                                else:
+                                                    CoupounField={"CoupounField":None}
+                                                    addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                    if addtocartupdate.is_valid():
+                                                        addtocartupdate.save()
                                             else:
-                                                CoupounField={"CoupounField":None}
-                                                addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
-                                                if addtocartupdate.is_valid():
-                                                    addtocartupdate.save()
+                                                for o in q.Price["Coupoun"]:
+                                                    if PromoCodeid==o["id"]:
+                                                        if coupoun.PercentageAmount:
+                                                            coupounField={"CoupounField":{"Product": q.Product_id_id, "Amount": None, "Reflect": False, "Percentage": coupoun.PercentageAmount, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "AutomaticDiscount": coupoun.AutomaticDiscount,"id":coupoun.id,"price":request.data["CoupounField"]["price"]}}
+                                                            addtocartupdate=Serializer_AddtoCart(q,data=coupounField,partial=True)
+                                                            if addtocartupdate.is_valid():
+                                                                addtocartupdate.save()
+                                                        elif coupoun.ValueAmount:
+                                                            CoupounField={"CoupounField":{"Product": q.Product_id_id, "Amount": coupoun.ValueAmount, "Reflect": False, "Percentage":None, "CouponMassage": "", "DiscountType": coupoun.DiscountType, "AutomaticDiscount": coupoun.AutomaticDiscount,"id":coupoun.id,"price":request.data["CoupounField"]["price"]}}
+                                                            addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                            if addtocartupdate.is_valid():
+                                                                addtocartupdate.save()
+                                                    else:
+                                                        CoupounField={"CoupounField":None}
+                                                        addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                                        if addtocartupdate.is_valid():
+                                                            addtocartupdate.save()
                                 else:
                                     for o in q.Price["Coupoun"]:
                                         if PromoCodeid==o["id"]:
@@ -761,7 +807,10 @@ class AddAddtoCart(APIView):
                                                 if addtocartupdate.is_valid():
                                                     addtocartupdate.save()
                                         else:
-                                            pass
+                                            CoupounField={"CoupounField":None}
+                                            addtocartupdate=Serializer_AddtoCart(q,data=CoupounField,partial=True)
+                                            if addtocartupdate.is_valid():
+                                                addtocartupdate.save()
 
                     return Response({"status": "New Add to Cart","data": serializer.data},status=status.HTTP_200_OK)
             else:
