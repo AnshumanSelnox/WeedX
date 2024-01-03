@@ -314,3 +314,127 @@
 # ]
 
 # import 
+
+# a=["FLOWER","FLOWER","FLOWER","FLOWER","FLOWER","EDIBLES","FLOWER","FLOWER","CONCENTRATES","VAPE PENS"]
+# # for i in range(0, len(a)):    
+# #     for j in range(i+1, len(a)):    
+# #         if(a[i] == a[j]):    
+# #             print(a[j]);   
+
+# l={i:a.count(i) for i in a}
+# print(l)
+
+# import requests,json
+# import pandas as pd
+
+# class BearerAuth(requests.auth.AuthBase):
+#     def __init__(self, token):
+#         self.token = token
+#     def __call__(self, r):
+#         r.headers["authorization"] = "Bearer " + self.token
+#         return r
+# data={"City":"","Country":"United States","State":"New York"}
+# auth=input("auth")
+# api="https://api.cannabaze.com/VendorPanel/Get-Product/"
+# x=requests.get(api,auth=BearerAuth(str(auth)))
+# print((json.loads(x.text)))
+# objects = [
+#     { "name": 'Object 1', "values": { "value1": 10, "value2": 20, "value3": 30 } },
+#     { "name": 'Object 2', "values": { "value1": 40, "value2": 50, "value3": 60 } },
+#     { "name": 'Object 3', "values": { "value1": 70, "value2": 80, "value3": 90 } },
+#     { "name": 'Object 4', "values": { "value1": 100, "value2": 110, "value3": 120 } }
+#   ]
+# a=[]
+# a=[{ "name": 'Object 1',"value1": 10,"value2": 20 }]
+# for i in objects:
+#     i.update(i.get("values"))
+#     i.pop("values")
+#     a.append(i)
+# print(a)
+# # for i in objects:
+# df = pd.DataFrame(a) #.to_excel("Dispensaries.xlsx")
+# # df=df.drop(['category_id','StoreDelivery'],axis=1)
+# df=df.to_excel("Dispensaries.xlsx")
+
+# class CropRatio:
+#     def __init__(self):
+#         self.crop_counts = {}
+
+#     def add(self, crop, count):
+#         if crop in self.crop_counts:
+#             self.crop_counts[crop] += count
+#         else:
+#             self.crop_counts[crop] = count
+
+#     def proportion(self, crop):
+#         total_count = sum(self.crop_counts.values())
+#         if total_count == 0:
+#             return 0
+#         if crop in self.crop_counts:
+#             return self.crop_counts[crop] / total_count
+#         else:
+#             return 0
+# crop_ratio=CropRatio()
+# crop_ratio.add("wheat",4)
+# crop_ratio.add("wheat",5)
+# crop_ratio.add("Rice",1)
+
+# print(crop_ratio.proportion("wheat")) #Return 0.9
+# print(crop_ratio.proportion("Rice")) #Return 0.1
+# print(crop_ratio.proportion("Corn")) #Return 0
+
+# class CropRatio:
+#     def __init__(self):
+#         pass #Write logic
+
+# crop_ratio=CropRatio()
+# crop_ratio.add("wheat",4)
+# crop_ratio.add("wheat",5)
+# crop_ratio.add("Rice",1)
+
+# print(crop_ratio.proportion("wheat")) #Return 0.9
+# print(crop_ratio.proportion("Rice")) #Return 0.1
+# print(crop_ratio.proportion("Corn")) #Return 0
+
+
+# import requests
+# import json
+# import pandas as pd
+
+# class BearerAuth(requests.auth.AuthBase):
+#     def __init__(self, token):
+#         self.token = token
+
+#     def __call__(self, r):
+#         r.headers["authorization"] = "Bearer " + self.token
+#         return r
+
+# try:
+#     auth = input("Enter auth token: ")
+#     api = "https://api.cannabaze.com/VendorPanel/Get-Product/"
+    
+#     response = requests.get(api, auth=BearerAuth(str(auth)))
+
+#     # Check if the request was successful (status code 200)
+#     response.raise_for_status()
+
+#     data = json.loads(response.text)
+
+#     # Create DataFrame
+#     df = pd.DataFrame(data)
+
+#     # Drop unnecessary columns
+#     df = df.drop(['category_id', 'StoreDelivery'], axis=1)
+
+#     # Provide a file path for the Excel file
+#     excel_file_path = "path/to/Dispensaries.xlsx"
+
+#     # Save DataFrame to Excel
+#     df.to_excel(excel_file_path, index=False)
+    
+#     print(f"Data has been successfully saved to {excel_file_path}")
+
+# except requests.exceptions.RequestException as e:
+#     print(f"Error making the request: {e}")
+# except Exception as e:
+#     print(f"An unexpected error occurred: {e}")

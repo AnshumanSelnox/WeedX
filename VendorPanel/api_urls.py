@@ -85,6 +85,11 @@ urlpatterns = [
     path('SearchProduct/<int:id>', SearchProduct.as_view()),
     path("LoginResendOtpAPI/",LoginResendOtpAPI.as_view()),
     path("SalesPerformancePieChart/",SalesPerformancePieChart.as_view()),
+    path("RecentOrderPieChart/",RecentOrderPieChart.as_view()),
+    path("SalesByCategoryPieChart/",SalesByCategoryPieChart.as_view()),
+    path("ProductByCategoryPieChart/<int:id>",ProductByCategoryPieChart.as_view()),
+    
+    
 
 ]
 

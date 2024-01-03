@@ -41,6 +41,7 @@ class Order(models.Model):
     OrderDate=models.DateTimeField(auto_now_add=True)
     Order_Type=models.CharField(choices=OrderType,max_length=100,default="Delivery")
 
+
 class Wishlist(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)

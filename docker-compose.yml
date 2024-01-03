@@ -1,19 +1,9 @@
-version: '3.3'
+version: '3'
 
-# Defining the compose version
 services:
-
-#  nginx:
-#   build: ./nginx
-#   ports:
-#     - 8687:80
-#   depends_on:
-#     - myproject
-#   restart: "always"
- 
- myproject:
-  build: .
-  command: sh -c "gunicorn myproject.wsgi:application --bind 0.0.0.0:8000"
-  expose: 
-   - 8000
-  restart: "always"
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app
