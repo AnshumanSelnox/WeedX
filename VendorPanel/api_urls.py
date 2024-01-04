@@ -88,7 +88,8 @@ urlpatterns = [
     path("RecentOrderPieChart/",RecentOrderPieChart.as_view()),
     path("SalesByCategoryPieChart/",SalesByCategoryPieChart.as_view()),
     path("ProductByCategoryPieChart/<int:id>",ProductByCategoryPieChart.as_view()),
-    
+    path("SalesInsights/",SalesInsights.as_view()),
+    path("SalesOverviewcard/",SalesOverviewcard.as_view()),
     
 
 ]

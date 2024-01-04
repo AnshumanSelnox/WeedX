@@ -438,3 +438,34 @@
 #     print(f"Error making the request: {e}")
 # except Exception as e:
 #     print(f"An unexpected error occurred: {e}")
+
+
+
+# import base64
+# import requests
+
+
+# def get_as_base64(url):
+
+#     return base64.b64encode(requests.get(url).content)
+
+
+# url=["https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240104T071929Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=4ac6269f37358ef4209b30f9ba1c48fbbd11774dfa7406e67ab7637a01aa0f7b"]
+
+# for i in url:
+#     z=get_as_base64()
+# class Node:  
+#     def __init__(self, value):  
+#         self.value = value  
+#         self.next = None  
+
+# def insertAfterNode(self, previous_node, value):  
+#     if previous_node is None:  
+#         print("There is no previous node. Make a new head.")  
+#         return  
+
+#     insertion_node = Node(value)  
+#     insertion_node.next = previous_node.next  
+#     previous_node.next = insertion_node  
+    
+# insertAfterNode(self=1,previous_node=5,value=10)

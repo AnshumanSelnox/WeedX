@@ -1268,11 +1268,12 @@ class GetTopSellingProduct(APIView):
             top=User.filter(Order_Status="Delivered")
             for i in top:
                 for j in i.Product:
+                    a=ProductImage.objects.filter(product=j["Product_id"]).first()
                     qwe=0
                     cart=0
                     qwe = qwe + j["TotalPrice"]
                     cart= cart +j["Cart_Quantity"]
-                    response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":j["Image"]}
+                    response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
                     x.append(response)
             for l in x:
                 if l not in y:
@@ -1560,15 +1561,95 @@ class ProductByCategoryPieChart(APIView):
     def get(self,request,id=None):
         try:
             s=[]
+            z=[]
             product=Product.objects.filter(Store_id=id)
             for i in product:
-                a=SubCategory.objects.filter(id=i.Sub_Category_id_id)
+                a=Category.objects.filter(id=i.Sub_Category_id.category_id_id)
                 for j in a:
-                    b=Category.objects.filter(id=j.category_id_id)
-                    serialize=Serializer_Category(b,many=True)
-                    s.append(serialize.data)
-                
-            return Response(s,status=status.HTTP_200_OK)
+                    count=Product.objects.filter(Sub_Category_id__category_id_id=j.id).count()
+                    response={j.name:count}
+                    s.append(response)
+            for m in s:
+               if m not in z:
+                    z.append(m)
+            return Response(z,status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+class SalesInsights(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            a=[]
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                response={"Date":datetime.today().date(),"Order":order,"CancelledOrder":cancelorder}
+                a.append(response)
+            if selectTime=="ThisWeek":
+                weekStart=(datetime.now()-timedelta(days=7)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
+                a.append(response)
+            if selectTime=="ThisMonth":
+                weekStart=(datetime.now()-timedelta(days=30)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
+                a.append(response)
+            if selectTime=="ThisYear":
+                weekStart=(datetime.now()-timedelta(days=365)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
+                a.append(response)
+            return Response(a)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+ 
+class SalesOverviewcard(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            a=[]
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                add=0
+                TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                response={"TotalOrder":order}
+                a.append(response)
+            if selectTime=="ThisWeek":
+                add=0
+                weekStart=(datetime.now()-timedelta(days=7)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                response={"Order":order}
+                a.append(response)
+            if selectTime=="ThisMonth":
+                add=0
+                weekStart=(datetime.now()-timedelta(days=30)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
+                response={"Order":order}
+                a.append(response)
+            if selectTime=="ThisYear":
+                add=0
+                weekStart=(datetime.now()-timedelta(days=365)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                for i in TodaySales:
+                    add=add+i.subtotal
+                order=TodaySales.count()
+                response={"Order":order,"TotalSale":add}
+                a.append(response)
+            return Response(a)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
