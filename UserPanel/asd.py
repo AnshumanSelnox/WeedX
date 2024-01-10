@@ -441,19 +441,22 @@
 
 
 
-# import base64
-# import requests
+import base64
+import requests
 
 
-# def get_as_base64(url):
+def get_as_base64(url):
 
-#     return base64.b64encode(requests.get(url).content)
+    return base64.b64encode(requests.get(url).content)
 
 
 # url=["https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240104T071929Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=4ac6269f37358ef4209b30f9ba1c48fbbd11774dfa7406e67ab7637a01aa0f7b"]
 
-# for i in url:
-#     z=get_as_base64()
+# get_as_base64(url)
+
+
+
+
 # class Node:  
 #     def __init__(self, value):  
 #         self.value = value  
@@ -469,3 +472,48 @@
 #     previous_node.next = insertion_node  
     
 # insertAfterNode(self=1,previous_node=5,value=10)
+
+
+import requests
+
+# def download_file(url, destination):
+#     response = requests.get(url)
+#     with open(destination, 'wb') as file:
+#         file.write(response.content)
+
+# # Replace 'your_link_here' with the actual link you want to download
+# link_url = 'https://unsplash.com/photos/a-jellyfish-floating-in-the-water-at-night-6PGkhhCx6-Y'
+
+# # Replace 'output_file.postman_form' with the desired file name for your Postman form file
+# output_file = 'output_file.postman_form'
+
+# download_file(link_url, output_file)
+
+# print(f'The file has been downloaded and saved as {output_file}')
+import requests
+from PIL import Image
+from io import BytesIO
+
+def link_to_image(link, output_path):
+    try:
+        # Send a GET request to the URL
+        response = requests.get(link)
+        response.raise_for_status()  # Raise an exception for bad requests
+
+        # Open the image using Pillow
+        image = Image.open(BytesIO(response.content))
+
+        # Save the image to the specified output path
+        image.save(output_path)
+
+        print(f"Image saved successfully at {output_path}")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+# Example usage:
+url = "https://plus.unsplash.com/premium_photo-1684993466316-81ae0b6c96ae?q=80&w=1744&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+output_file = "output_image.jpg"
+
+link_to_image(url, output_file)
+

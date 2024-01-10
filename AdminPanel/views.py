@@ -17,7 +17,13 @@ from Ecommerce.settings import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,EM
 import smtplib
 import random
 from UserPanel.serializer import *
-# Class based view to Get User Details using Token Authentication
+from rest_framework.permissions import BasePermission
+
+class IsCustomRolePermission(BasePermission):
+    def has_permission(self, request, view):
+            return request.user.groups.all().exists()
+
+
 def send_OneToOneMail(from_email='',to_emails=''):
     Otp=random.randint(1000, 9999)
     server=smtplib.SMTP(EMAIL_HOST,EMAIL_PORT)
@@ -214,18 +220,13 @@ class RegisterAPI(generics.GenericAPIView):
 
 #Category Api
 class GetCategories(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsCustomRolePermission]
 
     def get(self, request, format=None):
         try:
-            a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
-                category = Category.objects.select_related().all()
-                serialize = Serializer_Category(category, many=True)
-                return Response(serialize.data)
-            
-            else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+            category = Category.objects.select_related().all()
+            serialize = Serializer_Category(category, many=True)
+            return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
     
@@ -1934,3 +1935,55 @@ class UpdateProfileForVendor(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
          
+         
+
+class GetRolesAndPermission(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            category = CustomRole.objects.select_related().all()
+            serialize = Serializer_RolesandPermission(category, many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+    
+class AddRolesAndPermission(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            serializer = Serializer_RolesandPermission(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"status": "success","data": serializer.data},status=status.HTTP_200_OK)
+            else:
+                return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UpdateRolesAndPermission(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id=None):
+        try:
+            User = CustomRole.objects.get(id=id)
+            serializer = Serializer_RolesandPermission(User, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save(modified_by=request.user.username)
+                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DeleteRolesAndPermission(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self, request, id=None):
+        try:
+            User = get_object_or_404(CustomRole, id=id)
+            User.delete()
+            return Response({"status": "success", "data": "Deleted"})
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
+

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db import models
 from .choices import *
 from ckeditor.fields import RichTextField
@@ -5,6 +6,70 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from AdminPanel.choices import *
 
+class CustomRole(Group):
+    RoleTitle=models.CharField(max_length=100,default=None)
+    Description=models.CharField(max_length=1000,default=None)
+    AddStore=models.BooleanField(default=False)
+    ViewStore=models.BooleanField(default=False)
+    EditStore=models.BooleanField(default=False)
+    DeleteStore=models.BooleanField(default=False)
+    AddVendor=models.BooleanField(default=False)
+    ViewVendor=models.BooleanField(default=False)
+    DeleteVendor=models.BooleanField(default=False)
+    EditVendor=models.BooleanField(default=False)
+    AddBrand=models.BooleanField(default=False)
+    ViewBrand=models.BooleanField(default=False)
+    EditBrand=models.BooleanField(default=False)
+    DeleteBrand=models.BooleanField(default=False)
+    AddUsers=models.BooleanField(default=False)
+    ViewUsers=models.BooleanField(default=False)
+    EditUsers=models.BooleanField(default=False)
+    DeleteUsers=models.BooleanField(default=False)
+    AddCustomers=models.BooleanField(default=False)
+    ViewCustomers=models.BooleanField(default=False)
+    EditCustomers=models.BooleanField(default=False)
+    DeleteCustomers=models.BooleanField(default=False)
+    AddBanners=models.BooleanField(default=False)
+    ViewBanners=models.BooleanField(default=False)
+    EditBanners=models.BooleanField(default=False)
+    DeleteBanners=models.BooleanField(default=False)
+    AddCategory=models.BooleanField(default=False)
+    ViewCategory=models.BooleanField(default=False)
+    EditCategory=models.BooleanField(default=False)
+    DeleteCategory=models.BooleanField(default=False)
+    AddSubcategory=models.BooleanField(default=False)
+    ViewSubcategory=models.BooleanField(default=False)
+    EditSubcategory=models.BooleanField(default=False)
+    DeleteSubcategory=models.BooleanField(default=False)
+    AddBlogs=models.BooleanField(default=False)
+    ViewBlogs=models.BooleanField(default=False)
+    EditBlogs=models.BooleanField(default=False)
+    DeleteBlogs=models.BooleanField(default=False)
+    AddComments=models.BooleanField(default=False)
+    ViewComments=models.BooleanField(default=False)
+    EditComments=models.BooleanField(default=False)
+    DeleteComments=models.BooleanField(default=False)
+    AddReports=models.BooleanField(default=False)
+    ViewReports=models.BooleanField(default=False)
+    EditReports=models.BooleanField(default=False)
+    DeleteReports=models.BooleanField(default=False)
+    AddInqueries=models.BooleanField(default=False)
+    ViewInqueries=models.BooleanField(default=False)
+    EditInqueries=models.BooleanField(default=False)
+    DeleteInqueries=models.BooleanField(default=False)
+    AddMessages=models.BooleanField(default=False)
+    ViewMessages=models.BooleanField(default=False)
+    EditMessages=models.BooleanField(default=False)
+    DeleteMessages=models.BooleanField(default=False)
+    AddSalesAndAnalytics=models.BooleanField(default=False)
+    ViewSalesAndAnalytics=models.BooleanField(default=False)
+    EditSalesAndAnalytics=models.BooleanField(default=False)
+    DeleteSalesAndAnalytics=models.BooleanField(default=False)
+    AddStaff=models.BooleanField(default=False)
+    ViewStaff=models.BooleanField(default=False)
+    EditStaff=models.BooleanField(default=False)
+    DeleteStaff=models.BooleanField(default=False)
+    
 
 class UserManager(BaseUserManager):
     def create_user(self, username,email, password=None, **kwargs):
@@ -64,6 +129,8 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
     # created = models.DateField(auto_now_add=True,null=True)
+    groups=models.ManyToManyField(CustomRole)
+    
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
@@ -480,8 +547,12 @@ class BookTheDemo(models.Model):
     SelectLicenseType=models.CharField(max_length=1000,choices=LicenseType)
     Company=models.CharField(max_length=1000,default=None)
 
-class RolesandPermissions(models.Model):    
-    Title=models.CharField(max_length=100,default=None)
-    Description=models.CharField(max_length=1000,default=None)
+# class RolesandPermissions(models.Model):    
+#     Title=models.CharField(max_length=100,default=None)
+#     Description=models.CharField(max_length=1000,default=None)
     
+
+
+    
+
     

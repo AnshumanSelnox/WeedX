@@ -291,3 +291,9 @@ class Serializer_BookTheDemo(serializers.ModelSerializer):
     class Meta:
         model=BookTheDemo
         fields='__all__'
+        
+        
+class Serializer_RolesandPermission(serializers.ModelSerializer):
+    class Meta:
+        model=CustomRole
+        fields='__all__'

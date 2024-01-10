@@ -150,6 +150,11 @@ urlpatterns = [
     path('Delete-StaticImages/<int:id>', DeleteStaticImages.as_view()),
     ######################################################################################################################
     path('UpdateProfileForVendor/<int:id>', UpdateProfileForVendor.as_view()),
+    ######################################################################################################################
+    path('Get-RolesAndPermission/', GetRolesAndPermission.as_view()),
+    path('Add-RolesAndPermission/', AddRolesAndPermission.as_view()),
+    path('Update-RolesAndPermission/<int:id>', UpdateRolesAndPermission.as_view()),
+    path('Delete-RolesAndPermission/<int:id>', DeleteRolesAndPermission.as_view()),
 
 
 

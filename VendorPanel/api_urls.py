@@ -90,7 +90,11 @@ urlpatterns = [
     path("ProductByCategoryPieChart/<int:id>",ProductByCategoryPieChart.as_view()),
     path("SalesInsights/",SalesInsights.as_view()),
     path("SalesOverviewcard/",SalesOverviewcard.as_view()),
-    
+    path("ImageToBase64/",ImageToBase64.as_view()),
+    path("ProductInsight/",ProductInsight.as_view()),
+    path("OrderInsight/",OrderInsight.as_view()),
+    path("CategoryInsight/",CategoryInsight.as_view()),
+    # path("ImportXcel/",ImportXcel.as_view()),
 
 ]
 

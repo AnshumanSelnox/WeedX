@@ -1584,32 +1584,66 @@ class SalesInsights(APIView):
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
             if selectTime=="Today":
+                add=0
+                productsold=0
+                z=datetime.today().date()
                 TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
+                for i in TodaySales:
+                    add=add+i.subtotal
+                    for j in i.Product:
+                       productsold = productsold + j["Cart_Quantity"]
                 cancelorder=TodaySales.filter(Order_Status="Cancel").count()
-                response={"Date":datetime.today().date(),"Order":order,"CancelledOrder":cancelorder}
+                response={"Date":z.strftime("%x"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
                 a.append(response)
             if selectTime=="ThisWeek":
-                weekStart=(datetime.now()-timedelta(days=7)).date()
-                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
-                order=TodaySales.count()
-                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
-                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
-                a.append(response)
+                add=0
+                productsold=0
+                weekStart=(datetime.now()-timedelta(days=7))
+                z=datetime.today()
+                while weekStart <= z:
+                    TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                    order=TodaySales.count()
+                    for i in TodaySales:
+                        add=add+i.subtotal
+                        for j in i.Product:
+                            productsold = productsold + j["Cart_Quantity"]
+                    cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                    response={"Date":weekStart.strftime("%A"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
+                    a.append(response)
+                    weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisMonth":
-                weekStart=(datetime.now()-timedelta(days=30)).date()
-                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
-                order=TodaySales.count()
-                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
-                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
-                a.append(response)
+                add=0
+                productsold=0
+                weekStart=(datetime.now()-timedelta(days=30))
+                z=datetime.today()
+                while weekStart <= z:
+                    TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                    order=TodaySales.count()
+                    for i in TodaySales:
+                        add=add+i.subtotal
+                        for j in i.Product:
+                            productsold = productsold + j["Cart_Quantity"]
+                    cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                    response={"Date":weekStart.strftime("%x"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
+                    a.append(response)
+                    weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisYear":
-                weekStart=(datetime.now()-timedelta(days=365)).date()
-                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
-                order=TodaySales.count()
-                cancelorder=TodaySales.filter(Order_Status="Cancel").count()
-                response={"Date":weekStart,"Order":order,"CancelledOrder":cancelorder}
-                a.append(response)
+                add=0
+                productsold=0
+                weekStart=(datetime.now()-timedelta(days=365))
+                z=datetime.today()
+                while weekStart <= z:
+                    TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                    order=TodaySales.count()
+                    for i in TodaySales:
+                        add=add+i.subtotal
+                        for j in i.Product:
+                            productsold = productsold + j["Cart_Quantity"]
+                    cancelorder=TodaySales.filter(Order_Status="Cancel").count()
+                    response={"Date":weekStart.strftime("%B"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
+                    a.append(response)
+                    weekStart=weekStart + timedelta(days=30)
             return Response(a)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1624,32 +1658,467 @@ class SalesOverviewcard(APIView):
             store=request.data.get("store")
             if selectTime=="Today":
                 add=0
+                productsold=0
                 TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
-                response={"TotalOrder":order}
+                for i in TodaySales:
+                    add=add+i.subtotal
+                    for j in i.Product:
+                       productsold = productsold + j["Cart_Quantity"]
+                if productsold>1:
+                    AverageSales=add/order
+                else:
+                    AverageSales=0
+                response={"Order":order,"TotalSale":add,"ProductSold":productsold,"AverageSales":AverageSales}
                 a.append(response)
             if selectTime=="ThisWeek":
                 add=0
+                productsold=0
                 weekStart=(datetime.now()-timedelta(days=7)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
-                response={"Order":order}
+                order=TodaySales.count()
+                for i in TodaySales:
+                    add=add+i.subtotal
+                    for j in i.Product:
+                       productsold = productsold + j["Cart_Quantity"]
+                if productsold>1:
+                    AverageSales=add/order
+                else:
+                    AverageSales=0
+                response={"Order":order,"TotalSale":add,"ProductSold":productsold,"AverageSales":AverageSales}
                 a.append(response)
             if selectTime=="ThisMonth":
                 add=0
+                productsold=0
                 weekStart=(datetime.now()-timedelta(days=30)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
-                response={"Order":order}
+                for i in TodaySales:
+                    add=add+i.subtotal
+                    for j in i.Product:
+                       productsold = productsold + j["Cart_Quantity"]
+                if productsold>1:
+                    AverageSales=add/order
+                else:
+                    AverageSales=0
+                response={"Order":order,"TotalSale":add,"ProductSold":productsold,"AverageSales":AverageSales}
                 a.append(response)
             if selectTime=="ThisYear":
                 add=0
+                productsold=0
                 weekStart=(datetime.now()-timedelta(days=365)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                order=TodaySales.count()
                 for i in TodaySales:
                     add=add+i.subtotal
-                order=TodaySales.count()
-                response={"Order":order,"TotalSale":add}
+                    for j in i.Product:
+                       productsold = productsold + j["Cart_Quantity"]
+                if productsold>1:
+                    AverageSales=add/order
+                else:
+                    AverageSales=0
+                response={"Order":order,"TotalSale":add,"ProductSold":productsold,"AverageSales":AverageSales}
                 a.append(response)
             return Response(a)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+import base64
+import requests
+
+
+def get_as_base64(url):
+    return base64.b64encode(requests.get(url).content)
+
+# q=get_as_base64(url="https://selnoxmedia.s3.amazonaws.com/media/product_images/12c29b_7f4c8d01e3d244fba7a50c36c7c201ffmv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240108%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240108T111034Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=815ada9e110d068ec667910113fdf0640e2747c67fe45ee40d4bc73eb2179591")
+# print(q)
+class ImageToBase64(APIView):
+    def post(self,request):
+        try:
+            a=[]
+            url=request.data.get("url")
+            for i in url:
+                z=get_as_base64(i)
+                a.append(z)
+            return Response(a)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+ 
+class ProductInsight(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+
+            x=[]
+            y=[]
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                User = Order.objects.filter(Store=store).filter(OrderDate=datetime.today())
+                top=User.filter(Order_Status="Delivered")
+                for i in top:
+                    for j in i.Product:
+                        a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                        qwe=0
+                        cart=0
+                        qwe = qwe + j["TotalPrice"]
+                        cart= cart +j["Cart_Quantity"]
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        x.append(response)
+                for l in x:
+                    if l not in y:
+                        y.append(l)
+                y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+            if selectTime=="ThisWeek":
+                weekStart=(datetime.now()-timedelta(days=7)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                top=TodaySales.filter(Order_Status="Delivered")
+                for i in top:
+                    for j in i.Product:
+                        a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                        qwe=0
+                        cart=0
+                        qwe = qwe + j["TotalPrice"]
+                        cart= cart +j["Cart_Quantity"]
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        x.append(response)
+                for l in x:
+                    if l not in y:
+                        y.append(l)
+                y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+            if selectTime=="ThisMonth":
+                weekStart=(datetime.now()-timedelta(days=30)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                top=TodaySales.filter(Order_Status="Delivered")
+                for i in top:
+                    for j in i.Product:
+                        a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                        qwe=0
+                        cart=0
+                        qwe = qwe + j["TotalPrice"]
+                        cart= cart +j["Cart_Quantity"]
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        x.append(response)
+                for l in x:
+                    if l not in y:
+                        y.append(l)
+                y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+            if selectTime=="ThisYear":
+                weekStart=(datetime.now()-timedelta(days=365)).date()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
+                top=TodaySales.filter(Order_Status="Delivered")
+                for i in top:
+                    for j in i.Product:
+                        a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                        qwe=0
+                        cart=0
+                        qwe = qwe + j["TotalPrice"]
+                        cart= cart +j["Cart_Quantity"]
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        x.append(response)
+                for l in x:
+                    if l not in y:
+                        y.append(l)
+                y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+            return Response(y)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+   
+class OrderInsight(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                z=datetime.today().date()
+                TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
+                serialize=Serializer_Order(TodaySales,many=True)
+            if selectTime=="ThisWeek":
+                weekStart=(datetime.now()-timedelta(days=7))
+                z=datetime.today()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                serialize=Serializer_Order(TodaySales,many=True)
+            if selectTime=="ThisMonth":
+                weekStart=(datetime.now()-timedelta(days=30))
+                z=datetime.today()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                serialize=Serializer_Order(TodaySales,many=True)
+            if selectTime=="ThisYear":
+                weekStart=(datetime.now()-timedelta(days=365))
+                z=datetime.today()
+                TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
+                serialize=Serializer_Order(TodaySales,many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class CategoryInsight(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                date=datetime.now()
+                week=datetime.now()-timedelta(days=1)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisWeek":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisMonth":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered" ).filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisYear":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# from io import BytesIO
+# import io, base64,boto3
+# from PIL import Image
+
+# import requests
+# from PIL import Image
+# from io import BytesIO
+
+# # def link_to_image(link, output_path):
+# #     try:
+# #         response = requests.get(link)
+# #         if response.status_code == 200:
+# #             image = Image.open(BytesIO(response.content))
+# #             image.save(output_path)
+# #             print(f"Image saved to {output_path}")
+# #         else:
+# #             print(f"Failed to retrieve the image. Status code: {response.status_code}")
+# #     except Exception as e:
+# #         print(f"An error occurred: {e}")
+# def download_file(link, destination):
+#     try:
+#         # Send a GET request to the URL
+#         response = requests.get(link)
+#         response.raise_for_status()  # Raise an exception for bad requests
+
+#         # Open the image using Pillow
+#         image = Image.open(BytesIO(response.content))
+
+#         # Save the image to the specified output path
+#         image.save(destination)
+
+#         print(f"Image saved successfully at {destination}")
+
+#     except Exception as e:
+#         print(f"Error: {e}")
+
+# import base64
+# import json
+# from PIL import Image
+
+# # def image_to_json(image_path):
+# #     try:
+# #         # Open the image using Pillow
+# #         with open(image_path, "rb") as image_file:
+# #             # Convert image data to base64
+# #             base64_data = base64.b64encode(image_file.read()).decode('utf-8')
+
+# #         # Create a dictionary with the image data
+# #         image_data = {
+# #             "image_path": image_path,
+# #             "base64_data": base64_data
+# #         }
+
+# #         # Convert the dictionary to JSON
+# #         json_data = json.dumps(image_data, indent=2)
+
+# #         # Print or return the JSON data
+# #         print(json_data)
+# #         return json_data
+
+# #     except Exception as e:
+# #         print(f"Error: {e}")
+# def encode_image_to_base64(image_path):
+#     with open(image_path, "rb") as image_file:
+#         # Convert binary image data to base64
+#         base64_data = base64.b64encode(image_file.read()).decode('utf-8')
+#     return base64_data
+# def create_json_with_image(image_path):
+#     # Encode image to base64
+#     base64_data = encode_image_to_base64(image_path)
+
+#     # Create a dictionary with image data
+#     image_data = {
+#         "image_path": image_path,
+#         "base64_data": base64_data
+#     }
+
+#     # Convert the dictionary to JSON
+#     json_data = json.dumps(image_data, indent=2)
+#     return json_data
+
+# # Example usage:
+
+
+
+
+
+# from django.core.files import File
+
+
+# class ImportXcel(APIView):
+#     permission_classes=[IsAuthenticated]
+#     def post(self,request):
+#         try:
+#             data=request.data.get("data")
+#             for i in data:
+#                 b=Brand.objects.filter(name=i["Brand_Name"]).first()
+#                 c=SubCategory.objects.filter(name=i["SubcategoryName"]).first()
+#                 for j in i["images"]:
+#                     response = requests.get(j)
+#                     if response.status_code == 200:
+#                         response.encoding="utf-8"
+#                         temp_image_path = "/home/selnoxinfotech/Anshuman/BackwoodAroma/output_image.jpg"
+#                         with open(temp_image_path, 'wb') as temp_image_file:
+#                             temp_image_file.write(response.content)
+#                         i['image'] = File(open(temp_image_path, 'rb'))
+#                 createdata={"Brand_id":b.id,"Sub_Category_id":c.id,"Multiple_images":i['image']}
+#                 i.update(createdata)
+#                 product=Product.objects.filter(Specialid=i["Specialid"]).first()
+#                 if product:
+#                     serailze=Serializer_Product(product,data=i,partial=True)
+#                     if serailze.is_valid():
+#                         serailze.save()
+#                         return Response(serailze.data)
+#                     else:
+#                         return Response(serailze.errors,status=status.HTTP_400_BAD_REQUEST)
+#                 else:
+#                     serailze=Serializer_Product(i,partial=True)
+#                     if serailze.is_valid():
+#                         serailze.save()
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
