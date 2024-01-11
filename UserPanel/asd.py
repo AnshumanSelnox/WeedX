@@ -618,12 +618,17 @@
 # 	llist.head.next = second; # Link first node with second
 # 	second.next = third; # Link second node with the third node
 
-import mysql
+# import mysql
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="Anshuman",
-  password="password"
-)
+# mydb = mysql.connector.connect(
+#   host="localhost",
+#   user="Anshuman",
+#   password="password"
+# )
 
-print(mydb) 
+# print(mydb) 
+import smtplib,random,json
+Otp = random.randint(1000, 9999)
+asd='\033[1m' + str(Otp) + '\033[0m'
+Text = "Dear "+",\n \n Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password \n \n OTP:"+asd+"\n This OTP is valid for a single login session and should be used within 10 minutes. \n \n If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.\n \n Cannabaze POS \n Phone: +1 (209) 655-0360 \n Email: info@weedx.io \n Website: cannabaze.com \n \n Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.\n \n Best regards, \n Cannabaze POS Team"
+print(Text)

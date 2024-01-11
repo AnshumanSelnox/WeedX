@@ -16,24 +16,148 @@ from UserPanel.serializer import *
 from .serializer import *
 from UserPanel.serializer import *
 
-from termcolor import colored
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
+EmailBody='''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+       <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Dear {username},</h4>
 
-def send_OneToOneMail(from_email='', to_emails=''):
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP:<b>{otp}</b></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single login session and should be used within 10 minutes.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Cannabaze POS</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 (209) 655-0360</a></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.</h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Best regards,</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Cannabaze POS Team</h4>
+    </div>
+</body>
+</html>'''
+
+def send_OneToOneMail(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
-    server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
-    server.ehlo()
-    server.starttls()
-    server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
     user = User.objects.get(email=to_emails)
-    Subject =  "Your Cannabaze POS Vendor Panel Login OTP"
-    Text = "Dear "+str(user.username)+",\n \n Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password \n \n OTP:"  + (colored(str(Otp),attrs=['bold'])) + "\n This OTP is valid for a single login session and should be used within 10 minutes. \n \n If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.\n \n Cannabaze POS \n Phone: +1 (209) 655-0360 \n Email: info@weedx.io \n Website: cannabaze.com \n \n Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.\n \n Best regards, \n Cannabaze POS Team"
+    email_from = EMAIL_HOST_USER
+    password = EMAIL_HOST_PASSWORD
+    email_message = MIMEMultipart()
+    email_message['From'] = from_email
+    email_message['To']=to_emails
+    email_message['Subject'] = "Your Cannabaze POS Vendor Panel Login OTP"
+    email_message.attach(MIMEText(EmailBody.format(username=user.username,otp=str(Otp)), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        user.otp = Otp
+        server.sendmail(email_from, to_emails, email_string)
+        
 
-    msg = 'Subject: {}\n\n{}'.format(Subject, Text)
-    server.sendmail(from_email, to_emails, msg)
-    user.otp = Otp
-    user.save()
-    server.quit()
+
+EmailBody1='''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+       <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Dear {username},</h4>
+
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Thank you for signing up with Cannabaze POS! We're excited to have you on board. To complete your registration, please use the following One-Time Password (OTP):</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP:<b>{otp}</b></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a limited time. Please use it to confirm your account within the next 10 minutes.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  If you did not sign up for Cannabaze POS or have any concerns about your account, please contact our support team immediately.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Cannabaze POS</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 (209) 655-0360</a></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.</h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Best regards,</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Cannabaze POS Team</h4>
+    </div>
+</body>
+</html>'''
+
+def RegisterEmailSend(to_emails='',from_email=''):
+    Otp = random.randint(1000, 9999)
+    user = User.objects.get(email=to_emails)
+    email_from = EMAIL_HOST_USER
+    password = EMAIL_HOST_PASSWORD
+    email_message = MIMEMultipart()
+    email_message['From'] = from_email
+    email_message['To']=to_emails
+    email_message['Subject'] = "Welcome to Cannabaze POS - Confirm Your Account"
+    email_message.attach(MIMEText(EmailBody1.format(username=user.username,otp=str(Otp)), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        user.otp = Otp
+        server.sendmail(email_from, to_emails, email_string)
+        
+EmailBody2='''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+       <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Dear {username},</h4>
+
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  We received a request to reset the password associated with your Cannabaze POS vendor panel account. To proceed with the password reset, please use the following One-Time Password (OTP):</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP:<b>{otp}</b></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single use and should be entered within the next 10 minutes.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  If you did not request a password reset or have any concerns about your account security, please contact our support team immediately.</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Cannabaze POS</h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 (209) 655-0360</a></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.</h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Best regards,</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Cannabaze POS Team</h4>
+    </div>
+</body>
+</html>'''
+
+def ForgetEmailSend(to_emails='',from_email=''):
+    Otp = random.randint(1000, 9999)
+    user = User.objects.get(email=to_emails)
+    email_from = EMAIL_HOST_USER
+    password = EMAIL_HOST_PASSWORD
+    email_message = MIMEMultipart()
+    email_message['From'] = from_email
+    email_message['To']=to_emails
+    email_message['Subject'] = "Reset Your Cannabaze POS Vendor Panel Password"
+    email_message.attach(MIMEText(EmailBody2.format(username=user.username,otp=str(Otp)), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        user.otp = Otp
+        server.sendmail(email_from, to_emails, email_string)
+
 
 
 class VerifyOtpLogin(APIView):
@@ -97,7 +221,7 @@ class ForgetPasswordAPI(APIView):
             serializer = ChangePasswordSerializer(data=request.data)
             if serializer.is_valid():
                 email = serializer.validated_data['email']
-                send_OneToOneMail(
+                ForgetEmailSend(
                     from_email='smtpselnox@gmail.com', to_emails=email)
                 response = {
                     'status': 'success',
@@ -236,7 +360,7 @@ class RegisterAPI(generics.GenericAPIView):
                 data = username.first()
                 old_otp = data.otp
                 if old_otp == None:
-                    send_OneToOneMail(
+                    RegisterEmailSend(
                         from_email='smtpselnox@gmail.com', to_emails=email)
                     return Response({"message": {"Otp sent to": email}},status=status.HTTP_200_OK)
                 else:

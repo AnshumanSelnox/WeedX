@@ -1,4 +1,5 @@
 #gunicorn --bind 0.0.0.0:8000 Ecommerce.wsgi
+# docker run -p 8000:8000 ecommerce:latest
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,generics, permissions
