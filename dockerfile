@@ -1,23 +1,20 @@
-# Use an official Python runtime as a parent image
+# Dockerfile
+
 FROM python:3.8
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Copy the requirements file into the container at /usr/src/app/
-COPY requirements.txt ./
+WORKDIR /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy the current directory contents into the container at /usr/src/app/
-COPY . .
+COPY . /app/
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+CMD ["gunicorn", "--config", "gunicorn_config.py", "Ecommerce.wsgi:application"]
 
-# Define environment variable
-ENV DJANGO_SETTINGS_MODULE=myproject.settings
 
-# Run app.py when the container launches
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+
+
