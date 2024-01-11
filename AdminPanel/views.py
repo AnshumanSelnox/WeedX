@@ -19,9 +19,9 @@ import random
 from UserPanel.serializer import *
 from rest_framework.permissions import BasePermission
 
-class IsCustomRolePermission(BasePermission):
-    def has_permission(self, request, view):
-            return request.user.groups.all().exists()
+# class IsCustomRolePermission(BasePermission):
+#     def has_permission(self, request, view):
+#             return request.user.groups.all().exists()
 
 
 def send_OneToOneMail(from_email='',to_emails=''):
@@ -220,7 +220,7 @@ class RegisterAPI(generics.GenericAPIView):
 
 #Category Api
 class GetCategories(APIView):
-    permission_classes = [IsAuthenticated,IsCustomRolePermission]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         try:

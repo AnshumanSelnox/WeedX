@@ -135,6 +135,7 @@ urlpatterns = [
     path('UserAlreadyExist/',UserAlreadyExist.as_view()),
     path('GetUserNotification/',GetUserNotification.as_view()),
     path('GetUserNotificationByLogin/',GetUserNotificationByLogin.as_view()),
+    path('ClearNotification/',ClearNotification.as_view()),
 
 
 ]

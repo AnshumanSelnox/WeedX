@@ -3021,3 +3021,24 @@ class GetUserNotificationByLogin(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
 
+
+
+class ClearNotification(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self, request):
+        try:
+            ClearAll=request.data.get("ClearAll",None)
+            Clear=request.data.get("Clear",None)
+            if Clear:
+                for i in Clear:
+                    a=UserNotification.objects.filter(id=i).filter(user=request.user)
+                    a.delete()
+                    return Response("Notification Clear")
+            if ClearAll:
+                a=UserNotification.objects.all()
+                a.delete()
+                return Response("All Notification Clear")
+            else:
+                return Response("No New Notification")
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -441,13 +441,13 @@
 
 
 
-import base64
-import requests
+# import base64
+# import requests
 
 
-def get_as_base64(url):
+# def get_as_base64(url):
 
-    return base64.b64encode(requests.get(url).content)
+    # return base64.b64encode(requests.get(url).content)
 
 
 # url=["https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240104T071929Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=4ac6269f37358ef4209b30f9ba1c48fbbd11774dfa7406e67ab7637a01aa0f7b"]
@@ -474,7 +474,7 @@ def get_as_base64(url):
 # insertAfterNode(self=1,previous_node=5,value=10)
 
 
-import requests
+# import requests
 
 # def download_file(url, destination):
 #     response = requests.get(url)
@@ -490,30 +490,140 @@ import requests
 # download_file(link_url, output_file)
 
 # print(f'The file has been downloaded and saved as {output_file}')
-import requests
-from PIL import Image
-from io import BytesIO
+# import requests
+# from PIL import Image
+# from io import BytesIO
 
-def link_to_image(link, output_path):
-    try:
-        # Send a GET request to the URL
-        response = requests.get(link)
-        response.raise_for_status()  # Raise an exception for bad requests
+# def link_to_image(link, output_path):
+#     try:
+#         # Send a GET request to the URL
+#         response = requests.get(link)
+#         response.raise_for_status()  # Raise an exception for bad requests
 
-        # Open the image using Pillow
-        image = Image.open(BytesIO(response.content))
+#         # Open the image using Pillow
+#         image = Image.open(BytesIO(response.content))
 
-        # Save the image to the specified output path
-        image.save(output_path)
+#         # Save the image to the specified output path
+#         image.save(output_path)
 
-        print(f"Image saved successfully at {output_path}")
+#         print(f"Image saved successfully at {output_path}")
 
-    except Exception as e:
-        print(f"Error: {e}")
+#     except Exception as e:
+#         print(f"Error: {e}")
 
-# Example usage:
-url = "https://plus.unsplash.com/premium_photo-1684993466316-81ae0b6c96ae?q=80&w=1744&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-output_file = "output_image.jpg"
+# # Example usage:
+# url = "https://plus.unsplash.com/premium_photo-1684993466316-81ae0b6c96ae?q=80&w=1744&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+# output_file = "output_image.jpg"
 
-link_to_image(url, output_file)
+# link_to_image(url, output_file)
 
+
+# Set = set([1, 2, 'Geeks', 4, 'For', 6, 'Geeks'])
+# # print("\nSet with the use of Mixed Values")
+# # print(Set)
+ 
+# # Accessing element using
+# # for loop
+# print("\nElements of set: ")
+# for i in Set:
+#     print(i, end =" ")
+# # print()
+# list1=[1,2,3]
+# for j in list1:
+#     print(j,end="")
+
+# # # Checking the element
+# # # using in keyword
+# # print("Geeks" in Set)
+
+
+
+
+# Same as {"a", "b","c"}
+# normal_set = set(["a", "b","c"])
+ 
+# print("Normal Set")
+# print(normal_set)
+ 
+# # A frozen set
+# frozen_set = frozenset(["e", "f", "g"])
+# # frozen_set.add("h")
+ 
+# print("\nFrozen Set")
+# print(frozen_set)
+
+
+# Dict = {'Name': 'Geeks', 1: [1, 2, 3, 4]}
+# print(Dict[1])
+# # # print(Dict)
+
+# import numpy as np
+
+# a = np.array([[1,2,3,4],[4,55,1,2],
+# 			[8,3,20,19],[11,2,22,21]])
+# s = np.array([[1,2,3,4],[4,55,1,2],
+# 			[8,3,20,19],[11,2,22,21]])
+# d=s*a
+# print(d)
+# m = np.reshape(a,(4, 4))
+# print(m)
+
+# Accessing element
+# print("\nAccessing Elements")
+# print(a[1])
+# print(a[2][0])
+
+# # Adding Element
+# m = np.append(m,[[1, 15,13,11]],0)
+# print("\nAdding Element")
+# print(m)
+
+# # Deleting Element
+# m = np.delete(m,[1],0)
+# print("\nDeleting Element")
+# print(m)
+
+# A simple Python program to introduce a linked list
+
+# Node class
+# class Node:
+
+# 	# Function to initialise the node object
+# 	def __init__(self, data):
+# 		self.data = data # Assign data
+# 		self.next = None # Initialize next as null
+  
+
+
+# # Linked List class contains a Node object
+# class LinkedList:
+
+# 	# Function to initialize head
+# 	def __init__(self):
+# 		self.head = None
+        
+
+
+# # Code execution starts here
+# if __name__=='__main__':
+
+# 	# Start with the empty list
+# 	llist = LinkedList()
+
+# 	llist.head = Node(1)
+# 	second = Node(2)
+# 	third = Node(3)
+    
+
+# 	llist.head.next = second; # Link first node with second
+# 	second.next = third; # Link second node with the third node
+
+import mysql
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="Anshuman",
+  password="password"
+)
+
+print(mydb) 

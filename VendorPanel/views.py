@@ -16,18 +16,21 @@ from UserPanel.serializer import *
 from .serializer import *
 from UserPanel.serializer import *
 
+from termcolor import colored
+
+
 def send_OneToOneMail(from_email='', to_emails=''):
     Otp = random.randint(1000, 9999)
     server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
     server.ehlo()
     server.starttls()
     server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
-    Subject = "Selnox"
-    Text = "Your One Time Password is " + str(Otp)
+    user = User.objects.get(email=to_emails)
+    Subject =  "Your Cannabaze POS Vendor Panel Login OTP"
+    Text = "Dear "+str(user.username)+",\n \n Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password \n \n OTP:"  + (colored(str(Otp),attrs=['bold'])) + "\n This OTP is valid for a single login session and should be used within 10 minutes. \n \n If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.\n \n Cannabaze POS \n Phone: +1 (209) 655-0360 \n Email: info@weedx.io \n Website: cannabaze.com \n \n Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.\n \n Best regards, \n Cannabaze POS Team"
 
     msg = 'Subject: {}\n\n{}'.format(Subject, Text)
     server.sendmail(from_email, to_emails, msg)
-    user = User.objects.get(email=to_emails)
     user.otp = Otp
     user.save()
     server.quit()
@@ -2122,3 +2125,85 @@ class CategoryInsight(APIView):
 #         except Exception as e:
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+
+class SalesPerformance(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            SelectTime=request.data.get("SelectTime")
+            store=request.data.get("store")
+            if SelectTime=="Today":
+                z=[]
+                TotalPrice=0
+                UnitSold=0
+                week=(datetime.now()-timedelta(days=1))
+                date=datetime.today()
+                while week <= date:
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+
+            if SelectTime=="ThisWeek":
+                z=[]
+                TotalPrice=0
+                UnitSold=0
+                week=(datetime.now()-timedelta(days=7))
+                date=datetime.today()
+                while week <= date:
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%A"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisMonth":
+                z=[]
+                TotalPrice=0
+                UnitSold=0
+                week=(datetime.now()-timedelta(days=30))
+                date=datetime.today()
+                while week <= date:
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%x"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisYear":
+                z=[]
+                TotalPrice=0
+                UnitSold=0
+                week=(datetime.now()-timedelta(days=365))
+                date=datetime.today()
+                while week <= date:
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=30)
+                return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        
