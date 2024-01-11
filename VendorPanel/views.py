@@ -52,6 +52,8 @@ EmailBody='''<!DOCTYPE html>
 def send_OneToOneMail(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
     user = User.objects.get(email=to_emails)
+    user.otp = Otp
+    user.save()
     email_from = EMAIL_HOST_USER
     password = EMAIL_HOST_PASSWORD
     email_message = MIMEMultipart()
@@ -63,7 +65,6 @@ def send_OneToOneMail(to_emails='',from_email=''):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
-        user.otp = Otp
         server.sendmail(email_from, to_emails, email_string)
         
 
@@ -99,6 +100,8 @@ EmailBody1='''<!DOCTYPE html>
 def RegisterEmailSend(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
     user = User.objects.get(email=to_emails)
+    user.otp = Otp
+    user.save()
     email_from = EMAIL_HOST_USER
     password = EMAIL_HOST_PASSWORD
     email_message = MIMEMultipart()
@@ -110,7 +113,6 @@ def RegisterEmailSend(to_emails='',from_email=''):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
-        user.otp = Otp
         server.sendmail(email_from, to_emails, email_string)
         
 EmailBody2='''<!DOCTYPE html>
@@ -144,6 +146,8 @@ EmailBody2='''<!DOCTYPE html>
 def ForgetEmailSend(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
     user = User.objects.get(email=to_emails)
+    user.otp = Otp
+    user.save()
     email_from = EMAIL_HOST_USER
     password = EMAIL_HOST_PASSWORD
     email_message = MIMEMultipart()
@@ -155,7 +159,6 @@ def ForgetEmailSend(to_emails='',from_email=''):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
-        user.otp = Otp
         server.sendmail(email_from, to_emails, email_string)
 
 
