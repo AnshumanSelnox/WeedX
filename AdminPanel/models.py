@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Group
 from django.db import models
 from .choices import *
 from ckeditor.fields import RichTextField
@@ -6,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from AdminPanel.choices import *
 
-class CustomRole(Group):
+class CustomRole(models.Model):
     RoleTitle=models.CharField(max_length=100,default=None)
     Description=models.CharField(max_length=1000,default=None)
     AddStore=models.BooleanField(default=False)
@@ -128,8 +127,9 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
-    # created = models.DateField(auto_now_add=True,null=True)
-    groups=models.ManyToManyField(CustomRole)
+    Roles=models.ManyToManyField(CustomRole)
+
+        
     
 
     EMAIL_FIELD = "email"

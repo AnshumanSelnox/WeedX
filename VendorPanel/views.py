@@ -2262,11 +2262,11 @@ class SalesPerformance(APIView):
             store=request.data.get("store")
             if SelectTime=="Today":
                 z=[]
-                TotalPrice=0
-                UnitSold=0
                 week=(datetime.now()-timedelta(days=1))
                 date=datetime.today()
                 while week <= date:
+                    TotalPrice=0
+                    UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                     
                     for i in order:
@@ -2280,11 +2280,11 @@ class SalesPerformance(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                TotalPrice=0
-                UnitSold=0
                 week=(datetime.now()-timedelta(days=7))
                 date=datetime.today()
                 while week <= date:
+                    TotalPrice=0
+                    UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                     
                     for i in order:
@@ -2297,13 +2297,12 @@ class SalesPerformance(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                TotalPrice=0
-                UnitSold=0
                 week=(datetime.now()-timedelta(days=30))
                 date=datetime.today()
                 while week <= date:
+                    UnitSold=0
+                    TotalPrice=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
-                    
                     for i in order:
                         TotalPrice += i.subtotal
                         for j in i.Product:
@@ -2314,11 +2313,11 @@ class SalesPerformance(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                TotalPrice=0
-                UnitSold=0
                 week=(datetime.now()-timedelta(days=365))
                 date=datetime.today()
                 while week <= date:
+                    UnitSold=0
+                    TotalPrice=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                     
                     for i in order:
@@ -2334,3 +2333,136 @@ class SalesPerformance(APIView):
         
         
         
+class SalesByProductGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            SelectTime=request.data.get("SelectTime")
+            store=request.data.get("store")
+            if SelectTime=="Today":
+                z=[]
+                week=(datetime.now()-timedelta(days=1))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+
+            if SelectTime=="ThisWeek":
+                z=[]
+                week=(datetime.now()-timedelta(days=7))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%A"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisMonth":
+                z=[]
+                week=(datetime.now()-timedelta(days=30))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%x"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisYear":
+                z=[]
+                week=(datetime.now()-timedelta(days=365))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=30)
+                return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class SalesByOrderGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            SelectTime=request.data.get("SelectTime")
+            store=request.data.get("store")
+            if SelectTime=="Today":
+                z=[]
+                week=(datetime.now()-timedelta(days=1))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+
+            if SelectTime=="ThisWeek":
+                z=[]
+                week=(datetime.now()-timedelta(days=7))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%A"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisMonth":
+                z=[]
+                week=(datetime.now()-timedelta(days=30))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%x"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisYear":
+                z=[]
+                week=(datetime.now()-timedelta(days=365))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold}
+                    z.append(result)
+                    week=week + timedelta(days=30)
+                return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

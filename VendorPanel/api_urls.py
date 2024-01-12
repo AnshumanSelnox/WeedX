@@ -95,6 +95,10 @@ urlpatterns = [
     path("OrderInsight/",OrderInsight.as_view()),
     path("CategoryInsight/",CategoryInsight.as_view()),
     path("SalesPerformance/",SalesPerformance.as_view()),
+    path("SalesByProductGraph/",SalesByProductGraph.as_view()),
+    path("SalesByOrderGraph/",SalesByOrderGraph.as_view()),
+    
 
 ]
+
 
