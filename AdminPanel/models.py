@@ -68,6 +68,7 @@ class CustomRole(models.Model):
     ViewStaff=models.BooleanField(default=False)
     EditStaff=models.BooleanField(default=False)
     DeleteStaff=models.BooleanField(default=False)
+    # created_at=models.DateTimeField(auto_now_add=True)
     
 
 class UserManager(BaseUserManager):
@@ -106,7 +107,7 @@ class User(AbstractBaseUser):
     username= models.CharField(max_length=100,blank=True,null=True,unique=True)
     email = models.EmailField(unique=True)
     MobilePhone=models.CharField(max_length=20,null=True)
-    password=models.CharField(max_length=50)
+    password=models.CharField(max_length=1000)
     DeliveryAddress=models.CharField(max_length=5000,null=True)
     MedicalCardNumber=models.CharField(max_length=50,null=True)
     MedicalCardExpire=models.DateField(null=True)
@@ -221,13 +222,13 @@ class Stores(models.Model):
     Store_Name=models.CharField(max_length=100,null=True)
     Legal_Store_Name=models.CharField(max_length=1000,null=True)
     Store_Address=models.CharField(max_length=1000,null=True)
-    Store_Type=models.CharField(max_length=50,choices=StoreType,default=None,null=True)
+    Store_Type=models.CharField(max_length=150,choices=StoreType,default=None,null=True)
     Stores_Description=RichTextField(default=None,blank=True,null=True)
     Store_Image=models.ImageField(upload_to='media/Brand',default=None,blank=True,null=True)
     Stores_Website=models.URLField(max_length=200,blank=True,default=None,null=True)
-    Stores_MobileNo=models.CharField(max_length=15,unique=True)
+    Stores_MobileNo=models.CharField(max_length=20,unique=True)
     LicenceNo=models.CharField(max_length=50,default=None,unique=True,blank=True,null=True)
-    License_Type=models.CharField(max_length=23,default="None",choices=LicenseType,null=True)
+    License_Type=models.CharField(max_length=230,default="None",choices=LicenseType,null=True)
     Expiration=models.CharField(max_length=100,default=None,blank=True,null=True)
     Licence_Doc = models.FileField(upload_to="media/LicenceDocument",null= True,blank=True)
     Status=models.CharField(max_length=20,default="Hide",choices=Status)
@@ -425,6 +426,7 @@ class ProductImage(models.Model):
 class HomePageBanner(models.Model):
     Banner=models.ImageField(upload_to='media/Banner')
     mobile=models.ImageField(upload_to='media/MobileBanner')
+    status=models.CharField(max_length=999,choices=Status,default="Active")
 
 
 
@@ -515,6 +517,7 @@ class PromotionalBanners(models.Model):
     Title=models.CharField(max_length=999,default="",null=True)
     Link=models.URLField(null=True)
     mobile=models.ImageField(upload_to='media/MobilePromotionalBanner')
+    status=models.CharField(max_length=999,choices=Status,default="Active")
 
 
 
@@ -546,11 +549,6 @@ class BookTheDemo(models.Model):
     Address=models.CharField(max_length=500,default=None)
     SelectLicenseType=models.CharField(max_length=1000,choices=LicenseType)
     Company=models.CharField(max_length=1000,default=None)
-
-# class RolesandPermissions(models.Model):    
-#     Title=models.CharField(max_length=100,default=None)
-#     Description=models.CharField(max_length=1000,default=None)
-    
 
 
     

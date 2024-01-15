@@ -24,7 +24,7 @@ class AddtoCart(models.Model):
 
 
 class Order(models.Model):
-    DeliveryTime=models.CharField(max_length=20)
+    DeliveryTime=models.CharField(max_length=200)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     OrderId=models.AutoField(primary_key=True)
     IdCard=models.ImageField(upload_to='media/IdCard')
@@ -34,7 +34,7 @@ class Order(models.Model):
     MobileNo=models.CharField(max_length=50)
     MedicalMarijuanaNumber=models.CharField(max_length=20)
     Order_Status=models.CharField(choices=OrderStatus,max_length=100,default="Pending")
-    subtotal = models.DecimalField(max_digits=5000, decimal_places=2, default=0.00)
+    subtotal = models.FloatField(  default=0.00)
     Address=models.CharField(max_length=5000,null=True,blank=True)
     Store=models.ForeignKey(Stores,on_delete=models.CASCADE)
     Product=models.JSONField(null=True)
@@ -119,18 +119,18 @@ class UserProfileOrderDetails(models.Model):
     DateOfBirth=models.CharField(max_length=500)
     MobileNo=models.CharField(max_length=50)
     MedicalMarijuanaNumber=models.CharField(max_length=20)
-    email=models.EmailField()
+    Email=models.EmailField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     
     
 class SiteMap(models.Model):
     Xml=models.JSONField()
 
-# class ReplyonStoreReview(models.Model):
-#     Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
-#     reply=models.TextField()
-#     user=models.ForeignKey(User,on_delete=models.CASCADE)
-#     helpfull=models.JSONField(default=list,null=True)
+class ReplyonStoreReview(models.Model):
+    Review=models.ForeignKey(StoreReview,on_delete=models.CASCADE)
+    reply=models.TextField()
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    helpfull=models.JSONField(default=list,null=True)
     
 # class HelpfullStoreReview(models.Model):
 #     Review=models.ManyToManyField(StoreReview)

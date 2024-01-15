@@ -1727,11 +1727,11 @@ class SalesInsights(APIView):
                 response={"Date":z.strftime("%x"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
                 a.append(response)
             if selectTime=="ThisWeek":
-                add=0
-                productsold=0
                 weekStart=(datetime.now()-timedelta(days=7))
                 z=datetime.today()
                 while weekStart <= z:
+                    add=0
+                    productsold=0
                     TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
                     order=TodaySales.count()
                     for i in TodaySales:
@@ -1743,11 +1743,11 @@ class SalesInsights(APIView):
                     a.append(response)
                     weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisMonth":
-                add=0
-                productsold=0
                 weekStart=(datetime.now()-timedelta(days=30))
                 z=datetime.today()
                 while weekStart <= z:
+                    add=0
+                    productsold=0
                     TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
                     order=TodaySales.count()
                     for i in TodaySales:
@@ -1759,11 +1759,11 @@ class SalesInsights(APIView):
                     a.append(response)
                     weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisYear":
-                add=0
-                productsold=0
                 weekStart=(datetime.now()-timedelta(days=365))
                 z=datetime.today()
                 while weekStart <= z:
+                    add=0
+                    productsold=0
                     TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
                     order=TodaySales.count()
                     for i in TodaySales:
@@ -2464,5 +2464,358 @@ class SalesByOrderGraph(APIView):
                     z.append(result)
                     week=week + timedelta(days=30)
                 return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class SalesGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            SelectTime=request.data.get("SelectTime")
+            store=request.data.get("store")
+            if SelectTime=="Today":
+                z=[]
+                week=(datetime.now()-timedelta(days=1))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store).filter(Order_Status="Delivered")
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+
+            if SelectTime=="ThisWeek":
+                z=[]
+                week=(datetime.now()-timedelta(days=7))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store).filter(Order_Status="Delivered")
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                            
+                    result = {"Date":week.strftime("%A"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisMonth":
+                z=[]
+                week=(datetime.now()-timedelta(days=30))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store).filter(Order_Status="Delivered")
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%x"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisYear":
+                z=[]
+                week=(datetime.now()-timedelta(days=365))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store).filter(Order_Status="Delivered")
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=30)
+                return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        
+class OrderGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            SelectTime=request.data.get("SelectTime")
+            store=request.data.get("store")
+            if SelectTime=="Today":
+                z=[]
+                week=(datetime.now()-timedelta(days=1))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+
+            if SelectTime=="ThisWeek":
+                z=[]
+                week=(datetime.now()-timedelta(days=7))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                            
+                    result = {"Date":week.strftime("%A"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisMonth":
+                z=[]
+                week=(datetime.now()-timedelta(days=30))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%x"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=1)
+                return Response(z)
+            if SelectTime=="ThisYear":
+                z=[]
+                week=(datetime.now()-timedelta(days=365))
+                date=datetime.today()
+                while week <= date:
+                    UnitSold=0
+                    DeliverSale=0
+                    StoreSale=0
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    for i in order:
+                        if i.Order_Type == "Delivery":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                DeliverSale += j["Cart_Quantity"]
+                        elif i.Order_Type == "Pickup":
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                                StoreSale += j["Cart_Quantity"]
+                    result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
+                    z.append(result)
+                    week=week + timedelta(days=30)
+                return Response(z)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        
+class SalesByCategoryGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            selectTime=request.data.get("selectTime")
+            store=request.data.get("store")
+            if selectTime=="Today":
+                date=datetime.now()
+                week=datetime.now()-timedelta(days=1)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    if order.Order_Type == "Delivery":
+                        for product in order.Product:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,  
+                                "Amount": product["TotalPrice"]  
+                            })
+                    elif order.Order_Type == "Delivery":
+                        for product in order.Product:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,  
+                                "Amount": product["TotalPrice"]  
+                            })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisWeek":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisMonth":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered" ).filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
+            if selectTime=="ThisYear":
+                date=datetime.now() 
+                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
+                category_stats = []
+                for order in Delivered:
+                    for product in order.Product:
+                        category_stats.append({
+                            "category": product["category"],
+                            "Item": product["Cart_Quantity"],
+                            "Order": 1,  
+                            "Amount": product["TotalPrice"]  
+                        })
+                for order in TotalOrder:
+                    for product in order.Product:
+                        found = False
+                        for stat in category_stats:
+                            if stat["category"] == product["category"]:
+                                stat["Item"] += product["Cart_Quantity"]
+                                stat["Order"] += 1
+                                stat["Amount"] += product["TotalPrice"] 
+                                found = True
+                                break
+                        if not found:
+                            category_stats.append({
+                                "category": product["category"],
+                                "Item": product["Cart_Quantity"],
+                                "Order": 1,
+                                "Amount": product["TotalPrice"]  
+                            })
+
+                return Response(category_stats)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

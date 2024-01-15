@@ -3044,3 +3044,13 @@ class ClearNotification(APIView):
                 return Response("No New Notification")
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class GetStaticImages(APIView):
+    def get(self, request, format=None):
+        try:
+            User = StaticImages.objects.select_related().all()
+            serialize = Serializer_StaticImages(User, many=True)
+            return Response({"data":serialize.data},status=200)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)

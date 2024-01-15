@@ -97,6 +97,8 @@ urlpatterns = [
     path("SalesPerformance/",SalesPerformance.as_view()),
     path("SalesByProductGraph/",SalesByProductGraph.as_view()),
     path("SalesByOrderGraph/",SalesByOrderGraph.as_view()),
+    path("SalesGraph/",SalesGraph.as_view()),
+    path("OrderGraph/",OrderGraph.as_view()),
     
 
 ]
