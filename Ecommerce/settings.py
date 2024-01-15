@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'DeliveryBoy',
     'rest_framework_simplejwt',
-    'knox',
+
     
 ]
 

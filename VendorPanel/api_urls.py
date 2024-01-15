@@ -99,6 +99,7 @@ urlpatterns = [
     path("SalesByOrderGraph/",SalesByOrderGraph.as_view()),
     path("SalesGraph/",SalesGraph.as_view()),
     path("OrderGraph/",OrderGraph.as_view()),
+    path("SalesByCategoryGraph/",SalesByCategoryGraph.as_view()),
     
 
 ]
