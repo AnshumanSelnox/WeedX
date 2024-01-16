@@ -458,7 +458,6 @@ class GetProduct(APIView):
         try:
             User = Product.objects.filter(created_by=request.user) #created_by=self.request.user)
             serialize = Serializer_Product(User, many=True)
-            
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -2443,10 +2442,10 @@ class SalesByOrderGraph(APIView):
                     UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
                     for i in order:
-                        TotalPrice += i.subtotal
+                        # TotalPrice += i.subtotal
                         for j in i.Product:
                             UnitSold += j["Cart_Quantity"]
-                    result = {"Date":week.strftime("%x"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    result = {"Date":week.strftime("%x"),"UnitSold":UnitSold}
                     z.append(result)
                     week=week + timedelta(days=1)
                 return Response(z)

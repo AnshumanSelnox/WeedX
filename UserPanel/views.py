@@ -30,7 +30,6 @@ class Login(APIView):
             if serializer.is_valid():
                 user = User.objects.filter(email=email).first()
                 if user.user_type=="Customer":
-               
                     if user is not None :
                         tokens = create_jwt_pair_for_user(user)
                         response = {"message": "Login Successfull", "tokens": tokens}
