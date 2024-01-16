@@ -627,8 +627,126 @@
 # )
 
 # print(mydb) 
-import smtplib,random,json
-Otp = random.randint(1000, 9999)
-asd='\033[1m' + str(Otp) + '\033[0m'
-Text = "Dear "+",\n \n Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password \n \n OTP:"+asd+"\n This OTP is valid for a single login session and should be used within 10 minutes. \n \n If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.\n \n Cannabaze POS \n Phone: +1 (209) 655-0360 \n Email: info@weedx.io \n Website: cannabaze.com \n \n Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.\n \n Best regards, \n Cannabaze POS Team"
-print(Text)
+# import smtplib,random,json
+# Otp = random.randint(1000, 9999)
+# asd='\033[1m' + str(Otp) + '\033[0m'
+# Text = "Dear "+",\n \n Thank you for choosing Cannabaze POS! To access your vendor panel, please use the following One-Time Password \n \n OTP:"+asd+"\n This OTP is valid for a single login session and should be used within 10 minutes. \n \n If you did not request this OTP or have any concerns about your account security, please contact our support team immediately.\n \n Cannabaze POS \n Phone: +1 (209) 655-0360 \n Email: info@weedx.io \n Website: cannabaze.com \n \n Note: Do not share your OTP with anyone. Cannabaze POS will never ask you for your OTP through email or any other means.\n \n Best regards, \n Cannabaze POS Team"
+# print(Text)
+
+
+# def linearSearch(array, n, x):
+
+#     # Going through array sequencially
+#     for i in range(0, n):
+#         if (array[i] == x):
+#             return i
+#     return -1
+
+
+# array = [2, 4, 0, 1, 9]
+# x = input("enter")
+# n = len(array)
+# result = linearSearch(array, n, int(x))
+# if(result == -1):
+#     print("Element not found")
+# else:
+#     print("Element found at index: ", result)
+
+# create an empty list
+# l1 = []
+# n = int(input("enter number of elements required: "))
+# # creating a list using loop
+# for i in range(0, n):
+# 	element = int(input())
+# 	# appending elements to the list
+# 	l1.append(element)
+# print("Original List:", l1)
+
+# # sorting in decending
+# for i in range(0, len(l1)):
+#     for j in range(i+1, len(l1)):
+#         if l1[i] <= l1[j]:
+#             l1[i], l1[j] = l1[j], l1[i]
+        
+# # sorted list
+# print("Sorted List", l1)
+
+
+# Python program to flatten a nested list
+
+# explicit function to flatten a
+# nested list
+# def flattenList(nestedList):
+
+# 	# check if list is empty
+# 	if not(bool(nestedList)):
+# 		return nestedList
+
+# 	# to check instance of list is empty or not
+# 	if isinstance(nestedList[0], list):
+
+# 		# call function with sublist as argument
+# 		return flattenList(*nestedList[:1]) + flattenList(nestedList[1:])
+
+# 	# call function with sublist as argument
+# 	return nestedList[:1] + flattenList(nestedList[1:])
+
+
+# # Driver Code
+# nestedList = [[8, 9], [10, 11, 'geeks'], [13]]
+# print('Nested List:\n', nestedList)
+
+# print("Flattened List:\n", flattenList(nestedList))
+
+
+# iter_list = iter(['Geeks', 'For', 'Geeks']) 
+# print(next(iter_list)) 
+# print(next(iter_list)) 
+# print(next(iter_list)) 
+
+# def sq_numbers(n): 
+# 	for i in range(1, n+1): 
+# 		yield i*i 
+
+
+# a = sq_numbers(3) 
+
+# print("The square of numbers 1,2,3 are : ") 
+# print(next(a)) 
+# print(next(a)) 
+# print(next(a)) 
+# print(next(a)) 
+# print(next(a)) 
+
+# Python code to demonstrate
+# to flatten list of dictionaries
+
+# Initialising dictionary
+# ini_dict = [{'a':1}, {'b':2}, {'c':3}]
+
+# # printing initial dictionary
+# print ("initial dictionary", str(ini_dict))
+
+# # code to flatten list of dictionary
+# res = {}
+# for d in ini_dict:
+# 	res.update(d)
+	
+# # printing result
+# print ("result", str(res))
+# Python code to demonstrate
+# to flatten list of dictionaries
+
+# Initialising dictionary
+# ini_dict = [{'a':1}, {'b':2}, {'c':3}]
+
+# # printing initial dictionary
+# print ("initial dictionary", str(ini_dict))
+
+# # code to flatten list of dictionary
+# res = {k: v for d in ini_dict for k, v in d.items()}
+	
+# # printing result
+# print ("result", str(res))
+
+

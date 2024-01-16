@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 #             "NAME": BASE_DIR / "db.sqlite3",
             
 #         }
-#     }
+#     },
 
 DATABASES = {
 "default": {
