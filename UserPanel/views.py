@@ -302,7 +302,7 @@ class GetAllProduct(APIView):
             State=request.data.get("State")
             City=request.data.get("City")
             if City or State or Country:
-                User = Product.objects.filter(Status="Active").filter(Store_id__City=City).order_by('-created_by')
+                User = Product.objects.filter(Status="Active").filter(Store_id__City=City).order_by('-created_by') #.using("Product")
                 serialize = Serializer_Product(User, many=True)
                 if len(User)==0:
                     User1 = Product.objects.filter(Status="Active").filter(Store_id__State=State).order_by('-created_by')
@@ -1637,7 +1637,7 @@ class DeliveryAddress(APIView):
 class GetPromotionalBanners(APIView):
     def get(self, request, format=None):
         try:
-            User =PromotionalBanners.objects.select_related().all()
+            User =PromotionalBanners.objects.select_related().all().using("Product")
             serialize = Serializer_PromotionalBanners(User, many=True)
             
             return Response(serialize.data)

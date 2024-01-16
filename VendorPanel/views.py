@@ -792,7 +792,7 @@ class ActiveCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         try:
-            User=Category.objects.filter(Status="Active")
+            User=Category.objects.filter(Status="Active").using("Product")
             serializer = Serializer_Category(User,many=True)
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
