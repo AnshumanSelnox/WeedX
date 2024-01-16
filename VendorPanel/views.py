@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, permissions
-
 from rest_framework.permissions import IsAuthenticated
 from AdminPanel.tokens import create_jwt_pair_for_user
 from rest_framework import status
@@ -1894,6 +1893,7 @@ class ProductInsight(APIView):
             y=[]
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if selectTime=="Today":
                 User = Order.objects.filter(Store=store).filter(OrderDate=datetime.today())
                 top=User.filter(Order_Status="Delivered")
@@ -1911,7 +1911,7 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if selectTime=="ThisWeek":
-                weekStart=(datetime.now()-timedelta(days=7)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1928,7 +1928,7 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if selectTime=="ThisMonth":
-                weekStart=(datetime.now()-timedelta(days=30)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1945,7 +1945,7 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if selectTime=="ThisYear":
-                weekStart=(datetime.now()-timedelta(days=365)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1973,17 +1973,18 @@ class OrderInsight(APIView):
         try:
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if selectTime=="Today":
                 z=datetime.today().date()
                 TodaySales=Order.objects.filter(OrderDate=datetime.today()).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
             if selectTime=="ThisWeek":
-                weekStart=(datetime.now()-timedelta(days=7))
+                weekStart=(datetime.now()-timedelta(days=startdate))
                 z=datetime.today()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
             if selectTime=="ThisMonth":
-                weekStart=(datetime.now()-timedelta(days=30))
+                weekStart=(datetime.now()-timedelta(days=startdate))
                 z=datetime.today()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lte=z).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
