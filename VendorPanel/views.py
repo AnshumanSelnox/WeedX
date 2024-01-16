@@ -317,12 +317,19 @@ class LoginAPI(APIView):
                     serializer = LoginSerializer(data=request.data)
                     if serializer.is_valid():
                         email = serializer.validated_data['email']
-                        send_OneToOneMail(
-                            from_email='smtpselnox@gmail.com', to_emails=email)
-                        return Response({
-                            'message': 'Email sent',
-                            'data': {"Otp_Sent_to": email}
-                        },status=status.HTTP_200_OK)
+                        user=User.objects.get(email=email)
+                        if user:
+                            if user.user_type=="Vendor":
+                                send_OneToOneMail(
+                                    from_email='smtpselnox@gmail.com', to_emails=email)
+                                return Response({
+                                    'message': 'Email sent',
+                                    'data': {"Otp_Sent_to": email}
+                                },status=status.HTTP_200_OK)
+                            else:
+                                return Response({"error": "Not Vendor"}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            return Response({"error":"Vendor Not Register"},status=status.HTTP_400_BAD_REQUEST)
                     else:
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
@@ -471,11 +478,9 @@ class AddProduct(APIView):
             print(serializer)
             if serializer.is_valid():
                 serializer.save(created_by=request.user)
-               # data=json.dumps(serializer.data)
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
-                                           
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -2405,9 +2410,10 @@ class SalesByOrderGraph(APIView):
         try:
             SelectTime=request.data.get("SelectTime")
             store=request.data.get("store")
+            StartDate=request.data.get("StartDate")
             if SelectTime=="Today":
                 z=[]
-                week=(datetime.now()-timedelta(days=1))
+                week=(datetime.now()-timedelta(days=StartDate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2422,7 +2428,7 @@ class SalesByOrderGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=(datetime.now()-timedelta(days=7))
+                week=(datetime.now()-timedelta(days=StartDate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2436,13 +2442,12 @@ class SalesByOrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=(datetime.now()-timedelta(days=30))
+                week=(datetime.now()-timedelta(days=StartDate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
                     for i in order:
-                        # TotalPrice += i.subtotal
                         for j in i.Product:
                             UnitSold += j["Cart_Quantity"]
                     result = {"Date":week.strftime("%x"),"UnitSold":UnitSold}
@@ -2451,7 +2456,7 @@ class SalesByOrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                week=(datetime.now()-timedelta(days=365))
+                week=(datetime.now()-timedelta(days=StartDate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
