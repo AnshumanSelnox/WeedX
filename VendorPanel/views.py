@@ -1533,9 +1533,10 @@ class SalesPerformancePieChart(APIView):
             ThisMonth=request.data.get("ThisMonth",None)
             ThisYear=request.data.get("ThisYear",None)
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if Today:
                 date=datetime.now()
-                week=datetime.now()-timedelta(days=1)
+                week=datetime.now()-timedelta(days=startdate)
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store) 
                 result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0}
                 for i in order:
@@ -1549,7 +1550,7 @@ class SalesPerformancePieChart(APIView):
 
             if ThisWeek:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Pending").filter(Store_id=store)
                 result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0}
                 for i in order:
@@ -1561,8 +1562,8 @@ class SalesPerformancePieChart(APIView):
                         result["Curbsibe"] += i.subtotal
                 return Response(result)
             if ThisMonth:
-                date=datetime.now() 
-                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                date=datetime.now()
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Pending" ).filter(Store_id=store)
                 result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0}
                 for i in order:
@@ -1575,7 +1576,7 @@ class SalesPerformancePieChart(APIView):
                 return Response(result)
             if ThisYear:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                 result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0}
                 for i in order:
@@ -1601,9 +1602,10 @@ class RecentOrderPieChart(APIView):
             ThisMonth=request.data.get("ThisMonth",None)
             ThisYear=request.data.get("ThisYear",None)
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if Today:
                 date=datetime.now()
-                week=datetime.now()-timedelta(days=1)
+                week=datetime.now()-timedelta(days=startdate)
                 Pending=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Pending").filter(Store_id=store).count()
                 Processing=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Processing").filter(Store_id=store).count()
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store).count()
@@ -1612,7 +1614,7 @@ class RecentOrderPieChart(APIView):
                 return Response(response)
             if ThisWeek:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Pending=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Pending").filter(Store_id=store).count()
                 Processing=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Processing").filter(Store_id=store).count()
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store).count()
@@ -1621,7 +1623,7 @@ class RecentOrderPieChart(APIView):
                 return Response(response)
             if ThisMonth:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Pending=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Pending" ).filter(Store_id=store).count()
                 Processing=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Processing").filter(Store_id=store).count()
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store).count()
@@ -1629,8 +1631,8 @@ class RecentOrderPieChart(APIView):
                 response={"Pending":Pending,"Processing":Processing,"Delivered":Delivered,"Cancel":Cancel}
                 return Response(response)
             if ThisYear:
-                date=datetime.now() 
-                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                date=datetime.now()
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Pending=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Pending").filter(Store_id=store).count()
                 Processing=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Processing").filter(Store_id=store).count()
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store).count()
@@ -1651,9 +1653,10 @@ class SalesByCategoryPieChart(APIView):
             ThisMonth=request.data.get("ThisMonth",None)
             ThisYear=request.data.get("ThisYear",None)
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if Today:
                 date=datetime.now()
-                week=datetime.now()-timedelta(days=1)
+                week=datetime.now()-timedelta(days=startdate)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 for i in Delivered:
                     for j in i.Product:
@@ -1662,7 +1665,7 @@ class SalesByCategoryPieChart(APIView):
                 return Response(response)
             if ThisWeek:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 for i in Delivered:
                     for j in i.Product:
@@ -1671,7 +1674,7 @@ class SalesByCategoryPieChart(APIView):
                 return Response(response)
             if ThisMonth:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered" ).filter(Store_id=store)
                 for i in Delivered:
                     for j in i.Product:
@@ -1680,7 +1683,7 @@ class SalesByCategoryPieChart(APIView):
                 return Response(response)
             if ThisYear:
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                 for i in Delivered:
                     for j in i.Product:
@@ -1717,6 +1720,7 @@ class SalesInsights(APIView):
             a=[]
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if selectTime=="Today":
                 add=0
                 productsold=0
@@ -1731,7 +1735,7 @@ class SalesInsights(APIView):
                 response={"Date":z.strftime("%x"),"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
                 a.append(response)
             if selectTime=="ThisWeek":
-                weekStart=(datetime.now()-timedelta(days=7))
+                weekStart=(datetime.now()-timedelta(days=startdate))
                 z=datetime.today()
                 while weekStart <= z:
                     add=0
@@ -1747,7 +1751,7 @@ class SalesInsights(APIView):
                     a.append(response)
                     weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisMonth":
-                weekStart=(datetime.now()-timedelta(days=30))
+                weekStart=(datetime.now()-timedelta(days=startdate))
                 z=datetime.today()
                 while weekStart <= z:
                     add=0
@@ -1763,7 +1767,7 @@ class SalesInsights(APIView):
                     a.append(response)
                     weekStart=weekStart + timedelta(days=1)
             if selectTime=="ThisYear":
-                weekStart=(datetime.now()-timedelta(days=365))
+                weekStart=(datetime.now()-timedelta(days=startdate))
                 z=datetime.today()
                 while weekStart <= z:
                     add=0
@@ -1790,6 +1794,7 @@ class SalesOverviewcard(APIView):
             a=[]
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if selectTime=="Today":
                 add=0
                 productsold=0
@@ -1808,7 +1813,7 @@ class SalesOverviewcard(APIView):
             if selectTime=="ThisWeek":
                 add=0
                 productsold=0
-                weekStart=(datetime.now()-timedelta(days=7)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
                 for i in TodaySales:
@@ -1824,7 +1829,7 @@ class SalesOverviewcard(APIView):
             if selectTime=="ThisMonth":
                 add=0
                 productsold=0
-                weekStart=(datetime.now()-timedelta(days=30)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
                 for i in TodaySales:
@@ -1840,7 +1845,7 @@ class SalesOverviewcard(APIView):
             if selectTime=="ThisYear":
                 add=0
                 productsold=0
-                weekStart=(datetime.now()-timedelta(days=365)).date()
+                weekStart=(datetime.now()-timedelta(days=startdate)).date()
                 TodaySales=Order.objects.filter(OrderDate__gte=weekStart,OrderDate__lt=datetime.today()).filter(Store=store)
                 order=TodaySales.count()
                 for i in TodaySales:
@@ -1998,9 +2003,10 @@ class CategoryInsight(APIView):
         try:
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if selectTime=="Today":
                 date=datetime.now()
-                week=datetime.now()-timedelta(days=1)
+                week=datetime.now()-timedelta(days=startdate)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2033,7 +2039,7 @@ class CategoryInsight(APIView):
                 return Response(category_stats)
             if selectTime=="ThisWeek":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2066,7 +2072,7 @@ class CategoryInsight(APIView):
                 return Response(category_stats)
             if selectTime=="ThisMonth":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered" ).filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2099,7 +2105,7 @@ class CategoryInsight(APIView):
                 return Response(category_stats)
             if selectTime=="ThisYear":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2264,9 +2270,10 @@ class SalesPerformance(APIView):
         try:
             SelectTime=request.data.get("SelectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if SelectTime=="Today":
                 z=[]
-                week=(datetime.now()-timedelta(days=1))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     TotalPrice=0
@@ -2284,7 +2291,7 @@ class SalesPerformance(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=(datetime.now()-timedelta(days=7))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     TotalPrice=0
@@ -2301,7 +2308,7 @@ class SalesPerformance(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=(datetime.now()-timedelta(days=30))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2317,12 +2324,12 @@ class SalesPerformance(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                week=(datetime.now()-timedelta(days=365))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
                     TotalPrice=0
-                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                     
                     for i in order:
                         TotalPrice += i.subtotal
@@ -2343,9 +2350,10 @@ class SalesByProductGraph(APIView):
         try:
             SelectTime=request.data.get("SelectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if SelectTime=="Today":
                 z=[]
-                week=(datetime.now()-timedelta(days=1))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2360,7 +2368,7 @@ class SalesByProductGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=(datetime.now()-timedelta(days=7))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2374,7 +2382,7 @@ class SalesByProductGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=(datetime.now()-timedelta(days=30))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2388,7 +2396,7 @@ class SalesByProductGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                week=(datetime.now()-timedelta(days=365))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2478,9 +2486,10 @@ class SalesGraph(APIView):
         try:
             SelectTime=request.data.get("SelectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate",None)
             if SelectTime=="Today":
                 z=[]
-                week=(datetime.now()-timedelta(days=1))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2503,7 +2512,7 @@ class SalesGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=(datetime.now()-timedelta(days=7))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2526,7 +2535,7 @@ class SalesGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=(datetime.now()-timedelta(days=30))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2548,7 +2557,7 @@ class SalesGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                week=(datetime.now()-timedelta(days=365))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2579,15 +2588,16 @@ class OrderGraph(APIView):
         try:
             SelectTime=request.data.get("SelectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate")
             if SelectTime=="Today":
                 z=[]
-                week=(datetime.now()-timedelta(days=1))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
                     DeliverSale=0
                     StoreSale=0
-                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                     for i in order:
                         if i.Order_Type == "Delivery":
                             for j in i.Product:
@@ -2604,13 +2614,13 @@ class OrderGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=(datetime.now()-timedelta(days=7))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
                     DeliverSale=0
                     StoreSale=0
-                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                     for i in order:
                         if i.Order_Type == "Delivery":
                             for j in i.Product:
@@ -2627,13 +2637,13 @@ class OrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=(datetime.now()-timedelta(days=30))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
                     DeliverSale=0
                     StoreSale=0
-                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Store_id=store)
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                     for i in order:
                         if i.Order_Type == "Delivery":
                             for j in i.Product:
@@ -2649,7 +2659,7 @@ class OrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                week=(datetime.now()-timedelta(days=365))
+                week=(datetime.now()-timedelta(days=startdate))
                 date=datetime.today()
                 while week <= date:
                     UnitSold=0
@@ -2680,9 +2690,10 @@ class SalesByCategoryGraph(APIView):
         try:
             selectTime=request.data.get("selectTime")
             store=request.data.get("store")
+            startdate = request.data.get("StartDate")
             if selectTime=="Today":
                 date=datetime.now()
-                week=datetime.now()-timedelta(days=1)
+                week=datetime.now()-timedelta(days=startdate)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2724,7 +2735,7 @@ class SalesByCategoryGraph(APIView):
                 return Response(category_stats)
             if selectTime=="ThisWeek":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=7-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2757,7 +2768,7 @@ class SalesByCategoryGraph(APIView):
                 return Response(category_stats)
             if selectTime=="ThisMonth":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=30-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered" ).filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
@@ -2790,7 +2801,7 @@ class SalesByCategoryGraph(APIView):
                 return Response(category_stats)
             if selectTime=="ThisYear":
                 date=datetime.now() 
-                week=datetime.now()-timedelta(days=365-datetime.today().day)
+                week=datetime.now()-timedelta(days=startdate-datetime.today().day)
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date ).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=date).filter(Store_id=store)
                 category_stats = []
