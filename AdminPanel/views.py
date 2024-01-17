@@ -62,8 +62,10 @@ class VerifyOtpLogin(APIView):
                 if user is not None:
 
                     tokens = create_jwt_pair_for_user(user)
+                    permission=user.Roles.all()
+                    serialize=Serializer_RolesandPermission(permission,many=True).data
 
-                    response = {"message": "Login Successfull", "tokens": tokens,"UserType":user.user_type}
+                    response = {"message": "Login Successfull", "tokens": tokens,"UserType":user.user_type,"permission":serialize}
                     return Response(data=response, status=status.HTTP_200_OK)
 
                 else:
@@ -206,11 +208,11 @@ class RegisterAPI(generics.GenericAPIView):
 
     def post(self,request,*args,**kwargs):
         try:
+            roles=request.data.get("Roles")
             serializer=self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             user=serializer.save()
-            
-        
+            user.Roles.set(roles)
             return Response({
             "user":UserSerializer(user,context=self.get_serializer_context()).data,
             # "token":AuthToken.objects.create(user)[1]
@@ -218,6 +220,20 @@ class RegisterAPI(generics.GenericAPIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class DeleteUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def delete(self, request, id=None):
+        try:
+            a=request.user.user_type
+            if a == 'Admin':
+                user = get_object_or_404(User, id=id)
+                user.delete()
+                return Response({"status": "success", "data": "Deleted"})
+            else:
+                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error' : str(e)},status=500)
 #Category Api
 class GetCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1987,3 +2003,38 @@ class DeleteRolesAndPermission(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
+class UserNameCheck(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            username=request.data.get("username",None)
+            email=request.data.get("email",None)
+            UserName=User.objects.filter(username=username)
+            Email=User.objects.filter(email=email)
+            if UserName.exists():
+                return Response("This UserName is already Exist")
+            elif Email.exists():
+                return Response("This Email Id is already registered with another account.")
+            else:
+                return Response("False")
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class AllStaff(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            a=[]
+            q=[]
+            user=User.objects.all()
+            for i in user:
+                if i.Roles!=[]:
+                    z=i.Roles.all()
+                    b=Serializer_RolesandPermission(z,many=True).data
+                    if z:
+                        response={"ID":i.id,"Name":i.username,"Email":i.email,"Status":i.status,"Roles": [x["RoleTitle"] for x in b ]}
+                        a.append(response)
+            return Response(a)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

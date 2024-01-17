@@ -26,7 +26,8 @@ urlpatterns = [
     # path('logout/',knox_views.LogoutView.as_view(),name='logout'),
     path('ResetPasswordAPI/',ResetPasswordAPI.as_view(),name='ResetPasswordAPI'),
     path('VerifyOtpResetPassword/',VerifyOtpResetPassword.as_view(),name='VerifyOtpResetPassword'),
-    # path('logoutall/',knox_views.LogoutAllView.as_view(),name='logoutall'),
+    path('Delete-User/<int:id>', DeleteUser.as_view()),
+    # path('logoutall/',knox_views.LogoutAllView.as_view(),name='logoutall'),DeleteUser
     ########################################################################################################
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -155,6 +156,9 @@ urlpatterns = [
     path('Add-RolesAndPermission/', AddRolesAndPermission.as_view()),
     path('Update-RolesAndPermission/<int:id>', UpdateRolesAndPermission.as_view()),
     path('Delete-RolesAndPermission/<int:id>', DeleteRolesAndPermission.as_view()),
+    path('UserNameCheck/', UserNameCheck.as_view()),
+    path('AllStaf/', AllStaff.as_view()),
+
 
 
 
@@ -164,5 +168,6 @@ urlpatterns = [
 
 
 ]
+
 
 

@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'Ecommerce.urls'
@@ -95,7 +96,7 @@ DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             "NAME": BASE_DIR / "db.sqlite3",
-            
+
         },
 "Product": {
 "ENGINE": "django.db.backends.postgresql_psycopg2",

@@ -73,7 +73,7 @@ class PasswordReseetSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email','status')
+        fields = ('id', 'username', 'email','status','Roles')
           
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -81,11 +81,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=User
-        fields=('username','email','password','user_type')
+        fields=('username','email','password','user_type','Roles')
 
     def create(self,validated_data):
         user=User.objects.create_superuser(validated_data['username'],validated_data['email'],validated_data['password'],user_type=validated_data['user_type'])
-
         return user
                      
 
