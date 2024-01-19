@@ -4,6 +4,7 @@ from ckeditor.fields import RichTextField
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from AdminPanel.choices import *
+from datetime import datetime
 
 class CustomRole(models.Model):
     RoleTitle=models.CharField(max_length=100,default=None)
@@ -68,7 +69,11 @@ class CustomRole(models.Model):
     ViewStaff=models.BooleanField(default=False)
     EditStaff=models.BooleanField(default=False)
     DeleteStaff=models.BooleanField(default=False)
-    # created_at=models.DateTimeField(auto_now_add=True)
+    AddRoles=models.BooleanField(default=False)
+    ViewRoles=models.BooleanField(default=False)
+    EditRoles=models.BooleanField(default=False)
+    DeleteRoles=models.BooleanField(default=False)
+    created_at=models.DateTimeField(auto_now_add=True)
     
 
 class UserManager(BaseUserManager):
@@ -85,19 +90,15 @@ class UserManager(BaseUserManager):
         return admin
 
     def create_superuser(self, username,email, password=None, **kwargs):
-        kwargs.setdefault('is_staff', True)
-        kwargs.setdefault('is_superuser', True)
+        kwargs.setdefault('is_staff', False)
+        kwargs.setdefault('is_superuser', False)
         return self.create_user(username,email, password, **kwargs)
 
 class User(AbstractBaseUser):
     USER_CHOICES = (
         ('Admin', 'Admin'),
         ('Vendor', 'Vendor'),
-        ('Customer','Customer'),
-        ('Co-Owner','Co-Owner'),
-        ('Content Manager Editor','Content Manager Editor'),
-        ('vendor managent','vendor managent'),
-        ('store managment','store managment')
+        ('Customer','Customer')
     )
 
     user_type = models.CharField(choices=USER_CHOICES,default='Admin',max_length=30)
@@ -129,6 +130,7 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser=models.BooleanField(default=False)
     Roles=models.ManyToManyField(CustomRole)
+    created_at=models.DateTimeField(auto_now_add=True)
 
         
     

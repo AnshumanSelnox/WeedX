@@ -158,6 +158,7 @@ urlpatterns = [
     path('Delete-RolesAndPermission/<int:id>', DeleteRolesAndPermission.as_view()),
     path('UserNameCheck/', UserNameCheck.as_view()),
     path('AllStaf/', AllStaff.as_view()),
+    path('RolesAfterLogin/', RolesAfterLogin.as_view()),
 
 
 

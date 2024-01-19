@@ -17,28 +17,52 @@ from Ecommerce.settings import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,EM
 import smtplib
 import random
 from UserPanel.serializer import *
-from rest_framework.permissions import BasePermission
+
 
 # class IsCustomRolePermission(BasePermission):
 #     def has_permission(self, request, view):
 #             return request.user.groups.all().exists()
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
+EmailBody='''  <div>
+       <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Dear Administrator,
+    </h4>
 
-def send_OneToOneMail(from_email='',to_emails=''):
-    Otp=random.randint(1000, 9999)
-    server=smtplib.SMTP(EMAIL_HOST,EMAIL_PORT)
-    server.ehlo()
-    server.starttls()
-    server.login(EMAIL_HOST_USER,EMAIL_HOST_PASSWORD)
-    Subject="Selnox"
-    Text="Your One Time Password is "  + str(Otp)
-    
-    msg='Subject: {}\n\n{}'.format(Subject, Text)
-    server.sendmail(from_email,to_emails,msg)
-    user=User.objects.get(email=to_emails)
-    user.otp=Otp
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Thank you for choosing Cannabaze POS! Your trust in our services is highly appreciated. To access your admin panel, please use the following One-Time Password</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP:<b>{otp}</b></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single login session and should be utilized within the next 10 minutes. If you have not initiated this request or harbor any concerns about the security of your account, please promptly contact our support team.
+            </h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">Contact Information: </h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 1(209) 655-0360</a></h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> </h4>
+
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin-bottom: 0;"> Best regards,</h4>
+            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Cannabaze POS Team</h4>
+    </div>'''
+
+def send_OneToOneMail(to_emails='',from_email=''):
+    Otp = random.randint(1000, 9999)
+    user = User.objects.get(email=to_emails)
+    user.otp = Otp
     user.save()
-    server.quit()
+    email_from = EMAIL_HOST_USER
+    password = EMAIL_HOST_PASSWORD
+    email_message = MIMEMultipart()
+    email_message['From'] = from_email
+    email_message['To']=to_emails
+    email_message['Subject'] = "One-Time Password (OTP) for Cannabaze Admin Panel Login"
+    email_message.attach(MIMEText(EmailBody.format(username=user.username,otp=str(Otp)), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        server.sendmail(email_from, to_emails, email_string)
 
 class VerifyOtpLogin(APIView):
     permission_classes=(permissions.AllowAny,)
@@ -65,7 +89,7 @@ class VerifyOtpLogin(APIView):
                     permission=user.Roles.all()
                     serialize=Serializer_RolesandPermission(permission,many=True).data
 
-                    response = {"message": "Login Successfull", "tokens": tokens,"UserType":user.user_type,"permission":serialize}
+                    response = {"message": "Login Successfull", "tokens": tokens,"UserType":user.user_type,"permission":serialize,"is_superuser":user.is_superuser}
                     return Response(data=response, status=status.HTTP_200_OK)
 
                 else:
@@ -201,7 +225,7 @@ class UserAPI(generics.RetrieveAPIView):
         try:
             return self.request.user
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class =RegisterSerializer
@@ -225,26 +249,30 @@ class DeleteUser(APIView):
     permission_classes=[IsAuthenticated]
     def delete(self, request, id=None):
         try:
-            a=request.user.user_type
+            a=request.user.user_type    
             if a == 'Admin':
                 user = get_object_or_404(User, id=id)
                 user.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 #Category Api
 class GetCategories(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         try:
-            category = Category.objects.select_related().all()
-            serialize = Serializer_Category(category, many=True)
-            return Response(serialize.data)
+            a=request.user.user_type
+            if a=="Admin":
+                category = Category.objects.select_related().all()
+                serialize = Serializer_Category(category, many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class AddCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -252,7 +280,7 @@ class AddCategories(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
            
                 serializer = Serializer_Category(data=request.data)
                 if serializer.is_valid():
@@ -261,7 +289,7 @@ class AddCategories(APIView):
                 else:
                     return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -272,9 +300,7 @@ class UpdateCategories(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
-            
-            
+            if a == 'Admin':
                 User = Category.objects.get(id=id)
                 serializer = Serializer_Category(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -283,7 +309,7 @@ class UpdateCategories(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -299,9 +325,9 @@ class DeleteCategory(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Sub Category Api
 class GetSubCategories(APIView):
@@ -310,14 +336,14 @@ class GetSubCategories(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
                 User = SubCategory.objects.select_related().all()
                 serialize = Serializer_SubCategory(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -325,7 +351,7 @@ class AddSubCategories(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
 
                 serializer = Serializer_SubCategory(data=request.data, partial=True)
                 if serializer.is_valid():
@@ -334,7 +360,7 @@ class AddSubCategories(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
               
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -345,7 +371,7 @@ class UpdateSubCategories(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
                 User = SubCategory.objects.get(id=id)
                 serializer = Serializer_SubCategory(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -354,7 +380,7 @@ class UpdateSubCategories(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -369,9 +395,9 @@ class DeleteSubCategory(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Country
 class GetCountry(APIView):
@@ -380,21 +406,21 @@ class GetCountry(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Countries.objects.select_related().all()
                 serialize = Serializer_Country(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddCountry(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_Country(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -402,7 +428,7 @@ class AddCountry(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -413,7 +439,7 @@ class UpdateCountry(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a== 'Content Manager Editor':
+            if a == 'Admin' or a== 'Content Manager Editor':
 
                 User = Countries.objects.get(id=id)
                 serializer = Serializer_Country(User, data=request.data, partial=True)
@@ -423,7 +449,7 @@ class UpdateCountry(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -439,9 +465,9 @@ class DeleteCountry(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #States
 class GetStates(APIView):
@@ -450,22 +476,22 @@ class GetStates(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = States.objects.select_related().all()
                 serialize = Serializer_States(User, many=True)
                 
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddStates(APIView):
 
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a== 'Content Manager Editor':
+            if a == 'Admin' or a== 'Content Manager Editor':
                 serializer = Serializer_States(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -473,7 +499,7 @@ class AddStates(APIView):
                 else:
                     return Response({"status": "error", "data": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -484,7 +510,7 @@ class UpdateStates(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
             
                 User = States.objects.get(id=id)
                 serializer = Serializer_States(User, data=request.data, partial=True)
@@ -494,7 +520,7 @@ class UpdateStates(APIView):
                 else:
                     return Response({"status": "error", "data": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -509,9 +535,9 @@ class DeleteStates(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Cities 
 class GetCities(APIView):
@@ -520,21 +546,21 @@ class GetCities(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Cities.objects.select_related().all()
                 serialize = Serializer_Cities(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddCities(APIView):
 
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_Cities(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -542,7 +568,7 @@ class AddCities(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -552,7 +578,7 @@ class UpdateCities(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Cities.objects.get(id=id)
                 serializer = Serializer_Cities(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -561,7 +587,7 @@ class UpdateCities(APIView):
                 else:
                     return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -576,9 +602,9 @@ class DeleteCities(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 #Brand
 class GetBrand(APIView):
@@ -587,14 +613,14 @@ class GetBrand(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
                 User = Brand.objects.select_related().all()
                 serialize = Serializer_Brand(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddBrand(APIView):
     permission_classes = [IsAuthenticated]
@@ -602,7 +628,7 @@ class AddBrand(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
                 serializer = Serializer_Brand(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -610,7 +636,7 @@ class AddBrand(APIView):
                 else:
                     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         
                         
         except Exception as e:
@@ -622,7 +648,7 @@ class UpdateBrand(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
 
                 User = Brand.objects.get(id=id)
                 serializer = Serializer_Brand(User, data=request.data, partial=True)
@@ -632,7 +658,7 @@ class UpdateBrand(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                     
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -647,9 +673,9 @@ class DeleteBrand(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Salestax
 class GetSalesTax(APIView):
@@ -661,7 +687,7 @@ class GetSalesTax(APIView):
             serialize = Serializer_Salestax(User, many=True)
             return Response(serialize.data)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddSalesTax(APIView): 
     permission_classes = [IsAuthenticated]
@@ -709,7 +735,7 @@ class DeleteSalesTax(APIView):
             User.delete()
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Esteemedtax
 class GetEsteemedTax(APIView):
@@ -721,7 +747,7 @@ class GetEsteemedTax(APIView):
             serialize = Serializer_Esteemedtax(User, many=True)
             return Response(serialize.data)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddEsteemedTax(APIView): 
     permission_classes = [IsAuthenticated]
@@ -764,7 +790,7 @@ class DeleteEsteemedTax(APIView):
             User.delete()
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
-            return Response({'error' : str(e)},status=500)    
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
 #Replicate or Duplicate Data
 #Replicate or Duplicate Data
@@ -789,21 +815,21 @@ class GetStores(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='store managment':
+            if a == 'Admin' or a=='store managment':
                 User = Stores.objects.select_related().all()
                 serialize = Serializer_Store(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddStores(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='store managment':
+            if a == 'Admin' or a=='store managment':
 
                 serializer = Serializer_Store(data=request.data, partial=True)
                 if serializer.is_valid():
@@ -812,7 +838,7 @@ class AddStores(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -823,7 +849,7 @@ class UpdateStores(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='store managment':
+            if a == 'Admin' or a=='store managment':
 
                 User = Stores.objects.get(id=id)
                 serializer = Serializer_Store(User, data=request.data, partial=True)
@@ -833,7 +859,7 @@ class UpdateStores(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                                
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -849,9 +875,9 @@ class DeleteStores(APIView):
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #News
 class GetNews(APIView):
@@ -860,14 +886,14 @@ class GetNews(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = News.objects.select_related().all()
                 serialize = Serializer_News(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddNews(APIView):
     permission_classes = [IsAuthenticated]
@@ -876,7 +902,7 @@ class AddNews(APIView):
         try:
             user=request.user
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_News(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save(created_by=user)
@@ -891,7 +917,7 @@ class AddNews(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                                         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -902,7 +928,7 @@ class UpdateNews(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
 
                 User = News.objects.get(id=id)
                 serializer = Serializer_News(User, data=request.data, partial=True)
@@ -912,7 +938,7 @@ class UpdateNews(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
                                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -923,14 +949,14 @@ class DeleteNews(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(News, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)    
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
 import pandas as pd
 import uuid
@@ -953,7 +979,7 @@ class ExportImportExcel(APIView):
             df.to_csv(f'/home/selnoxinfotech/Anshuman/BackwoodAroma/{uuid.uuid4()}.csv',encoding="UTF-8",index=False)
             return Response(a)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TotalCount(APIView):
@@ -973,7 +999,7 @@ class TotalCount(APIView):
                                     {"title":"Total store","total":store},
                                     {"title":"Total News","total":news}]})
         except Exception as e:
-            return Response({'error' : str(e)},status=500)    
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
 class TotalProductGraph(APIView):   
     permission_classes = [IsAuthenticated]
@@ -1011,7 +1037,7 @@ class TotalProductGraph(APIView):
                         
             return Response({'data':{"Month":CreatedMonths,"count":TotalProductCount}})
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #Category Api
@@ -1021,14 +1047,14 @@ class GetNewsCategories(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = NewsCategory.objects.select_related().all()
                 serialize = Serializer_NewsCategory(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class AddNewsCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1036,7 +1062,7 @@ class AddNewsCategories(APIView):
     def post(self, request):
         try:
             a=request.user
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_NewsCategory(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save(created_by=request.user)
@@ -1044,7 +1070,7 @@ class AddNewsCategories(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -1055,7 +1081,7 @@ class UpdateNewsCategories(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = NewsCategory.objects.get(id=id)
                 serializer = Serializer_NewsCategory(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1064,7 +1090,7 @@ class UpdateNewsCategories(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1074,14 +1100,14 @@ class DeleteNewsCategory(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(NewsCategory, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Sub Category Api
 class GetNewsSubCategories(APIView):
@@ -1090,14 +1116,14 @@ class GetNewsSubCategories(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = NewsSubCategory.objects.select_related().all()
                 serialize = Serializer_NewsSubCategory(User, many=True)
-                return Response({"data":serialize.data},status=200)
+                return Response({"data":serialize.data},status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddNewsSubCategories(APIView):
     permission_classes = [IsAuthenticated]
@@ -1105,7 +1131,7 @@ class AddNewsSubCategories(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_NewsSubCategory(data=request.data, partial=True)
                 if serializer.is_valid(): 
                     serializer.save()
@@ -1113,7 +1139,7 @@ class AddNewsSubCategories(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1123,7 +1149,7 @@ class UpdateNewsSubCategories(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = NewsSubCategory.objects.get(id=id)
                 serializer = Serializer_NewsSubCategory(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1132,7 +1158,7 @@ class UpdateNewsSubCategories(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1142,14 +1168,14 @@ class DeleteNewsSubCategory(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(NewsSubCategory, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FilterbyNewsSubCategory(APIView):
     permission_classes = [IsAuthenticated]
@@ -1159,9 +1185,9 @@ class FilterbyNewsSubCategory(APIView):
             subcategory=request.data.get(id)
             User = News.objects.filter(SubCategory=subcategory)
             serializer = Serializer_News(User,many=True)
-            return Response({"status": "success", "data": serializer.data}, status=200)
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FilterbyCategory(APIView):
     permission_classes = [IsAuthenticated]
@@ -1251,9 +1277,13 @@ class ActiveStores(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         try:
-            User=Stores.objects.filter(Status="Active")
-            serializer = Serializer_Store(User,many=True)
-            return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
+            a=request.user.user_type
+            if a=="Admin":
+                User=Stores.objects.filter(Status="Active")
+                serializer = Serializer_Store(User,many=True)
+                return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN) 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1261,9 +1291,13 @@ class ActiveBrand(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         try:
-            User=Brand.objects.filter(Status="Active")
-            serializer = Serializer_Brand(User,many=True)
-            return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
+            a=request.user.user_type
+            if a=="Admin":
+                User=Brand.objects.filter(Status="Active")
+                serializer = Serializer_Brand(User,many=True)
+                return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
+            else:
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN) 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
       
@@ -1282,12 +1316,12 @@ class  DeleteVendor(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='vendor managent':
+            if a == 'Admin':
                 user = get_object_or_404(User, id=id)
                 user.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1296,12 +1330,12 @@ class GetAllUsers(APIView):
     def get(self,request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner':
+            if a == 'Admin':
                 alluser=User.objects.all()
                 serializer = UserSerializer(alluser,many=True)
                 return Response({"status": "success", "data":serializer.data}, status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1311,7 +1345,7 @@ class GetAllVendor(APIView):
         try:
             z=[]
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='vendor managent':
+            if a == 'Admin':
                 allvendor=User.objects.filter(user_type='Vendor')
                 for i in allvendor:
                     l=Stores.objects.filter(created_by=i.id)
@@ -1320,7 +1354,7 @@ class GetAllVendor(APIView):
                         z.append(response)
                 return Response({"status":"success","data":z},status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -1329,13 +1363,13 @@ class GetActiveVendor(APIView):
     def get(self,request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='vendor managent':
+            if a == 'Admin':
                 user=User.objects.filter(status='Active')
                 allvendor=user.filter(user_type="Vendor")
                 serializer=UserSerializer(allvendor,many=True)
                 return Response({"status":"success","data":serializer.data},status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1344,40 +1378,38 @@ class GetHideVendor(APIView):
     def get(self,request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='vendor managent':
+            if a == 'Admin':
                 user=User.objects.filter(status='Hide')
                 allvendor=user.filter(user_type="Vendor")
                 serializer=UserSerializer(allvendor,many=True)
                 return Response({"status":"success","data":serializer.data},status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #Home_Page_Banner  
 class Get_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User =HomePageBanner.objects.select_related().all()
                 serialize = Serializer_HomePageBanner(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
             
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
  
 class Add_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_HomePageBanner(data=request.data, partial=True)
                 if serializer.is_valid():
                         serializer.save()
@@ -1385,17 +1417,16 @@ class Add_Home_Page_Banner(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class Update_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = HomePageBanner.objects.get(id=id)
                 serializer = Serializer_HomePageBanner(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1404,24 +1435,23 @@ class Update_Home_Page_Banner(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class Delete_Home_Page_Banner(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(HomePageBanner, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 import io, csv, pandas as pd
 class FileUploadAPIView(generics.CreateAPIView):
@@ -1466,21 +1496,21 @@ class GetLaw(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User =Law.objects.select_related().all()
                 serialize = Serializer_Law(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddLaw(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_Law(data=request.data, partial=True)
                 if serializer.is_valid():
                         serializer.save()
@@ -1488,7 +1518,7 @@ class AddLaw(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1498,7 +1528,7 @@ class UpdateLaw(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Law.objects.get(id=id)
                 serializer = Serializer_Law(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1507,46 +1537,45 @@ class UpdateLaw(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DeleteLaw(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(Law, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetAboutUs(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User =AboutUs.objects.select_related().all()
                 serialize = Serializer_AboutUs(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddAboutUs(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_AboutUs(data=request.data, partial=True)
                 if serializer.is_valid():
                         serializer.save()
@@ -1554,7 +1583,7 @@ class AddAboutUs(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1564,7 +1593,7 @@ class UpdateAboutUs(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = AboutUs.objects.get(id=id)
                 serializer = Serializer_AboutUs(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1573,45 +1602,44 @@ class UpdateAboutUs(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DeleteAboutUs(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(AboutUs, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
      
 class GetTermsandCondition(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User =TermsandCondition.objects.select_related().all()
                 serialize = Serializer_TermsAndCondition(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddTermsandCondition(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_TermsAndCondition(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -1619,17 +1647,16 @@ class AddTermsandCondition(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class UpdateTermsandCondition(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = TermsandCondition.objects.get(id=id)
                 serializer = Serializer_TermsAndCondition(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1638,45 +1665,44 @@ class UpdateTermsandCondition(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DeleteTermsandCondition(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(TermsandCondition, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class GetPrivacyandPolicies(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User =PrivacyandPolicies.objects.select_related().all()
                 serialize = Serializer_PrivacyAndPolicies(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddPrivacyandPolicies(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_PrivacyAndPolicies(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -1684,7 +1710,7 @@ class AddPrivacyandPolicies(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1694,7 +1720,7 @@ class UpdatePrivacyandPolicies(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = PrivacyandPolicies.objects.get(id=id)
                 serializer = Serializer_PrivacyAndPolicies(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1703,7 +1729,7 @@ class UpdatePrivacyandPolicies(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1713,43 +1739,43 @@ class DeletePrivacyandPolicies(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(PrivacyandPolicies, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetPromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         try:
-            a=request.user.user_type.Name
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            a=request.user.user_type
+            if a == 'Admin':
                 User =PromotionalBanners.objects.select_related().all()
                 serialize = Serializer_PromotionalBanners(User, many=True)
                 return Response(serialize.data)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddPromotionalBanners(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
-            # a=request.user.user_type.Name
-            # if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            a=request.user.user_type.Name
+            if a == 'Admin':
                 serializer = Serializer_PromotionalBanners(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
-            # else:
-            #     return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -1759,7 +1785,7 @@ class UpdatePromotionalBanners(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = PromotionalBanners.objects.get(id=id)
                 serializer = Serializer_PromotionalBanners(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1768,7 +1794,7 @@ class UpdatePromotionalBanners(APIView):
                 else:
                     return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1778,14 +1804,14 @@ class DeletePromotionalBanners(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type.Name
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(PromotionalBanners, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
@@ -1793,14 +1819,14 @@ class GetNet_Weight(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Net_Weight.objects.select_related().all()
                 serialize = Serializer_Net_Weight(User, many=True)
-                return Response({"data":serialize.data},status=200)
+                return Response({"data":serialize.data},status=status.HTTP_200_OK)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
@@ -1808,7 +1834,7 @@ class AddNet_Weight(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_Net_Weight(data=request.data, partial=True)
                 if serializer.is_valid(): 
                     serializer.save()
@@ -1816,7 +1842,7 @@ class AddNet_Weight(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1826,7 +1852,7 @@ class UpdateNet_Weight(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = Net_Weight.objects.get(id=id)
                 serializer = Serializer_Net_Weight(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1835,7 +1861,7 @@ class UpdateNet_Weight(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1845,40 +1871,38 @@ class DeleteNet_Weight(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(Net_Weight, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetSubscribe(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         try:
-            User = Subscribe.objects.select_related().all()
-            serialize = Serializer_Subscribe(User, many=True)
-            return Response({"data":serialize.data},status=200)
+            a=request.user.user_type
+            if a == 'Admin':
+                User = Subscribe.objects.select_related().all()
+                serialize = Serializer_Subscribe(User, many=True)
+                return Response({"data":serialize.data},status=status.HTTP_200_OK)
+            else:
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetStaticImages(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         try:
-            a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
-                User = StaticImages.objects.select_related().all()
-                serialize = Serializer_StaticImages(User, many=True)
-                return Response({"data":serialize.data},status=200)
-            else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+            User = StaticImages.objects.select_related().all()
+            serialize = Serializer_StaticImages(User, many=True)
+            return Response({"data":serialize.data},status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AddStaticImages(APIView):
     permission_classes = [IsAuthenticated]
@@ -1886,7 +1910,7 @@ class AddStaticImages(APIView):
     def post(self, request):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 serializer = Serializer_StaticImages(data=request.data, partial=True)
                 if serializer.is_valid(): 
                     serializer.save()
@@ -1894,7 +1918,7 @@ class AddStaticImages(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1904,7 +1928,7 @@ class UpdateStaticImages(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = StaticImages.objects.get(id=id)
                 serializer = Serializer_StaticImages(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1913,7 +1937,7 @@ class UpdateStaticImages(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1923,14 +1947,14 @@ class DeleteStaticImages(APIView):
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 User = get_object_or_404(StaticImages, id=id)
                 User.delete()
                 return Response({"status": "success", "data": "Deleted"})
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UpdateProfileForVendor(APIView):
@@ -1938,7 +1962,7 @@ class UpdateProfileForVendor(APIView):
     def post(self, request, id=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='Co-Owner' or a=='Content Manager Editor':
+            if a == 'Admin':
                 user = User.objects.get(id=id)
                 serializer = UserSerializer(user, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -1947,7 +1971,7 @@ class UpdateProfileForVendor(APIView):
                 else:
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response("Not Authorised",status=status.HTTP_401_UNAUTHORIZED)
+                return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
          
@@ -1958,23 +1982,32 @@ class GetRolesAndPermission(APIView):
 
     def get(self, request, format=None):
         try:
-            category = CustomRole.objects.select_related().all()
-            serialize = Serializer_RolesandPermission(category, many=True)
-            return Response(serialize.data)
+            a=request.user.user_type
+            if a=="Admin":
+                category = CustomRole.objects.select_related().all()
+                serialize = Serializer_RolesandPermission(category, many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class AddRolesAndPermission(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
-            serializer = Serializer_RolesandPermission(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({"status": "success","data": serializer.data},status=status.HTTP_200_OK)
+            a=request.user.user_type
+            if a=="Admin":
+                serializer = Serializer_RolesandPermission(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"status": "success","data": serializer.data},status=status.HTTP_200_OK)
+                else:
+                    return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({ "error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1983,13 +2016,17 @@ class UpdateRolesAndPermission(APIView):
 
     def post(self, request, id=None):
         try:
-            User = CustomRole.objects.get(id=id)
-            serializer = Serializer_RolesandPermission(User, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save(modified_by=request.user.username)
-                return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+            a=request.user.user_type
+            if a=="Admin":
+                User = CustomRole.objects.get(id=id)
+                serializer = Serializer_RolesandPermission(User, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(modified_by=request.user.username)
+                    return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
+                else:
+                    return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -1997,26 +2034,34 @@ class DeleteRolesAndPermission(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, id=None):
         try:
-            User = get_object_or_404(CustomRole, id=id)
-            User.delete()
-            return Response({"status": "success", "data": "Deleted"})
+            a=request.user.user_type
+            if a=="Admin":
+                User = get_object_or_404(CustomRole, id=id)
+                User.delete()
+                return Response({"status": "success", "data": "Deleted"})
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
-            return Response({'error' : str(e)},status=500)
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserNameCheck(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
         try:
-            username=request.data.get("username",None)
-            email=request.data.get("email",None)
-            UserName=User.objects.filter(username=username)
-            Email=User.objects.filter(email=email)
-            if UserName.exists():
-                return Response("This UserName is already Exist")
-            elif Email.exists():
-                return Response("This Email Id is already registered with another account.")
+            a=request.user.user_type
+            if a=="Admin":
+                username=request.data.get("username",None)
+                email=request.data.get("email",None)
+                UserName=User.objects.filter(username=username)
+                Email=User.objects.filter(email=email)
+                if UserName.exists():
+                    return Response("This UserName is already Exist")
+                elif Email.exists():
+                    return Response("This Email Id is already registered with another account.")
+                else:
+                    return Response("False")
             else:
-                return Response("False")
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -2025,16 +2070,36 @@ class AllStaff(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
         try:
-            a=[]
-            q=[]
-            user=User.objects.all()
-            for i in user:
-                if i.Roles!=[]:
-                    z=i.Roles.all()
-                    b=Serializer_RolesandPermission(z,many=True).data
-                    if z:
-                        response={"ID":i.id,"Name":i.username,"Email":i.email,"Status":i.status,"Roles": [x["RoleTitle"] for x in b ]}
-                        a.append(response)
-            return Response(a)
+            qwe=request.user.user_type
+            if qwe =="Admin":
+                a=[]
+                user=User.objects.all()
+                for i in user:
+                    if i.Roles!=[]:
+                        z=i.Roles.all()
+                        b=Serializer_RolesandPermission(z,many=True).data
+                        if z:
+                            response={"ID":i.id,"Name":i.username,"Email":i.email,"Status":i.status,"Roles": [x["RoleTitle"] for x in b ],"created_at": i.created_at}
+                            a.append(response)
+                return Response(a)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class RolesAfterLogin(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            a=request.user.user_type
+            if a == 'Admin':
+                user=request.user
+                z=user.Roles.all()
+                serialize=Serializer_RolesandPermission(z,many=True).data
+                return Response(serialize)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

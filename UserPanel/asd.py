@@ -763,3 +763,20 @@
 # # with function "monkey_f()" 
 # obj.func() 
 
+
+
+# a=[{"jan":200},{"jan":200},{"jan":300},{"feb":20},{"feb":200},{"mar":50},{"mar":500}]
+# l={}
+
+# n=len(a)
+# for i in range(0, n):
+#     for j in a:
+#             for zxc in j:
+#                 # if (a[i] == j):
+#                     asd=0
+#                     asd=(a[i].get(zxc))
+#                     asd+=asd
+#                     lkj={zxc:asd}
+#                     l.update(lkj)
+# print(l)
+        
