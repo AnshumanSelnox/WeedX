@@ -159,7 +159,8 @@ urlpatterns = [
     path('UserNameCheck/', UserNameCheck.as_view()),
     path('AllStaf/', AllStaff.as_view()),
     path('RolesAfterLogin/', RolesAfterLogin.as_view()),
-
+    ###########################################################################################################################################
+    path('TotalStore/', TotalStore.as_view()),
 
 
 

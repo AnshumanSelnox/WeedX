@@ -17,7 +17,10 @@ import requests,smtplib,random
 from rest_framework_simplejwt.tokens import RefreshToken   
 from .serializer import *
 from .ordercheck import sendmailoforderdetailsVendor,sendmailoforderdetailsCustomer,sendmailoforderdetailsAdmin
-
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 class Login(APIView): 
     permission_classes = (permissions.AllowAny,)
@@ -53,21 +56,47 @@ class Login(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def send_OneToOneMail(from_email='', to_emails=''):
-    Otp = random.randint(1000, 9999)
-    server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
-    server.ehlo()
-    server.starttls()
-    server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
-    Subject = "Selnox"
-    Text = "Your One Time Password is " + str(Otp)
+EmailBody='''
 
-    msg = 'Subject: {}\n\n{}'.format(Subject, Text)
-    server.sendmail(from_email, to_emails, msg)
+     <div>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Dear {username},
+        </h4>
+ 
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">You've requested a Forget password for your WeedX.io account. To ensure the security of your account, please use the provided One-Time Password (OTP) to reset your password:</h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;background-color: yellow; display: inline;"> <b> Your One Time Password (OTP) is : {otp}</b></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single session. If you did not initiate this forget password or have any concerns, please contact our support team immediately.
+            </h4>
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Thank you for choosing WeedX.io. We're dedicated to ensuring the safety of your account and providing a seamless experience.
+        </h4>
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Contact Information:
+        </h4>
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;margin: 4px;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 (209) 655-0360</a></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;margin: 4px;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;margin: 4px;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/">  WeedX.io</a></h4>
+ 
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;margin: 4px; margin-top: 12px;"> Best regards,</h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;margin: 4px;"> The WeedX.io Team </h4>
+     </div>
+     '''
+
+def send_OneToOneMail(to_emails='',from_email=''):
+    Otp = random.randint(1000, 9999)
     user = User.objects.get(email=to_emails)
     user.otp = Otp
     user.save()
-    server.quit()
+    email_from = EMAIL_HOST_USER
+    password = EMAIL_HOST_PASSWORD
+    email_message = MIMEMultipart()
+    email_message['From'] = from_email
+    email_message['To']=to_emails
+    username=user.username
+    email_message['Subject'] = f'WeedX.io Forget password - {username} , Secure Your Account!'
+    email_message.attach(MIMEText(EmailBody.format(username=user.username,otp=str(Otp)), "html"))
+    email_string = email_message.as_string()
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_from, password)
+        server.sendmail(email_from, to_emails, email_string)
 
 
 class ForgetPasswordAPI(APIView):

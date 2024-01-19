@@ -17,7 +17,7 @@ from Ecommerce.settings import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,EM
 import smtplib
 import random
 from UserPanel.serializer import *
-
+from datetime import datetime,timedelta
 
 # class IsCustomRolePermission(BasePermission):
 #     def has_permission(self, request, view):
@@ -27,24 +27,19 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-EmailBody='''  <div>
-       <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Dear Administrator,
-    </h4>
+EmailBody='''    <div>
+        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Dear Administrator,</h4>
 
-        <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Thank you for choosing Cannabaze POS! Your trust in our services is highly appreciated. To access your admin panel, please use the following One-Time Password</h4>
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP:<b>{otp}</b></h4>
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single login session and should be utilized within the next 10 minutes. If you have not initiated this request or harbor any concerns about the security of your account, please promptly contact our support team.
-            </h4>
-        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">Contact Information: </h4>
-        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">  Phone:  <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 1(209) 655-0360</a></h4>
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;"> Email: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
-        <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin: 0;">  Website: <a  style="color:#0084ff;font-size:13px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
-
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> </h4>
-
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight:400;margin-bottom: 0;"> Best regards,</h4>
-            <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> Cannabaze POS Team</h4>
-    </div>'''
+         <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Thank you for choosing Cannabaze POS! Your trust in our services is highly appreciated. To access your admin panel, kindly use the provided One-Time Password (OTP):</h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> OTP: <b style="color:#222222;font-size:14px;font-weight: 700; background-color: yellow;"> Your One Time Password is {otp}</b></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;"> This OTP is valid for a single login session and should be utilized within the next 10 minutes. If you have not initiated this request or harbor any concerns about the security of your account, please promptly contact our support team.</h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;">Contact Information: </h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400; margin:4px;"> Phone:  <a  style="color:#0084ff;font-size:14px;font-weight: 500;"  href="tel:+1 (209) 655-0360">+1 1(209) 655-0360</a></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400; margin:4px;"> Email: <a  style="color:#0084ff;font-size:14px;font-weight: 500;"  href="mailto:info@weedx.io">info@weedx.io</a></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400; margin:4px;"> Website: <a  style="color:#0084ff;font-size:14px;font-weight: 500;"  href="https://cannabaze.com/"> cannabaze.com</a></h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400;  margin:4px; margin-top: 12px;"> Best regards,</h4>
+             <h4 style="color:#4e4e4e;font-size:13px;font-weight: 400; margin:4px;"> Cannabaze POS Team</h4>
+     </div>'''
 
 def send_OneToOneMail(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
@@ -2103,3 +2098,68 @@ class RolesAfterLogin(APIView):
         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class TotalStore(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                LastStartDate=request.data.get("LastStartDate",None)
+                EndStartDate=request.data.get("EndStartDate",None)
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    DayBeforeYesterday=request.data.get("DayBeforeYesterday")
+                    daybefore=Stores.objects.filter(created__icontains=DayBeforeYesterday).count()
+                    store=Stores.objects.filter(created__icontains=StartDate).count()
+                    lastdaystore=Stores.objects.filter(created__icontains=LastStartDate).count()
+                    lastpercent=daybefore*lastdaystore/100
+                    currentpercentage=lastdaystore*store/100
+                    totalpercenttage=lastpercent * currentpercentage /100
+                    if currentpercentage> lastpercent:
+                        result = {"TotalStore":store,"percentage":totalpercenttage,"Growth":True}
+                        z.append(result)
+                    else:
+                        result={"TotalStore":store,"percentage":totalpercenttage,"Growth":False}
+                        z.append(result)
+                    return Response(z)
+
+                else:
+                    z=[]
+                    DayBeforeWeekStart=request.data.get("DayBeforeWeekStart")
+                    DayBeforeWeekEnd=request.data.get("DayBeforeWeekEnd")
+                    startDate=datetime.strptime(StartDate, '%Y-%m-%d')
+                    endDate=datetime.strptime(EndDate, '%Y-%m-%d')
+                    lastStartDate=datetime.strptime(LastStartDate, '%Y-%m-%d')
+                    endStartDate=datetime.strptime(EndStartDate, '%Y-%m-%d')
+                    dayBeforeWeekStart=datetime.strptime(DayBeforeWeekStart, '%Y-%m-%d')
+                    dayBeforeWeekEnd=datetime.strptime(DayBeforeWeekEnd, '%Y-%m-%d')
+                    
+                    while startDate <= endDate:
+                        currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=endDate).count()
+                        laststore=Stores.objects.filter(created__gte=lastStartDate,created__lt=endStartDate).count()
+                        previoustimestore=Stores.objects.filter(created__gte=dayBeforeWeekStart,created__lt=dayBeforeWeekEnd).count()
+                        currentstorepercentage=currentstorecount * laststore /100
+                        laststorepercentage=laststore *previoustimestore/100
+                        totalpercenttage=currentstorepercentage *laststorepercentage/100
+                        if currentstorepercentage> laststorepercentage:
+                            result = {"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":True}
+                            z.append(result)
+                        else:
+                            result={"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":False}
+                            z.append(result)
+                        startDate=startDate + timedelta(days=1)
+                    return Response(z[-1])
+                
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+                
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        
