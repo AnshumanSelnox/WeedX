@@ -19,7 +19,7 @@ import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+from dateutil.relativedelta import relativedelta
 EmailBody='''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1511,8 +1511,8 @@ class SalesPerformancePieChart(APIView):
                 return Response(result)
 
             else:
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
                 result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0}
                 for i in order:
@@ -1545,8 +1545,8 @@ class RecentOrderPieChart(APIView):
                 response={"Pending":Pending,"Processing":Processing,"Delivered":Delivered,"Cancel":Cancel}
                 return Response(response)
             else:
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Pending=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Pending").filter(Store_id=store).count()
                 Processing=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Processing").filter(Store_id=store).count()
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store).count()
@@ -1573,8 +1573,8 @@ class SalesByCategoryPieChart(APIView):
                 response={i:category.count(i) for i in category}
                 return Response(response)
             else:
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
                 for i in Delivered:
                     for j in i.Product:
@@ -1626,8 +1626,8 @@ class SalesInsights(APIView):
                 response={"Date":StartDate,"Order":order,"CancelledOrder":cancelorder,"ProductSold":productsold,"Sale":add}
                 a.append(response)
             if SelectTime=="ThisWeek":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     add=0
                     productsold=0
@@ -1642,8 +1642,8 @@ class SalesInsights(APIView):
                     a.append(response)
                     week=week + timedelta(days=1)
             if SelectTime=="ThisMonth":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     add=0
                     productsold=0
@@ -1658,8 +1658,8 @@ class SalesInsights(APIView):
                     a.append(response)
                     week=week + timedelta(days=1)
             if SelectTime=="ThisYear":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     add=0
                     productsold=0
@@ -1704,8 +1704,8 @@ class SalesOverviewcard(APIView):
                 a.append(response)
                 return Response(a)
             else :
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 add=0
                 productsold=0
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store=store)
@@ -1775,8 +1775,8 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if SelectTime=="ThisWeek":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1793,8 +1793,8 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if SelectTime=="ThisMonth":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1811,8 +1811,8 @@ class ProductInsight(APIView):
                         y.append(l)
                 y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
             if SelectTime=="ThisYear":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store=store)
                 top=TodaySales.filter(Order_Status="Delivered")
                 for i in top:
@@ -1847,20 +1847,20 @@ class OrderInsight(APIView):
                 serialize=Serializer_Order(TodaySales,many=True)
                 return Response(serialize.data)
             if SelectTime=="ThisWeek":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=today).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
                 return Response(serialize.data)
             if SelectTime=="ThisMonth":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=today).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
                 return Response(serialize.data)
             if SelectTime=="ThisYear":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 TodaySales=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=today).filter(Store=store)
                 serialize=Serializer_Order(TodaySales,many=True)
                 return Response(serialize.data)
@@ -1908,8 +1908,8 @@ class CategoryInsight(APIView):
 
                 return Response(category_stats)
             if SelectTime=="ThisWeek":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -1941,8 +1941,8 @@ class CategoryInsight(APIView):
 
                 return Response(category_stats)
             if SelectTime=="ThisMonth":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered" ).filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -1974,8 +1974,8 @@ class CategoryInsight(APIView):
 
                 return Response(category_stats)
             if SelectTime=="ThisYear":
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -2161,7 +2161,7 @@ class SalesPerformance(APIView):
             if SelectTime=="ThisWeek":
                 z=[]
                 week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
-                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                today=timezone.make_aware(timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d')))
                 while week <= today:
                     TotalPrice=0
                     UnitSold=0
@@ -2178,7 +2178,7 @@ class SalesPerformance(APIView):
             if SelectTime=="ThisMonth":
                 z=[]
                 week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
-                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                today=timezone.make_aware(timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d')))
                 while week <= today:
                     UnitSold=0
                     TotalPrice=0
@@ -2194,7 +2194,7 @@ class SalesPerformance(APIView):
             if SelectTime=="ThisYear":
                 z=[]
                 week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
-                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                today=timezone.make_aware(timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d')))
                 while week <= today:
                     UnitSold=0
                     TotalPrice=0
@@ -2302,8 +2302,8 @@ class SalesByOrderGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Store_id=store)
@@ -2316,8 +2316,8 @@ class SalesByOrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Store_id=store)
@@ -2331,8 +2331,8 @@ class SalesByOrderGraph(APIView):
             if SelectTime=="ThisYear":
                 z=[]
                 l={}
-                week=datetime.strptime(StartDate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Store_id=store)
@@ -2380,8 +2380,8 @@ class SalesGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     DeliverSale=0
@@ -2403,8 +2403,8 @@ class SalesGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     DeliverSale=0
@@ -2426,8 +2426,8 @@ class SalesGraph(APIView):
             if SelectTime=="ThisYear":
                 z=[]
                 l={}
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 UnitSold=0
                 DeliverSale=0
                 StoreSale=0
@@ -2453,8 +2453,9 @@ class SalesGraph(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
-        
+# from dateutil import relativedelta as rd   
+# import dateutil #.relativedelta     
+
 class OrderGraph(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2484,8 +2485,8 @@ class OrderGraph(APIView):
 
             if SelectTime=="ThisWeek":
                 z=[]
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     DeliverSale=0
@@ -2507,8 +2508,8 @@ class OrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisMonth":
                 z=[]
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     DeliverSale=0
@@ -2529,9 +2530,8 @@ class OrderGraph(APIView):
                 return Response(z)
             if SelectTime=="ThisYear":
                 z=[]
-                l={}
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 while week <= today:
                     UnitSold=0
                     DeliverSale=0
@@ -2548,12 +2548,8 @@ class OrderGraph(APIView):
                                 StoreSale += j["Cart_Quantity"]
                     result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}
                     z.append(result)
-                    week=week + timedelta(days=1)
-                for qwe in range(0,len(z)):
-                    for rty in z:
-                        if (z[qwe]==rty):
-                            l.update(rty)
-                return Response([l])
+                    week=week + relativedelta(months=+1)
+                return Response(z)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -2608,8 +2604,8 @@ class SalesByCategoryGraph(APIView):
 
                 return Response(category_stats)
             if selectTime=="ThisWeek":
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -2641,8 +2637,8 @@ class SalesByCategoryGraph(APIView):
 
                 return Response(category_stats)
             if selectTime=="ThisMonth":
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered" ).filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -2674,8 +2670,8 @@ class SalesByCategoryGraph(APIView):
 
                 return Response(category_stats)
             if selectTime=="ThisYear":
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 Delivered=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered").filter(Store_id=store)
                 TotalOrder=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 category_stats = []
@@ -2742,8 +2738,8 @@ class VendorCardDashBoard(APIView):
             else:
                 z=[]
                 d=[]
-                week=datetime.strptime(startdate, '%Y-%m-%d')
-                today=datetime.strptime(EndDate, '%Y-%m-%d')
+                week=timezone.make_aware(datetime.strptime(startdate, '%Y-%m-%d'))
+                today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                 order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Store_id=store)
                 PendingOrder=order.filter(Order_Status="Pending").count()
                 CancelOrder=order.filter(Order_Status="Cancel").count()  

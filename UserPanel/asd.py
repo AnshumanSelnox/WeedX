@@ -780,3 +780,72 @@
 #                     l.update(lkj)
 # print(l)
         
+# import math
+# marks={}
+# class person:
+#     def __init__(self,name) -> None:
+#         self.name=name
+#         # self.marks=marks
+
+#     def say_hi(self,marks):
+#         x=0
+#         for i in marks.values():
+#             x+=int(i)
+#         # z=(sum(marks.values()))
+#         average=x/len(marks)
+#         print({"Name":self.name,"total":x,"Average":average})
+# p=person("Anshuman")
+# subjects = ["Tamil","English","Maths","Science","Social"]
+# for subject in subjects:
+#     marks[subject] = input("Enter the " + subject + " marks:")
+# p.say_hi(marks)
+        
+        
+# marks = {} #a dictionary, it's a list of (key : value) pairs (eg. "Maths" : 34)
+# subjects = ["Tamil","English","Maths","Science","Social"] # this is a list
+
+# #here we populate the dictionary with the marks for every subject
+# for subject in subjects:
+#    marks[subject] = input("Enter the " + subject + " marks:")
+
+# #and finally the calculation of the total and the average
+# total = sum(marks.__next__())
+# average = float(total) / len(marks)
+
+# print ("The total is " + str(total) + " and the average is " + str(average))
+
+
+# a=lambda x: x * x
+# print(a(5))
+
+# user = [{"name": "Dough", "age": 55}, 
+#         {"name": "Ben", "age": 44}, 
+#         {"name": "Citrus", "age": 33},
+#         {"name": "Abdullah", "age":22},
+#         ]
+# print(sorted(user, key=lambda el: el["name"]))
+# print(sorted(user, key= lambda y: y["age"]))
+
+# a=(lambda x,y: x if(x==y) else (x ** y))
+# print(a(3,2))
+
+# a=2 %  2
+# print(a)
+
+
+def flatten_dictionary(d, parent_key='', sep='.'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dictionary(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+nested_dict = {'a': 1, 'c': {'a': 2, 'b': {'x': 3, 'z': {'aa': 1, 'vv': 7}, 'y': 4}, 'ra': 10}, 'd': [6, 7, 8]}
+flattened_dict = flatten_dictionary(nested_dict)
+
+print(flattened_dict)
+
+#Expected Output: {'a': 1, 'c.a': 2, 'c.b.x': 3, 'c.b.z.aa': 1, 'c.b.z.vv': 7, 'c.b.y': 4, 'c.ra': 10, 'd': [6, 7, 8]}
