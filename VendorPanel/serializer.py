@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
     fields = ["id","username","Gender",'DateOfBirth','otp']
     
 #Serializer to Register User
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer1(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('username', 'password','email','Gender','DateOfBirth')
