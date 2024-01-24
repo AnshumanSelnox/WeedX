@@ -161,6 +161,10 @@ urlpatterns = [
     path('RolesAfterLogin/', RolesAfterLogin.as_view()),
     ###########################################################################################################################################
     path('TotalStore/', TotalStore.as_view()),
+    path('AllRecentOrder/', AllRecentOrder.as_view()),
+    path('AllPendingStores/', AllPendingStores.as_view()),
+    path('SearchRecentOrderDashboard/', SearchRecentOrderDashboard.as_view()),
+
 
 
 

@@ -18,6 +18,7 @@ import smtplib
 import random
 from UserPanel.serializer import *
 from datetime import datetime,timedelta
+from django.utils import timezone
 
 # class IsCustomRolePermission(BasePermission):
 #     def has_permission(self, request, view):
@@ -2162,4 +2163,134 @@ class TotalStore(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
+class VendoreCard(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                LastStartDate=request.data.get("LastStartDate",None)
+                EndStartDate=request.data.get("EndStartDate",None)
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    DayBeforeYesterday=request.data.get("DayBeforeYesterday")
+                    daybefore=Stores.objects.filter(created__icontains=DayBeforeYesterday).count()
+                    store=Stores.objects.filter(created__icontains=StartDate).count()
+                    lastdaystore=Stores.objects.filter(created__icontains=LastStartDate).count()
+                    lastpercent=daybefore*lastdaystore/100
+                    currentpercentage=lastdaystore*store/100
+                    totalpercenttage=lastpercent * currentpercentage /100
+                    if currentpercentage> lastpercent:
+                        result = {"TotalStore":store,"percentage":totalpercenttage,"Growth":True}
+                        z.append(result)
+                    else:
+                        result={"TotalStore":store,"percentage":totalpercenttage,"Growth":False}
+                        z.append(result)
+                    return Response(z)
+
+                else:
+                    z=[]
+                    DayBeforeWeekStart=request.data.get("DayBeforeWeekStart")
+                    DayBeforeWeekEnd=request.data.get("DayBeforeWeekEnd")
+                    startDate=datetime.strptime(StartDate, '%Y-%m-%d')
+                    endDate=datetime.strptime(EndDate, '%Y-%m-%d')
+                    lastStartDate=datetime.strptime(LastStartDate, '%Y-%m-%d')
+                    endStartDate=datetime.strptime(EndStartDate, '%Y-%m-%d')
+                    dayBeforeWeekStart=datetime.strptime(DayBeforeWeekStart, '%Y-%m-%d')
+                    dayBeforeWeekEnd=datetime.strptime(DayBeforeWeekEnd, '%Y-%m-%d')
+                    
+                    while startDate <= endDate:
+                        currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=endDate).count()
+                        laststore=Stores.objects.filter(created__gte=lastStartDate,created__lt=endStartDate).count()
+                        previoustimestore=Stores.objects.filter(created__gte=dayBeforeWeekStart,created__lt=dayBeforeWeekEnd).count()
+                        currentstorepercentage=currentstorecount * laststore /100
+                        laststorepercentage=laststore *previoustimestore/100
+                        totalpercenttage=currentstorepercentage *laststorepercentage/100
+                        if currentstorepercentage> laststorepercentage:
+                            result = {"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":True}
+                            z.append(result)
+                        else:
+                            result={"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":False}
+                            z.append(result)
+                        startDate=startDate + timedelta(days=1)
+                    return Response(z[-1])
+                
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+                
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class AllRecentOrder(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            a=request.user.user_type
+            if a=="Admin":
+                order=Order.objects.all().order_by("-OrderId")
+                serialize=Serializer_Order(order,many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class SearchRecentOrderDashboard(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            a=request.user.user_type
+            if a=="Admin":
+                search=request.data.get("search")
+                order=Order.objects.filter(OrderId__icontains=search) or  Order.objects.filter(Store__Store_Name__icontains=search) or Order.objects.filter(created_by__username__icontains=search)
+                serialize=Serializer_Order(order,many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+
+class AllPendingStores(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            a=request.user.user_type
+            if a=="Admin":
+                StartDate=request.data.get("StartDate")
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime")
+                z=[]
+                l=[]
+                if SelectTime == "Today":
+                    store=Stores.objects.filter(Status="Hide").filter(created__icontains=StartDate).order_by("-id")
+                    for i in store:
+                        user=User.objects.filter(id=i.created_by_id).first()
+                        response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url  }
+                        z.append(response)
+                    return Response(z)
+                else:
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    while week <= today:
+                        store=Stores.objects.filter(Status="Hide").filter(created__gte=week,created__lt=today).order_by("-id")
+                        for i in store:
+                            user=User.objects.filter(id=i.created_by_id).first()
+                            response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url  }
+                            z.append(response)
+                        week=week + timedelta(days=1)
+                    for m in z:
+                        if m not in l:
+                            l.append(m)
+                    return Response(l)
+            
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            
