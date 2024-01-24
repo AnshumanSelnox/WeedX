@@ -849,3 +849,53 @@ flattened_dict = flatten_dictionary(nested_dict)
 print(flattened_dict)
 
 #Expected Output: {'a': 1, 'c.a': 2, 'c.b.x': 3, 'c.b.z.aa': 1, 'c.b.z.vv': 7, 'c.b.y': 4, 'c.ra': 10, 'd': [6, 7, 8]}
+
+
+# sample_list = [12,23,"ab","cd",45,67]
+# for i in sample_list:
+#     # for j in range(len(sample_list)):
+#         # print(type(i)==str)
+#         if type(i) != str:
+#             pass
+#         else:
+#             print(i)
+#             sample_list.remove(i)
+        
+#         # i.remove()
+    
+    
+# print(sample_list)
+
+# capital = "MyPythonFunctionName"
+# output = "my_python_function_name"
+
+# dic = { 1:"abc",2:"hij",3:"pqr"}
+# output = {1:"bcd",2:"ijk",3:"qrs"}
+
+# print(dic[1]) 
+
+# a  = (23,34,45,[1,2])
+
+# a = (1)
+# a = (1,)
+# a = {}
+
+# a= {1:2,3}
+# a = {1:(2,3,4)}
+# a = {(1,2,):456}
+# a = {[1,2]:34}
+
+# def func():
+#     try:
+#         return 1/0
+#     except:
+#         print("working")
+#         return 1
+#     finally:
+#         return 34
+
+# sample_list = [12,23,"ab","cd",45,67]
+# capital = "MyPythonFunctionName"
+# output = "my_python_function_name"
+# dic = { 1:"abc",2:"hij",3:"pqr" }
+# output = {1:"bcd",2:"ijk",3:"qrs"}
