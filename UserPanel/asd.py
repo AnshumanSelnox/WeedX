@@ -833,44 +833,47 @@
 # print(a)
 
 
-def flatten_dictionary(d, parent_key='', sep='.'):
-    items = []
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_dictionary(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return dict(items)
+# def flatten_dictionary(d, parent_key='', sep='.'):
+#     items = []
+#     for k, v in d.items():
+#         new_key = f"{parent_key}{sep}{k}" if parent_key else k
+#         if isinstance(v, dict):
+#             items.extend(flatten_dictionary(v, new_key, sep=sep).items())
+#         else:
+#             items.append((new_key, v))
+#     return dict(items)
 
-nested_dict = {'a': 1, 'c': {'a': 2, 'b': {'x': 3, 'z': {'aa': 1, 'vv': 7}, 'y': 4}, 'ra': 10}, 'd': [6, 7, 8]}
-flattened_dict = flatten_dictionary(nested_dict)
+# nested_dict = {'a': 1, 'c': {'a': 2, 'b': {'x': 3, 'z': {'aa': 1, 'vv': 7}, 'y': 4}, 'ra': 10}, 'd': [6, 7, 8]}
+# flattened_dict = flatten_dictionary(nested_dict)
 
-print(flattened_dict)
+# print(flattened_dict)
 
 #Expected Output: {'a': 1, 'c.a': 2, 'c.b.x': 3, 'c.b.z.aa': 1, 'c.b.z.vv': 7, 'c.b.y': 4, 'c.ra': 10, 'd': [6, 7, 8]}
 
 
 # sample_list = [12,23,"ab","cd",45,67]
-# for i in sample_list:
-#     # for j in range(len(sample_list)):
-#         # print(type(i)==str)
-#         if type(i) != str:
-#             pass
-#         else:
-#             print(i)
-#             sample_list.remove(i)
-        
-#         # i.remove()
+# sample_list=[x for x in sample_list if isinstance(x, int)]
+# print(sample_list)
     
     
 # print(sample_list)
 
 # capital = "MyPythonFunctionName"
-# output = "my_python_function_name"
+# # output = "my_python_function_name"
+# output = capital.lower() == "my_python_function_name"
+# print(output)
+
+# def convert_to_snake_case(s):
+#     return ''.join(['_' + i.lower() if i.isupper() else i for i in s]).lstrip('_')
+
+# capital = "MyPythonFunctionName"
+# snake_case = convert_to_snake_case(capital)
+# print(snake_case)
 
 # dic = { 1:"abc",2:"hij",3:"pqr"}
-# output = {1:"bcd",2:"ijk",3:"qrs"}
+# # output = {1:"bcd",2:"ijk",3:"qrs"}
+# output= {key: ''.join(chr(ord(char) + 1) for char in value) for key, value in dic.items()}
+# print(output)
 
 # print(dic[1]) 
 

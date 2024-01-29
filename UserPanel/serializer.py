@@ -58,6 +58,7 @@ class Serializer_AddtoCart(serializers.ModelSerializer):
 class Serializer_Order(serializers.ModelSerializer):
   SellerName=serializers.ReadOnlyField(source='Store.created_by.username')
   username=serializers.ReadOnlyField(source='created_by.username')
+  email=serializers.ReadOnlyField(source='created_by.email')
   class Meta:
     model=Order
     fields='__all__'

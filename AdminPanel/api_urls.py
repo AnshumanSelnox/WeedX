@@ -164,6 +164,11 @@ urlpatterns = [
     path('AllRecentOrder/', AllRecentOrder.as_view()),
     path('AllPendingStores/', AllPendingStores.as_view()),
     path('SearchRecentOrderDashboard/', SearchRecentOrderDashboard.as_view()),
+    path('VendorCard/', VendorCard.as_view()),
+    path('TotalSalesCard/', TotalSalesCard.as_view()),
+    path('TotalOrderCard/', TotalOrderCard.as_view()),
+    path('ProductDashBoardCard/', ProductDashBoardCard.as_view()),
+    path('CustomerDashBoardCard/', CustomerDashBoardCard.as_view()),
 
 
 
