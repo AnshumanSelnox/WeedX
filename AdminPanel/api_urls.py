@@ -169,6 +169,7 @@ urlpatterns = [
     path('TotalOrderCard/', TotalOrderCard.as_view()),
     path('ProductDashBoardCard/', ProductDashBoardCard.as_view()),
     path('CustomerDashBoardCard/', CustomerDashBoardCard.as_view()),
+    path('TopProduct/', TopProduct.as_view()),
 
 
 

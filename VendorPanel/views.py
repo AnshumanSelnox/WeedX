@@ -387,7 +387,7 @@ class RegisterAPI(generics.GenericAPIView):
 
             else:
                 if serializer.is_valid():
-                    user = serializer.save(user_type='Vendor')    
+                    user = serializer.save(user_type='Vendor')
                     send_OneToOneMail(
                         from_email='smtpselnox@gmail.com', to_emails=email)
                     return Response({"message": {"Otp sent to": email}},status=status.HTTP_200_OK)
@@ -627,7 +627,7 @@ class AddStores(APIView):
             LicenceNo=request.data.get("LicenceNo")
             a=Stores.objects.filter(Stores_MobileNo=Stores_MobileNo)
             s=Stores.objects.filter(LicenceNo=LicenceNo)
-            if len(Stores_MobileNo) == 15:
+            if len(Stores_MobileNo) <= 10:
                 if a.exists():
                     return Response({"Stores_MobileNo":"Mobile no. is already Exist"},status=status.HTTP_400_BAD_REQUEST) 
                 elif s.exists():

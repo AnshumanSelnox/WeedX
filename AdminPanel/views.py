@@ -2122,7 +2122,7 @@ class TotalStore(APIView):
                             result = {"TotalStore":store,"percentage":totalpercenttage,"Growth":True}
                             z.append(result)
                         else:
-                            result={"TotalStore":store,"percentage":totalpercenttage,"Growth":False}
+                            result={"TotalStore":store,"percentage":round(totalpercenttage,2),"Growth":False}
                             z.append(result)
                     else:
                         result={"TotalStore":store,"percentage":0,"Growth":True}
@@ -2135,15 +2135,15 @@ class TotalStore(APIView):
                     endDate=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                     lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
                     endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
-                    currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=endDate).count()
+                    currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=(endDate+timedelta(days=1))).count()
                     laststore=Stores.objects.filter(created__gte=lastStartDate,created__lt=endStartDate).count()
                     if laststore !=0:
                         totalpercenttage=(currentstorecount - laststore)  * 100/laststore
                         if currentstorecount >= laststore:
-                            result = {"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":True}
+                            result = {"TotalStore":currentstorecount,"percentage":round(totalpercenttage,2),"Growth":True}
                             z.append(result)
                         else:
-                            result={"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":False}
+                            result={"TotalStore":currentstorecount,"percentage":round(totalpercenttage,2),"Growth":False}
                             z.append(result)
                     else:
                         result={"TotalStore":currentstorecount,"percentage":0,"Growth":True}
@@ -2180,7 +2180,7 @@ class VendorCard(APIView):
                             result = {"TotalStore":store,"percentage":totalpercenttage,"Growth":True}
                             z.append(result)
                         else:
-                            result={"TotalStore":store,"percentage":totalpercenttage,"Growth":False}
+                            result={"TotalStore":store,"percentage":round(totalpercenttage,2),"Growth":False}
                             z.append(result)
                     else:
                         result={"TotalStore":store,"percentage":0,"Growth":True}
@@ -2193,15 +2193,15 @@ class VendorCard(APIView):
                     endDate=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                     lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
                     endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
-                    currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=endDate).count()
+                    currentstorecount=Stores.objects.filter(created__gte=startDate,created__lt=(endDate + timedelta(days=1))).count()
                     laststore=Stores.objects.filter(created__gte=lastStartDate,created__lt=endStartDate).count()
                     if laststore !=0:
                         totalpercenttage=(currentstorecount - laststore)*100/laststore
                         if currentstorecount >= laststore:
-                            result = {"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":True}
+                            result = {"TotalStore":currentstorecount,"percentage":round(totalpercenttage,2),"Growth":True}
                             z.append(result)
                         else:
-                            result={"TotalStore":currentstorecount,"percentage":totalpercenttage,"Growth":False}
+                            result={"TotalStore":currentstorecount,"percentage":round(totalpercenttage,2),"Growth":False}
                             z.append(result)
                     else:
                         result={"TotalStore":currentstorecount,"percentage":0,"Growth":True}
@@ -2268,7 +2268,7 @@ class AllPendingStores(APIView):
                     week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
                     today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
                     while week <= today:
-                        store=Stores.objects.filter(Status="Hide").filter(created__gte=week,created__lt=today).order_by("-id")
+                        store=Stores.objects.filter(Status="Hide").filter(created__gte=week,created__lt=(today+timedelta(days=1))).order_by("-id")
                         for i in store:
                             user=User.objects.filter(id=i.created_by_id).first()
                             response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url  }
@@ -2523,7 +2523,7 @@ class CustomerDashBoardCard(APIView):
                     for i in daybefore:
                         daybeforecustomer.append(i.created_by)
                     res1 = [daybeforecustomer[i] for i in range(len(daybeforecustomer)) if i == daybeforecustomer.index(daybeforecustomer[i]) ]
-                    if res1 !=0:
+                    if len(res1) !=0:
                         totalpercenttage=(len(res) - len(res1)) * 100/len(res1)
                         if len(res) >= len(res1):
                             result = {"TotalCustomer":len(res),"percentage":round(totalpercenttage,2),"Growth":True}
@@ -2566,7 +2566,12 @@ class TotalSalesPieChart(APIView):
                 else:
                     week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
                     today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
+                    endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
+                    lastsale=0
                     order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered")
+                    order1=Order.objects.filter(OrderDate__gte=lastStartDate,OrderDate__lt=endStartDate).filter(Order_Status="Delivered")
+                    
                     result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0,"TotalSales":0}
                     for i in order:
                         result["TotalSales"] +=i.subtotal
@@ -2582,3 +2587,56 @@ class TotalSalesPieChart(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+from operator import itemgetter  
+class TopProduct(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    order=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered")
+                    for i in order:
+                        for j in i.Product:
+                            a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                            qwe=0
+                            cart=0
+                            qwe = qwe + j["TotalPrice"]
+                            cart= cart +j["Cart_Quantity"]
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                            z.append(response)
+                    for l in z:
+                        if l not in y:
+                            y.append(l)
+                    y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+                    return Response(y)
+                else:
+                    z=[]
+                    y=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=(today + timedelta(days=1))).filter(Order_Status="Delivered")
+                    for i in order:
+                        for j in i.Product:
+                            a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                            qwe=0
+                            cart=0
+                            qwe = qwe + j["TotalPrice"]
+                            cart= cart +j["Cart_Quantity"]
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                            z.append(response)
+                    for l in z:
+                        if l not in y:
+                            y.append(l)
+                    y.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+                    return Response(y)
+
+                
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

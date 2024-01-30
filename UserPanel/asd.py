@@ -888,17 +888,132 @@
 # a = {(1,2,):456}
 # a = {[1,2]:34}
 
-# def func():
-#     try:
-#         return 1/0
-#     except:
-#         print("working")
-#         return 1
-#     finally:
-#         return 34
-
+def func():
+    try:
+        return 1/0
+    except:
+        print("working")
+        return 1
+    finally:
+        return 32,21
+print(func())
 # sample_list = [12,23,"ab","cd",45,67]
 # capital = "MyPythonFunctionName"
 # output = "my_python_function_name"
 # dic = { 1:"abc",2:"hij",3:"pqr" }
 # output = {1:"bcd",2:"ijk",3:"qrs"}
+
+
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'plusMinus' function below.
+#
+# The function accepts INTEGER_ARRAY arr as parameter.
+#
+
+# def plusMinus(arr):
+#     numbers = [0,0,0]
+#     for i in arr:
+#         # positive
+#         numbers[0] += (i > 0)
+#         # negative
+#         numbers[1] += (i < 0)
+#         # zero
+#         numbers[2] += (i == 0)
+        
+#     numbers = [ print( round((number/len( arr )), 6)) for number in numbers]
+
+# if __name__ == '__main__':
+#     n = int(input().strip())
+
+#     arr = list(map(int, input().rstrip().split()))
+
+#     plusMinus(arr)
+
+
+# # -4 3 -9 0 4 1
+
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'miniMaxSum' function below.
+#
+# The function accepts INTEGER_ARRAY arr as parameter.
+#
+
+# def miniMaxSum(arr):
+#     a=sorted(arr)
+#     z=0
+#     for i in range(len(a)):
+#         z+=a[i]
+
+# if __name__ == '__main__':
+
+#     arr = list(map(int, input().rstrip().split()))
+
+#     miniMaxSum(arr)
+
+
+
+# def remove_duplicate_values_dict(test_dict):
+#     seen_values = []
+#     result_dict = {}
+#     for i in test_dict:
+#         for key, value in i.items():
+#             if value not in seen_values:
+#                 result_dict[key] = value
+#                 seen_values.append(value)
+            
+#         return result_dict
+
+a=[{
+        "ProductName": "HOT MINTS HYBRID",
+        "ProductSalesCount": 2,
+        "Price": 154,
+        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
+        "category": "EDIBLES",
+        "Product_id": 46
+    },
+{
+        "ProductName": "HOT MINTS HYBRID",
+        "ProductSalesCount": 2,
+        "Price": 68,
+        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
+        "category": "EDIBLES",
+        "Product_id": 46
+    },
+{
+        "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
+        "ProductSalesCount": 1,
+        "Price": 42,
+        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
+        "category": "EDIBLES",
+        "Product_id": 48
+    }]
+# z=[]
+# l=dict()
+# for i in a:
+#    for key, val in i.items():
+   
+#     if val not in z:
+#         z.append(val)
+#         l[key] = val
+
+# print(remove_duplicate_values_dict(a))
+for i in a:
+    d2= {tuple(v): k for k, v in i.items()}
+    i={v: list(k) for k, v in d2.items()}
+print(i)

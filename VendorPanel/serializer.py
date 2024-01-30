@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 class RegisterSerializer1(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('username', 'password','email','Gender','DateOfBirth')
+    fields = ('username', 'password','email','Gender','DateOfBirth','user_type')
    
 
   def create(self, validated_data):
@@ -43,7 +43,9 @@ class RegisterSerializer1(serializers.ModelSerializer):
       username=validated_data['username'],
       email=validated_data['email'],
       Gender=validated_data['Gender'],
-      DateOfBirth=validated_data['DateOfBirth']
+      DateOfBirth=validated_data['DateOfBirth'],
+      user_type=validated_data['user_type']
+      
     )
     user.set_password(validated_data['password'])
     user.save()
