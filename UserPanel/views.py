@@ -116,16 +116,20 @@ class ForgetPasswordAPI(APIView):
             serializer = ChangePasswordSerializer(data=request.data)
             if serializer.is_valid():
                 email = serializer.validated_data['email']
-                send_OneToOneMail(
-                    from_email='smtpselnox@gmail.com', to_emails=email)
-                response = {
-                    'status': 'success',
-                    'code': status.HTTP_200_OK,
-                    'message': 'mail sent successfully',
-                    'data': {"Otp_Sent_To": email}
-                }
+                user=User.objects.get(email=email)
+                if user.user_type=="Customer":
+                    send_OneToOneMail(
+                        from_email='smtpselnox@gmail.com', to_emails=email)
+                    response = {
+                        'status': 'success',
+                        'code': status.HTTP_200_OK,
+                        'message': 'mail sent successfully',
+                        'data': {"Otp_Sent_To": email}
+                    }
 
-                return Response(response)
+                    return Response(response)
+                else:
+                    return Response({"message": "Not A Customer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 return Response({"message": "Something Goes Wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:

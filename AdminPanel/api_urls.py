@@ -170,6 +170,12 @@ urlpatterns = [
     path('ProductDashBoardCard/', ProductDashBoardCard.as_view()),
     path('CustomerDashBoardCard/', CustomerDashBoardCard.as_view()),
     path('TopProduct/', TopProduct.as_view()),
+    path('TopStore/', TopStore.as_view()),
+    path('TotalSalesPieChart/', TotalSalesPieChart.as_view()),
+    path('TotalUserGraph/', TotalUserGraph.as_view()),
+    path('TotalStore/', TotalStore.as_view()),
+    path('ParticularOrder/<int:id>', ParticularOrder.as_view()),
+
 
 
 

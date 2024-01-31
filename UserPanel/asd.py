@@ -888,15 +888,15 @@
 # a = {(1,2,):456}
 # a = {[1,2]:34}
 
-def func():
-    try:
-        return 1/0
-    except:
-        print("working")
-        return 1
-    finally:
-        return 32,21
-print(func())
+# def func():
+#     try:
+#         return 1/0
+#     except:
+#         print("working")
+#         return 1
+#     finally:
+#         return 32,21
+# print(func())
 # sample_list = [12,23,"ab","cd",45,67]
 # capital = "MyPythonFunctionName"
 # output = "my_python_function_name"
@@ -906,11 +906,11 @@ print(func())
 
 #!/bin/python3
 
-import math
-import os
-import random
-import re
-import sys
+# import math
+# import os
+# import random
+# import re
+# import sys
 
 #
 # Complete the 'plusMinus' function below.
@@ -942,11 +942,11 @@ import sys
 
 #!/bin/python3
 
-import math
-import os
-import random
-import re
-import sys
+# import math
+# import os
+# import random
+# import re
+# import sys
 
 #
 # Complete the 'miniMaxSum' function below.
@@ -1002,8 +1002,56 @@ a=[{
         "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
         "category": "EDIBLES",
         "Product_id": 48
+    },
+{
+        "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
+        "ProductSalesCount": 4,
+        "Price": 42,
+        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
+        "category": "EDIBLES",
+        "Product_id": 48
     }]
 # z=[]
+# for i in a:
+#     if len(z)==0:
+#         z.append(i)
+#     else:
+#         for j in z:
+#             if j["Product_id"]==i["Product_id"]:
+#                 j.update({"ProductSalesCount":i["ProductSalesCount"]+j["ProductSalesCount"]})
+                
+#             else:
+#                 z.append(i)
+                
+                    
+# print(z)
+
+q = []
+for i in a:
+    found = False
+    for j in q:
+        if j["Product_id"] == i["Product_id"]:
+            j["ProductSalesCount"] += i["ProductSalesCount"]
+            j["Price"] += i["Price"]
+            found = True
+            break
+
+    if not found:
+        q.append(i.copy())
+
+print(q)
+
+
+
+
+
+
+
+
+
+
+
+
 # l=dict()
 # for i in a:
 #    for key, val in i.items():
@@ -1013,7 +1061,22 @@ a=[{
 #         l[key] = val
 
 # print(remove_duplicate_values_dict(a))
-for i in a:
-    d2= {tuple(v): k for k, v in i.items()}
-    i={v: list(k) for k, v in d2.items()}
-print(i)
+# z=[]
+# for i in a:
+#     z.append(i["Product_id"])
+    
+# myData =  [i for i in a if not (i['Product_id'] == z)]
+# print(type(a))
+# print(myData)
+# for i in a:
+#     # print(type(i))
+#     for j in range(len(a)):
+#         if i["Product_id"]==a[j]["Product_id"]:
+#             del a[j]
+#             z.append(i)
+
+# z=[element for element in a if element.get('Product_id', '') != 'Product_id']
+# for i, j in enumerate(a):
+#   if j['Product_id'] :
+#       del a[i]
+# print(i)

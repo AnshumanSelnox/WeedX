@@ -59,6 +59,7 @@ class Serializer_Order(serializers.ModelSerializer):
   SellerName=serializers.ReadOnlyField(source='Store.created_by.username')
   username=serializers.ReadOnlyField(source='created_by.username')
   email=serializers.ReadOnlyField(source='created_by.email')
+  UserProfileImage=serializers.ReadOnlyField(source='created_by.image.url')
   class Meta:
     model=Order
     fields='__all__'
