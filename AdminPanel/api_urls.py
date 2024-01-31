@@ -173,8 +173,14 @@ urlpatterns = [
     path('TopStore/', TopStore.as_view()),
     path('TotalSalesPieChart/', TotalSalesPieChart.as_view()),
     path('TotalUserGraph/', TotalUserGraph.as_view()),
-    path('TotalStore/', TotalStore.as_view()),
+    path('TotalStoreVendorProFileCard/<int:id>', TotalStoreVendorProFileCard.as_view()),
     path('ParticularOrder/<int:id>', ParticularOrder.as_view()),
+    path('TotalSalesVendorCard/', TotalSalesVendorCard.as_view()),
+    path('TotalOrderVendorCard/', TotalOrderVendorCard.as_view()),
+    path('TotalProductCard/', TotalProductCard.as_view()),
+    path('TotalCustomerVendorCard/', TotalCustomerVendorCard.as_view()),
+    path('AllStoresVendor/<int:id>', AllStoresVendor.as_view()),
+
 
 
 
