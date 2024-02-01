@@ -496,7 +496,6 @@ class UpdateProduct(APIView):
             Productid=request.data.get("Productid")
             Weightid=request.data.get("Weightid")
             prices=request.data.get("Multiple_prices")
-            images=request.FILES.get('Multiple_images')
             DeleteImageId=request.data.get("DeleteImageId")
             if Weightid:
                 WeightId=ProductWeight.objects.get(id=Weightid)

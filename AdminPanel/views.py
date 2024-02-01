@@ -3154,55 +3154,352 @@ class TopSaleProductVendor(APIView):
         try:
             user=request.user.user_type
             if user=='Admin':
-                id=request.data.get("id")
+                Storeid=request.data.get("Storeid",None)
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    q=[]
+                    y=[]
+                    order=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    for i in order:
+                        for j in i.Product:
+                            a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                            qwe=0
+                            cart=0
+                            qwe = qwe + j["TotalPrice"]
+                            cart= cart +j["Cart_Quantity"]
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            z.append(response)
+                    for l in z:
+                        if l not in y:
+                            y.append(l)
+                    for w in y:
+                        found = False
+                        for l in q:
+                            if l["Product_id"] == w["Product_id"]:
+                                l["ProductSalesCount"] += w["ProductSalesCount"]
+                                l["Price"] += w["Price"]
+                                found = True 
+                                break
+                        if not found:
+                            q.append(w.copy())
+                    q.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+                    return Response(q)
+                else:
+                    z=[]
+                    y=[]
+                    q=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=(today + timedelta(days=1))).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    for i in order:
+                        for j in i.Product:
+                            a=ProductImage.objects.filter(product=j["Product_id"]).first()
+                            qwe=0
+                            cart=0
+                            qwe = qwe + j["TotalPrice"]
+                            cart= cart +j["Cart_Quantity"]
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            z.append(response)
+                    for l in z:
+                        if l not in y:
+                            y.append(l)
+                    for w in y:
+                        found = False
+                        for l in q:
+                            if l["Product_id"] == w["Product_id"]:
+                                l["ProductSalesCount"] += w["ProductSalesCount"]
+                                l["Price"] += w["Price"]
+                                found = True 
+                                break
+
+                        if not found:
+                            q.append(w.copy())
+                        q.sort(key = itemgetter('ProductSalesCount'), reverse=True)
+                    return Response(q)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class TotalSalesVendorPieChart(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                Storeid=request.data.get("Storeid")
                 LastStartDate=request.data.get("LastStartDate",None)
                 EndStartDate=request.data.get("EndStartDate",None)
                 StartDate=request.data.get("StartDate",None)
                 EndDate=request.data.get("EndDate",None)
                 SelectTime=request.data.get("SelectTime",None)
                 if SelectTime=="Today":
-                    z=[]
-                    store=Stores.objects.filter(created_by=id)
-                    for i in store:
-                        product=Product.objects.filter(created__icontains=StartDate).count()
-                        lastdayProduct=Product.objects.filter(created__icontains=LastStartDate).count()
-                        if lastdayProduct !=0:
-                            totalpercenttage=(product-lastdayProduct)*100 /lastdayProduct
-                            if product >= lastdayProduct:
-                                result = {"Totalproduct":product,"percentage":round(totalpercenttage,2),"Growth":True}
-                                z.append(result)
-                            else:
-                                result={"Totalproduct":product,"percentage":round(totalpercenttage,2),"Growth":False}
-                                z.append(result)
-                        else:
-                            result={"Totalproduct":product,"percentage":0,"Growth":False}
-                            z.append(result)
-                    return Response(z)
-
-                else:
-                    z=[]
-                    startDate=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d')).date()
-                    endDate=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d')).date()
-                    lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d')).date()
-                    endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d')).date()
-                    currentproductcount=Product.objects.filter(created__gte=startDate,created__lt=(endDate + timedelta(days=1))).count()
-                    lastcurrentproductcount=Product.objects.filter(created__gte=lastStartDate,created__lt=endStartDate).count()
-                    if lastcurrentproductcount !=0:
-                        totalpercenttage=(currentproductcount - lastcurrentproductcount)*100 /lastcurrentproductcount
-                        if currentproductcount >= lastcurrentproductcount:
-                            result = {"Totalproduct":currentproductcount,"percentage":round(totalpercenttage,2),"Growth":True}
-                            z.append(result)
-                        else:
-                            result={"Totalproduct":currentproductcount,"percentage":round(totalpercenttage,2),"Growth":False}
-                            z.append(result)
+                    order=Order.objects.filter(OrderDate__icontains=EndDate).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    order1=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    if order1.count()!=0:
+                        percentage=(order.count()- order1.count())*100/order1.count()
+                        result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0,"TotalSales":0,"Percentage":round(percentage,2),"Growth": (order.count()) >= (order1.count())}
+                        for i in order:
+                            result["TotalSales"] +=i.subtotal
+                            if i.Order_Type == "Pickup":
+                                result["Pickup"] += i.subtotal
+                            elif i.Order_Type == "Delivery":
+                                result["Delivery"] += i.subtotal
+                            elif i.Order_Type == "Delivery and Pickup":
+                                result["Curbsibe"] += i.subtotal
+                    
+                        return Response(result)
                     else:
-                        result={"Totalproduct":currentproductcount,"percentage":0,"Growth":False}
-                        z.append(result)
-
-                    return Response(z)
+                        result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0,"TotalSales":0,"Percentage":0,"Growth": True}
+                        for i in order:
+                            result["TotalSales"] +=i.subtotal
+                            if i.Order_Type == "Pickup":
+                                result["Pickup"] += i.subtotal
+                            elif i.Order_Type == "Delivery":
+                                result["Delivery"] += i.subtotal
+                            elif i.Order_Type == "Delivery and Pickup":
+                                result["Curbsibe"] += i.subtotal
+                        return Response(result)
+                else:
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
+                    endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=(today + timedelta(days=1))).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    order1=Order.objects.filter(OrderDate__gte=lastStartDate,OrderDate__lt=endStartDate).filter(Order_Status="Delivered").filter(Store=Storeid)
+                    if order1.count()!=0:
+                        percentage=(order.count()- order1.count())*100/order1.count()
+                        result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0,"TotalSales":0,"Percentage":round(percentage,2),"Growth": (order.count()) >= (order1.count())}
+                        for i in order:
+                            result["TotalSales"] +=i.subtotal
+                            if i.Order_Type == "Pickup":
+                                result["Pickup"] += i.subtotal
+                            elif i.Order_Type == "Delivery":
+                                result["Delivery"] += i.subtotal
+                            elif i.Order_Type == "Delivery and Pickup":
+                                result["Curbsibe"] += i.subtotal
+                    
+                        return Response(result)
+                    else:
+                        result = {"Pickup": 0, "Delivery": 0,"Curbsibe":0,"TotalSales":0,"Percentage":0,"Growth": True}
+                        for i in order:
+                            result["TotalSales"] +=i.subtotal
+                            if i.Order_Type == "Pickup":
+                                result["Pickup"] += i.subtotal
+                            elif i.Order_Type == "Delivery":
+                                result["Delivery"] += i.subtotal
+                            elif i.Order_Type == "Delivery and Pickup":
+                                result["Curbsibe"] += i.subtotal
+                        return Response(result)
             else:
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
-                
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
+    
+    
+
+class SalesPerformanceVendorGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                SelectTime=request.data.get("SelectTime",None)
+                store=request.data.get("store")
+                StartDate = request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate")
+                if SelectTime=="Today":
+                    z=[]
+                    TotalPrice=0
+                    UnitSold=0
+                    order=Order.objects.filter(OrderDate__icontains=StartDate ).filter(Order_Status="Delivered").filter(Store_id=store)
+                    
+                    for i in order:
+                        TotalPrice += i.subtotal
+                        for j in i.Product:
+                            UnitSold += j["Cart_Quantity"]
+                    result = {"Date":StartDate,"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                    z.append(result)
+                    return Response(z)
+
+                if SelectTime=="ThisWeek":
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    while week <= today:
+                        TotalPrice=0
+                        UnitSold=0
+                        order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered").filter(Store_id=store)
+                        
+                        for i in order:
+                            TotalPrice += i.subtotal
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                        result = {"Date":week.strftime("%A"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                        z.append(result)
+                        week=week + timedelta(days=1)
+                    return Response(z)
+                if SelectTime=="ThisMonth":
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    while week <= today:
+                        UnitSold=0
+                        TotalPrice=0
+                        order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today ).filter(Order_Status="Delivered").filter(Store_id=store)
+                        for i in order:
+                            TotalPrice += i.subtotal
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                        result = {"Date":week.strftime("%x"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                        z.append(result)
+                        week=week + timedelta(days=1)
+                    return Response(z)
+                if SelectTime=="ThisYear":
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    while week <= today:
+                        UnitSold=0
+                        TotalPrice=0
+                        order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
+                        for i in order:
+                            TotalPrice += i.subtotal
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                        result = {"Date":week.strftime("%B"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                        z.append(result)
+                        week += relativedelta(months=+1)
+                    return Response(z)
+                else:
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    while week <= today:
+                        UnitSold=0
+                        TotalPrice=0
+                        order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=today).filter(Order_Status="Delivered").filter(Store_id=store)
+                        for i in order:
+                            TotalPrice += i.subtotal
+                            for j in i.Product:
+                                UnitSold += j["Cart_Quantity"]
+                        result = {"Date":week.strftime("%B"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                        z.append(result)
+                        week += timedelta(days=1)
+                    return Response(z)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)    
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class ProductDetailsVendor(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                Storeid=request.data.get("Storeid")
+                product=Product.objects.filter(Store_id=Storeid).order_by("-created")
+                serialize=Serializer_Product(product,many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class ViewProductById(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                id=request.data.get("id")
+                Storeid=request.data.get("Storeid")
+                product=Product.objects.filter(Store_id=Storeid).filter(id=id)
+                serialize=Serializer_Product(product,many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class EditProductById(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                id=request.data.get("id")
+                Storeid=request.data.get("Storeid")
+                Weightid=request.data.get("Weightid")
+                prices=request.data.get("Multiple_prices")
+                DeleteImageId=request.data.get("DeleteImageId")
+                if Weightid:
+                    WeightId=ProductWeight.objects.get(id=Weightid)
+                    serialize=ProductWeightSerializer(WeightId,data=request.data, partial=True)
+                    if serialize.is_valid():
+                        serialize.save(Price=json.loads(prices))
+                if id:
+                    ProductId = Product.objects.filter(Store_id=Storeid).filter(id=id).first()
+                    serialize=Serializer_Product(ProductId,data=request.data, partial=True)
+                    if serialize.is_valid():
+                        serialize.save()
+                if DeleteImageId :
+                            ProductId = Product.objects.get(id=id)
+                            for j in json.loads(DeleteImageId):
+                                User = get_object_or_404(ProductImage, id=j)
+                                User.delete()
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class DeleteProductById(APIView):
+    permission_classes=[IsAuthenticated]
+    def delete(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                User = get_object_or_404(Product, id=id)
+                User.delete()
+                return Response({"status": "success", "data": "Deleted"})
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+       
+class OrderByStoreId(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                Storeid=request.data.get("Storeid")
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    order=Order.objects.filter(Store=Storeid).filter(OrderDate__icontains=StartDate).order_by("-OrderDate")
+                    serialize=Serializer_Order(order,many=True)
+                    return Response(serialize.data)
+                else:
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(Store=Storeid).filter(OrderDate__gte=week,OrderDate__lte=(today +timedelta(days=1))).order_by("-OrderDate")
+                    serialize=Serializer_Order(order,many=True)
+                    return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+# class AllReviews(APIView):
+    

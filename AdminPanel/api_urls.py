@@ -180,6 +180,20 @@ urlpatterns = [
     path('TotalProductCard/', TotalProductCard.as_view()),
     path('TotalCustomerVendorCard/', TotalCustomerVendorCard.as_view()),
     path('AllStoresVendor/<int:id>', AllStoresVendor.as_view()),
+    path('TopSaleProductVendor/', TopSaleProductVendor.as_view()),
+    path('TotalSalesVendorPieChart/', TotalSalesVendorPieChart.as_view()),
+    path('SalesPerformanceVendorGraph/', SalesPerformanceVendorGraph.as_view()),
+    path('ProductDetailsVendor/', ProductDetailsVendor.as_view()),
+    path('ViewProductById/', ViewProductById.as_view()),
+    path('EditProductById/', EditProductById.as_view()),
+    path('DeleteProductById/<int:id>', DeleteProductById.as_view()),
+    path('OrderByStoreId/', OrderByStoreId.as_view()),
+
+    
+    
+    
+    
+
 
 
 

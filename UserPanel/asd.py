@@ -979,39 +979,39 @@
             
 #         return result_dict
 
-a=[{
-        "ProductName": "HOT MINTS HYBRID",
-        "ProductSalesCount": 2,
-        "Price": 154,
-        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
-        "category": "EDIBLES",
-        "Product_id": 46
-    },
-{
-        "ProductName": "HOT MINTS HYBRID",
-        "ProductSalesCount": 2,
-        "Price": 68,
-        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
-        "category": "EDIBLES",
-        "Product_id": 46
-    },
-{
-        "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
-        "ProductSalesCount": 1,
-        "Price": 42,
-        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
-        "category": "EDIBLES",
-        "Product_id": 48
-    },
-{
-        "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
-        "ProductSalesCount": 4,
-        "Price": 42,
-        "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
-        "category": "EDIBLES",
-        "Product_id": 48
-    }]
-# z=[]
+# a=[{
+#         "ProductName": "HOT MINTS HYBRID",
+#         "ProductSalesCount": 2,
+#         "Price": 154,
+#         "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
+#         "category": "EDIBLES",
+#         "Product_id": 46
+#     },
+# {
+#         "ProductName": "HOT MINTS HYBRID",
+#         "ProductSalesCount": 2,
+#         "Price": 68,
+#         "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_42ff23afb9a04ba88c4d1dcd09c66c6amv21.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fddf4ab6d6480fa7bb54517f77c55e09fa31127a4c7954c04538eb3d1c1b2fd7",
+#         "category": "EDIBLES",
+#         "Product_id": 46
+#     },
+# {
+#         "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
+#         "ProductSalesCount": 1,
+#         "Price": 42,
+#         "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
+#         "category": "EDIBLES",
+#         "Product_id": 48
+#     },
+# {
+#         "ProductName": "ALIEN LABS GALACTIC HASH GUMMIES",
+#         "ProductSalesCount": 4,
+#         "Price": 42,
+#         "Image": "https://selnoxmedia.s3.amazonaws.com/media/product_images/2159d3_4efe79375f3547659db78b6f81b4be8emv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240129%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240129T121053Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3e7b9e66ca0b5b32db77b5bb7c0eeea3fcda0729309f8bb56b9ebfc564df98a4",
+#         "category": "EDIBLES",
+#         "Product_id": 48
+#     }]
+# # z=[]
 # for i in a:
 #     if len(z)==0:
 #         z.append(i)
@@ -1026,20 +1026,20 @@ a=[{
                     
 # print(z)
 
-q = []
-for i in a:
-    found = False
-    for j in q:
-        if j["Product_id"] == i["Product_id"]:
-            j["ProductSalesCount"] += i["ProductSalesCount"]
-            j["Price"] += i["Price"]
-            found = True
-            break
+# q = []
+# for i in a:
+#     found = False
+#     for j in q:
+#         if j["Product_id"] == i["Product_id"]:
+#             j["ProductSalesCount"] += i["ProductSalesCount"]
+#             j["Price"] += i["Price"]
+#             found = True
+#             break
 
-    if not found:
-        q.append(i.copy())
+#     if not found:
+#         q.append(i.copy())
 
-print(q)
+# print(q)
 
 
 
@@ -1080,3 +1080,6 @@ print(q)
 #   if j['Product_id'] :
 #       del a[i]
 # print(i)
+
+
+
