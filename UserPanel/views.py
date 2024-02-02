@@ -2179,7 +2179,7 @@ class AddBlankImage(APIView):
     def post(self, request):
         try:
 
-            serializer = StoreRatingAndReviewSerializer(data=request.data, partial=True)
+            serializer = StoreReviewSerializer(data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response({"status": "success","data": serializer.data}, status.HTTP_200_OK)
@@ -2615,7 +2615,7 @@ class UpdateStoreReview(APIView):
     def post(self, request, id=None):
         try:
             User = StoreReview.objects.get(id=id)
-            serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
+            serializer = StoreReviewSerializer(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
@@ -2701,7 +2701,7 @@ class AddHelpfull(APIView):
                 a.helpfull.append(userid)
             l=len(a.helpfull)
             response={"helpfull":a.helpfull,"count":l}
-            serialize=StoreRatingAndReviewSerializer(a,data=response,partial=True)
+            serialize=StoreReviewSerializer(a,data=response,partial=True)
             if serialize.is_valid():
                 serialize.save()
                 storeReview={"storeReview":a.id,"user":request.user}
@@ -2717,7 +2717,7 @@ class GetStoreReview(APIView):
     def get(self,request,id=None):
         try:
             like=StoreReview.objects.filter(Store=id)
-            serialize=StoreRatingAndReviewSerializer(like,many=True).data
+            serialize=StoreReviewSerializer(like,many=True).data
             return Response(serialize)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -2926,7 +2926,7 @@ class GetStoreReviewbyUser(APIView):
         try:
 
             product=StoreReview.objects.filter(user=request.user)
-            serialize=StoreRatingAndReviewSerializer(product,many=True).data
+            serialize=StoreReviewSerializer(product,many=True).data
 
             return Response(serialize)
         except Exception as e:
@@ -3026,13 +3026,13 @@ class GetUserNotificationByLogin(APIView):
                 s=StoreReview.objects.filter(id=i.storeReview).first()
                 if s:
                     if s.Reply != None:
-                        seraialize4=StoreRatingAndReviewSerializer(s,many=True).data
+                        seraialize4=StoreReviewSerializer(s,many=True).data
                 else:
                     seraialize4=[]
                 if s:
                     
                     if len(s.helpfull) >3:
-                        seraialize5=StoreRatingAndReviewSerializer(s,many=True).data
+                        seraialize5=StoreReviewSerializer(s,many=True).data
                 else:
                     seraialize5=[]
                 if i.lastday==datetime.now():

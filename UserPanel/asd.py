@@ -1083,3 +1083,30 @@
 
 
 
+
+# def simpleGeneratorFun(): 
+# 	yield type((1,2))		
+# 	# yield 2			
+# 	# yield 3			
+
+# for value in simpleGeneratorFun(): 
+# 	print(value)
+
+# a=(1,2,3,4,[1,2]) #updating list in tuple
+# for i in a:
+#     if type(i)==list:
+#         i.append(3)
+# print(a)
+
+# def Geek():
+# 	return 5
+# let = Geek
+# print(callable(let))
+# num = 5 * 5
+# print(callable(num))
+
+def asd(x):
+    return x*x
+z=[7,8,8]
+q=map(asd,z)
+print((q))

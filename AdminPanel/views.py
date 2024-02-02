@@ -3501,5 +3501,90 @@ class OrderByStoreId(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
-# class AllReviews(APIView):
-    
+class AllReviews(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    Productreview=Review.objects.filter(created_at__icontains=StartDate)
+                    Storereview=StoreReview.objects.filter(created_at__icontains=StartDate)
+                    serialize=ReviewSerializer(Productreview,many=True)
+                    serialize1=StoreReviewSerializer(Storereview,many=True)
+                    data=serialize.data+serialize1.data
+                    return Response(data)
+                else:
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    Productreview=Review.objects.filter(created_at__gte=week,created_at__lte=(today +timedelta(days=1)))
+                    Storereview=StoreReview.objects.filter(created_at__gte=week,created_at__lte=(today +timedelta(days=1)))
+                    serialize=ReviewSerializer(Productreview,many=True)
+                    serialize1=StoreReviewSerializer(Storereview,many=True)
+                    data=serialize.data+serialize1.data
+                    return Response(data)
+
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class ReviewsByStore(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StoreId=request.data.get("StoreId")
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    Productreview=Review.objects.filter(created_at__icontains=StartDate).filter(product__Store_id=StoreId)
+                    Storereview=StoreReview.objects.filter(created_at__icontains=StartDate).filter(Store=StoreId)
+                    serialize=ReviewSerializer(Productreview,many=True)
+                    serialize1=StoreReviewSerializer(Storereview,many=True)
+                    data=serialize.data+serialize1.data
+                    return Response(data)
+                else:
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    Productreview=Review.objects.filter(created_at__gte=week,created_at__lte=(today +timedelta(days=1))).filter(product__Store_id=StoreId)
+                    Storereview=StoreReview.objects.filter(created_at__gte=week,created_at__lte=(today +timedelta(days=1))).filter(Store=StoreId)
+                    serialize=ReviewSerializer(Productreview,many=True)
+                    serialize1=StoreReviewSerializer(Storereview,many=True)
+                    data=serialize.data+serialize1.data
+                    return Response(data)
+
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class DeleteReviews(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StoreId=request.data.get("StoreId",None)
+                productId=request.data.get("productId",None)
+
+                if productId:
+                    Productreview=Review.objects.get(id=productId)
+                    Productreview.delete()
+                    return Response('Deleted')
+                elif StoreId:
+                    Storereview=StoreReview.objects.get(id=StoreId)
+                    Storereview.delete()
+                    return Response('Deleted')
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

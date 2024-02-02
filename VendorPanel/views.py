@@ -1394,7 +1394,7 @@ class AddReplyonStoreReview(APIView):
     def post(self, request, id=None):
         try:
             User = StoreReview.objects.get(id=id)
-            serializer = StoreRatingAndReviewSerializer(User, data=request.data, partial=True)
+            serializer = StoreReviewSerializer(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
                 return Response({"status": "success", "data": serializer.data}, status.HTTP_200_OK)
@@ -1407,7 +1407,7 @@ class GetReplyonStoreReview(APIView):
     def get(self,request,id=None):
         try:
             like=StoreReview.objects.filter(Store=id)
-            serialize=StoreRatingAndReviewSerializer(like,many=True).data
+            serialize=StoreReviewSerializer(like,many=True).data
             return Response(serialize)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -188,7 +188,9 @@ urlpatterns = [
     path('EditProductById/', EditProductById.as_view()),
     path('DeleteProductById/<int:id>', DeleteProductById.as_view()),
     path('OrderByStoreId/', OrderByStoreId.as_view()),
-
+    path('AllReviews/', AllReviews.as_view()),
+    path('ReviewsByStore/', ReviewsByStore.as_view()),
+    path('DeleteReviews/', DeleteReviews.as_view()),
     
     
     
@@ -206,6 +208,4 @@ urlpatterns = [
 
 
 ]
-
-
 

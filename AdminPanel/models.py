@@ -344,6 +344,7 @@ class Product(models.Model):                #Product
     Status=models.CharField(max_length=20,default="Active",choices=Status)
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     rating=models.IntegerField(default=0,null=True)
+    TotalRating=models.IntegerField(default=0)
     WishList=models.BooleanField(default=False)
     ProductCoupoun=models.JSONField(default=list,null=True)
     CategoryCoupoun=models.JSONField (default=list,null=True)
