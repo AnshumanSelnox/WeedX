@@ -3387,7 +3387,7 @@ class SalesPerformanceVendorGraph(APIView):
                             TotalPrice += i.subtotal
                             for j in i.Product:
                                 UnitSold += j["Cart_Quantity"]
-                        result = {"Date":week.strftime("%B"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
+                        result = {"Date":week.strftime("%x"),"TotalPrice":TotalPrice,"UnitSold":UnitSold}
                         z.append(result)
                         week += timedelta(days=1)
                     return Response(z)

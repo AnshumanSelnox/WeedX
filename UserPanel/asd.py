@@ -474,6 +474,8 @@
 # insertAfterNode(self=1,previous_node=5,value=10)
 
 
+# www_authenticate_realm = "api"
+# media_type = "multipart/form-data"
 # import requests
 
 # def download_file(url, destination):
@@ -1105,8 +1107,63 @@
 # num = 5 * 5
 # print(callable(num))
 
-def asd(x):
-    return x*x
-z=[7,8,8]
-q=map(asd,z)
-print((q))
+# def asd(x):
+#     return x*x
+# z=[7,8,8]
+# q=map(asd,z)
+# print((q))
+
+# a=5
+# b=7
+# a,b=b,a
+# print(a)
+# print(b)
+
+
+# www_authenticate_realm = "api"
+# media_type = "multipart/form-data"
+
+import requests
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
+from rest_framework import status
+
+class ImageUploadView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request, *args, **kwargs):
+        link = request.data.get('image_link')
+        
+        # Download image from link
+        try:
+            response = requests.get(link)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Convert image to multipart/form-data
+        image_content = ContentFile(response.content)
+        image_file = SimpleUploadedFile('image.jpg', image_content.read(), content_type='image/jpeg')
+
+        # Include additional form data if needed
+        form_data = {'other_field': 'value'}
+
+        # Create a MultiValueDict for form data
+        data = request.data.copy()
+        data.update(form_data)
+        data.update({'image': image_file})
+
+        # Pass the data to your serializer or process it as needed
+        # For example:
+        # serializer = YourSerializer(data=data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+a=ImageUploadView()
+z=a
