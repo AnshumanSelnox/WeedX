@@ -192,21 +192,13 @@ urlpatterns = [
     path('ReviewsByStore/', ReviewsByStore.as_view()),
     path('DeleteReviews/', DeleteReviews.as_view()),
     path('TotalSalesPage/', TotalSalesPage.as_view()),
+    path('UserOrderandReview/<int:id>', UserOrderandReview.as_view()),
+    path('OrderbyUser/<int:id>', OrderbyUser.as_view()),
+    path('ReviewbyUser/<int:id>', ReviewbyUser.as_view()),
+    path('PopularLocationGraph/', PopularLocationGraph.as_view()),
+    path('PopularLocationGraphPage/', PopularLocationGraphPage.as_view()),
     
     
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
 ]
 

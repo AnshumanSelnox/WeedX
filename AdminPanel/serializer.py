@@ -73,7 +73,7 @@ class PasswordReseetSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email','status','Roles','is_superuser','MobilePhone')
+        fields = ('id', 'username', 'email','status','Roles','is_superuser','MobilePhone','image','googlelink','DateOfBirth','PhotoId')
           
 
 class RegisterSerializer(serializers.ModelSerializer):

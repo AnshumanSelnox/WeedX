@@ -24,6 +24,9 @@ class AddtoCart(models.Model):
 
 
 class Order(models.Model):
+    Country=models.CharField(max_length=256,blank=False,null=False)
+    State=models.CharField(max_length=256,blank=False,null=False)
+    City=models.CharField(max_length=256,blank=False,null=False)
     DeliveryTime=models.CharField(max_length=200)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     OrderId=models.AutoField(primary_key=True)

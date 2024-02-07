@@ -3666,9 +3666,177 @@ class UserOrderandReview(APIView):
         try:
             user=request.user.user_type
             if user=='Admin':
-                customer=User.objects.get(id=id)
-                serialize=UserSerializer(customer).data
+                customer=User.objects.filter(id=id)
+                serialize=UserSerializer(customer,many=True)
+                order=Order.objects.filter(created_by=id).count()
+                storereview=StoreReview.objects.filter(user=id).count()
+                productreview=Review.objects.filter(user=id).count()
+                TotalReview=storereview+productreview
+                data=list(serialize.data)
+                data.append({"order":order,"reviews":TotalReview})
+                    
+                return Response(data)
             else:
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class OrderbyUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request,id=None):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                order=Order.objects.filter(created_by=id)
+                serialize=Serializer_Order(order,many=True)
+                return Response(serialize.data)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ReviewbyUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request,id=None):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                storereview=StoreReview.objects.filter(user=id)
+                productreview=Review.objects.filter(user=id)
+                serializestore=StoreReviewSerializer(storereview,many=True).data
+                serializerproduct=ReviewSerializer(productreview,many=True).data
+                serialize=serializestore+serializerproduct
+                return Response(serialize)
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class PopularLocationGraph(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    order=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered")
+                    if order.count()>0:
+                        for i in order:
+                            z.append({"State":i.State,"TotalSale":i.subtotal}) 
+                            
+                            temp = {}
+                            for data in z:
+                                if data["State"] in temp:
+                                    temp[data["State"]]["TotalSale"] += data["TotalSale"]
+                                else:
+                                    temp[data["State"]] = data.copy()
+                            category_delivery_list = list(temp.values())
+                        return Response(category_delivery_list)
+                    else:
+                        return Response(z)
+                else:
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=(today+timedelta(days=1))).filter(Order_Status="Delivered")
+                    if order.count()>0:
+                        for i in order:
+                            z.append({"State":i.State,"TotalSale":i.subtotal}) 
+                            
+                            temp = {}
+                            for data in z:
+                                if data["State"] in temp:
+                                    temp[data["State"]]["TotalSale"] += data["TotalSale"]
+                                else:
+                                    temp[data["State"]] = data.copy()
+                            category_delivery_list = list(temp.values())
+                        return Response(category_delivery_list)
+                    else:
+                        return Response(z)
+                    
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+     
+class PopularLocationGraphPage(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                LastStartDate=request.data.get("LastStartDate",None)
+                EndStartDate=request.data.get("EndStartDate",None)
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    previousSale=0
+                    totalsale=0
+                    AllSale=0
+                    order=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered")
+                    order1=Order.objects.filter(OrderDate__icontains=EndDate).filter(Order_Status="Delivered")
+                    for k in order1:
+                        previousSale=previousSale+k.subtotal
+                    if order.count()>0:
+                        for i in order:
+                            totalsale =totalsale + i.subtotal
+                            z.append({"State":i.State,"TotalSale":i.subtotal}) 
+                            
+                            temp = {}
+                            for data in z:
+                                if data["State"] in temp:
+                                    temp[data["State"]]["TotalSale"] += data["TotalSale"]
+                                else:
+                                    temp[data["State"]] = data.copy()
+                            category_delivery_list = list(temp.values())
+                        for j in category_delivery_list:
+                            AllSale=AllSale+j["TotalSale"]
+                        category_delivery_list.append({"AllSale":AllSale,"Growth":AllSale>previousSale})    
+                        return Response(category_delivery_list)
+                        
+                    else:
+                        return Response(z)
+                else:
+                    z=[]
+                    previousSale=0
+                    totalsale=0
+                    AllSale=0
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
+                    endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
+                    order=Order.objects.filter(OrderDate__gte=week,OrderDate__lte=(today+timedelta(days=1))).filter(Order_Status="Delivered")
+                    lastorder=Order.objects.filter(OrderDate__gte=lastStartDate,OrderDate__lte=endStartDate).filter(Order_Status="Delivered")
+                    for k in lastorder:
+                        previousSale=previousSale+k.subtotal
+                    if order.count()>0:
+                        for i in order:
+                            totalsale =totalsale + i.subtotal
+                            z.append({"State":i.State,"TotalSale":i.subtotal}) 
+                            
+                            temp = {}
+                            for data in z:
+                                if data["State"] in temp:
+                                    temp[data["State"]]["TotalSale"] += data["TotalSale"]
+                                else:
+                                    temp[data["State"]] = data.copy()
+                            category_delivery_list = list(temp.values())
+                        for j in category_delivery_list:
+                            AllSale=AllSale+j["TotalSale"]
+                        category_delivery_list.append({"AllSale":AllSale,"Growth":AllSale>previousSale})    
+                        return Response(category_delivery_list)
+                    else:
+                        return Response(z)
+                    
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
