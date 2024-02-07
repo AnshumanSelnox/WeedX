@@ -1728,27 +1728,48 @@ class SalesOverviewcard(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
-import base64
+# import base64
 import requests
+from rest_framework.parsers import MultiPartParser,JSONParser
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.base import ContentFile
 
 
-def get_as_base64(url):
-    return base64.b64encode(requests.get(url).content)
+# def get_as_base64(url):
+#     return base64.b64encode(requests.get(url).content)
 
 # q=get_as_base64(url="https://selnoxmedia.s3.amazonaws.com/media/product_images/12c29b_7f4c8d01e3d244fba7a50c36c7c201ffmv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240108%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240108T111034Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=815ada9e110d068ec667910113fdf0640e2747c67fe45ee40d4bc73eb2179591")
 # print(q)
-class ImageToBase64(APIView):
-    def post(self,request):
-        try:
-            a=[]
-            url=request.data.get("url")
-            for i in url:
-                z=get_as_base64(i)
-                a.append(z)
-            return Response(a)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class ImageToBase64(APIView):
+#     def post(self,request):
+#         try:
+#             a=[]
+#             url=request.data.get("url")
+#             for i in url:
+#                 z=get_as_base64(i)
+#                 a.append(z)
+#             return Response(a)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class ImageUploadView(APIView):
+    parser_classes = [MultiPartParser,JSONParser]
+
+    def post(self, request):
+            try:
+                for i in request.data:
+                    for j in i["images"]:
+                        response = requests.get(j)
+                        response.raise_for_status()
+                image_content = ContentFile(response.content)
+                image_file = SimpleUploadedFile('image.jpg', image_content.read(), content_type='image/jpeg')
+                form_data = {'other_field': 'value'}
+                data = request.data.copy()
+                data.update(form_data)
+                data.update({'image': image_file})
+            except requests.exceptions.RequestException as e:
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
  
 class ProductInsight(APIView):
     permission_classes=[IsAuthenticated]

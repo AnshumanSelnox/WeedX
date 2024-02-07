@@ -191,6 +191,7 @@ urlpatterns = [
     path('AllReviews/', AllReviews.as_view()),
     path('ReviewsByStore/', ReviewsByStore.as_view()),
     path('DeleteReviews/', DeleteReviews.as_view()),
+    path('TotalSalesPage/', TotalSalesPage.as_view()),
     
     
     

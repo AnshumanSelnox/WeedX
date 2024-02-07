@@ -3588,3 +3588,87 @@ class DeleteReviews(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class TotalSalesPage(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                delivery=0
+                pickup=0
+                curbsidepickup=0
+                TotalSale=0
+                LastStartDate=request.data.get("LastStartDate",None)
+                EndStartDate=request.data.get("EndStartDate",None)
+                StartDate=request.data.get("StartDate",None)
+                EndDate=request.data.get("EndDate",None)
+                SelectTime=request.data.get("SelectTime",None)
+                if SelectTime=="Today":
+                    z=[]
+                    store=Stores.objects.all()
+                    for i in store:
+                        order=Order.objects.filter(OrderDate__icontains=EndDate).filter(Order_Status="Delivered").filter(Store=i.id)
+                        order1=Order.objects.filter(OrderDate__icontains=StartDate).filter(Order_Status="Delivered").filter(Store=i.id)
+                        for j in order:
+                            if j.Order_Type == 'Delivery':
+                                delivery += j.subtotal
+                            elif j.Order_Type == 'Pickup':
+                                pickup += j.subtotal
+                            elif j.Order_Type == 'Delivery and Pickup':
+                                curbsidepickup += j.subtotal
+                            response = {"StoreName": i.Store_Name, "delivery": delivery, "Pickup": pickup, "curbsidepickup": curbsidepickup}
+                            z.append(response)
+                    for l in z:
+                        TotalSale+=l["delivery"]+l["Pickup"]+l["curbsidepickup"]
+                    z.append({"TotalSales":TotalSale})
+                    return Response(z)
+                else:
+                    z=[]
+                    week=timezone.make_aware(datetime.strptime(StartDate, '%Y-%m-%d'))
+                    today=timezone.make_aware(datetime.strptime(EndDate, '%Y-%m-%d'))
+                    lastStartDate=timezone.make_aware(datetime.strptime(LastStartDate, '%Y-%m-%d'))
+                    endStartDate=timezone.make_aware(datetime.strptime(EndStartDate, '%Y-%m-%d'))
+                    store=Stores.objects.all()
+                    for i in store:
+                        delivery=0
+                        pickup=0
+                        curbsidepickup=0
+                        TotalSale=0
+                        previous=0
+                        order=Order.objects.filter(OrderDate__gte=week,OrderDate__lt=(today + timedelta(days=1))).filter(Order_Status="Delivered").filter(Store=i.id)
+                        order1=Order.objects.filter(OrderDate__gte=lastStartDate,OrderDate__lt=endStartDate).filter(Order_Status="Delivered").filter(Store=i.id)
+                        for j in order:
+                            if j.Order_Type == 'Delivery':
+                                delivery += j.subtotal
+                            elif j.Order_Type == 'Pickup':
+                                pickup += j.subtotal
+                            elif j.Order_Type == 'Delivery and Pickup':
+                                curbsidepickup += j.subtotal
+                                for k in order1:
+                                    previous += k.subtotal
+                        response = {"StoreName": i.Store_Name, "delivery": delivery, "Pickup": pickup, "curbsidepickup": curbsidepickup}
+                        z.append(response)
+                    for l in z:
+                        TotalSale+=l["delivery"]+l["Pickup"]+l["curbsidepickup"]
+                    z.append({"TotalSales":TotalSale,"Growth":TotalSale>previous})
+                    return Response(z)
+                            
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+class UserOrderandReview(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request,id=None):
+        try:
+            user=request.user.user_type
+            if user=='Admin':
+                customer=User.objects.get(id=id)
+                serialize=UserSerializer(customer).data
+            else:
+                return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
