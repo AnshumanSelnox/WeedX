@@ -181,6 +181,8 @@ class VerifyOtpResetPassword(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+
 class LoginAPI(APIView):
     permission_classes=(permissions.AllowAny,)
     def post(self,request,format=None):
@@ -188,19 +190,23 @@ class LoginAPI(APIView):
             username=request.data.get("username")
             email=request.data.get("email")
             password=request.data.get("password")
+            
             if username:
                 if email:
                     if password:
-                        serializer=LoginSerializer(data=request.data)
+                        serializer=LoginSerializer1(data=request.data)
                         if serializer.is_valid():
-                            # self.object.check_password(Admin.data.get("password"))
-                            
                             email=serializer.validated_data['email']
-                            send_OneToOneMail(from_email='smtpselnox@gmail.com',to_emails=email)
-                            return Response({
-                                        'message':'Email sent',
-                                        'data':{"Otp_Sent_to":email}
-                                    },status=status.HTTP_200_OK)
+                            user1=User.objects.filter(username=username).filter(email=email)
+                            if user1:
+                                send_OneToOneMail(from_email='smtpselnox@gmail.com',to_emails=email)
+                                return Response({
+                                            'message':'Email sent',
+                                            'data':{"Otp_Sent_to":email}
+                                        },status=status.HTTP_200_OK)
+                            else:
+                                return Response({"error":"Username and Email Mismatch"},status=status.HTTP_400_BAD_REQUEST)
+                            
                         else:
                             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
                     else:

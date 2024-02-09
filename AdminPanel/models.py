@@ -4,7 +4,7 @@ from ckeditor.fields import RichTextField
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from AdminPanel.choices import *
-from datetime import datetime
+# from datetime import datetime
 
 class CustomRole(models.Model):
     RoleTitle=models.CharField(max_length=100,default=None)

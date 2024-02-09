@@ -139,7 +139,8 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 from VendorPanel.auth import EmailBackend
 from django.contrib.auth.hashers import check_password
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer1(serializers.Serializer):
+
     email = serializers.EmailField()
     password = serializers.CharField(style={"input_type": "password"},)
     def verify_password(self,password):

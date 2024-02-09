@@ -136,6 +136,8 @@ urlpatterns = [
     path('GetUserNotification/',GetUserNotification.as_view()),
     path('GetUserNotificationByLogin/',GetUserNotificationByLogin.as_view()),
     path('ClearNotification/',ClearNotification.as_view()),
+    path('GetNewsbyUser/',GetNewsbyUser.as_view()),
+    
 
 
 ]

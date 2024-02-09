@@ -29,9 +29,9 @@ class Login(APIView):
         try:
             email = request.data.get("email")
             password = request.data.get("password")
-            serializer = LoginSerializer(data=request.data)
+            serializer = LoginSerializer2(data=request.data)
             if serializer.is_valid():
-                user = User.objects.filter(email=email).first()
+                user = CustomerUser.objects.filter(email=email).first()
                 if user.user_type=="Customer":
                     if user is not None :
                         tokens = create_jwt_pair_for_user(user)
@@ -81,7 +81,7 @@ EmailBody='''
 
 def send_OneToOneMail(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
-    user = User.objects.get(email=to_emails)
+    user = CustomerUser.objects.get(email=to_emails)
     user.otp = Otp
     user.save()
     email_from = EMAIL_HOST_USER
@@ -116,7 +116,7 @@ class ForgetPasswordAPI(APIView):
             serializer = ChangePasswordSerializer(data=request.data)
             if serializer.is_valid():
                 email = serializer.validated_data['email']
-                user=User.objects.get(email=email)
+                user=CustomerUser.objects.get(email=email)
                 if user.user_type=="Customer":
                     send_OneToOneMail(
                         from_email='smtpselnox@gmail.com', to_emails=email)
@@ -141,7 +141,7 @@ class ValidateOTPForgetPassword(APIView):
         try:
             email=request.data.get("email")
             otp=request.data.get("otp")
-            user=User.objects.filter(email=email).first()
+            user=CustomerUser.objects.filter(email=email).first()
             if not user:
                 return Response({
                     'message': 'Something goes wrong',
@@ -166,7 +166,7 @@ class VerifyOtpForgetPassword(APIView):
         try:
             email=request.data.get("email")
             password=request.data.get("password")
-            user = User.objects.get(email=email)
+            user = CustomerUser.objects.get(email=email)
             serializer = PasswordReseetSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 if not user:
@@ -176,7 +176,7 @@ class VerifyOtpForgetPassword(APIView):
                     },status=status.HTTP_400_BAD_REQUEST)
                
                 if len(password) > 5:
-                    email=User.objects.get(email=email)
+                    email=CustomerUser.objects.get(email=email)
                     email.set_password(password)
                     email.save()
                     return Response({
@@ -194,7 +194,7 @@ class VerifyOtpForgetPassword(APIView):
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
-    serializer_class = UserSerializer
+    serializer_class = CustomerUserSerializer
 
     def get_object(self):
         try:
@@ -207,7 +207,7 @@ class UserAlreadyExist(APIView):
         try:
             email = request.data.get("email")
             if email:
-                user=User.objects.filter(email=email)
+                user=CustomerUser.objects.filter(email=email)
                 if user.exists():
                     return Response({"email": "Email is already Registered"})
                 else:
@@ -230,8 +230,8 @@ class RegisterAPI(generics.GenericAPIView):
                     if password:
                        
                         serializer = RegisterUserSerializer(data=request.data)
-                        user = User.objects.filter(email=email)
-                        username = User.objects.filter(username=username)
+                        user = CustomerUser.objects.filter(email=email)
+                        username = CustomerUser.objects.filter(username=username)
                         if user.exists():
                             if username.exists():
                                 return Response({"username": "Username is already Registered"},status=status.HTTP_400_BAD_REQUEST)
@@ -258,8 +258,8 @@ class RegisterAPI(generics.GenericAPIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ResetPassword(APIView):
-    serializer_class = PasswordReseetSerializer
-    model = User
+    serializer_class = PasswordResetSerializerCustomer
+    model = CustomerUser
     # permission_classes = (IsAuthenticated,)
 
     def get(self, queryset=None):
@@ -415,7 +415,8 @@ class GetNews(APIView):
             for i in serialize:
                 a=BlogComment.objects.filter(Blog=i["id"]).count()
                 b=BlogLike.objects.filter(Blog=i["id"]).count()
-                c=BlogView.objects.filter(blog=i["id"]).first()
+                l=BlogLike.objects.filter(Blog=i["id"]).filter
+                # c=BlogView.objects.filter(blog=i["id"]).first()
                 response={"id":i["id"],"Title":i["Title"],"Description":i["Description"],"username":i["username"],"Image":i["Image"],"Publish_Date":i["Publish_Date"],"likeCount":a,"commentCount":b,"ViewCount":i["ViewCount"]}
                 z.append(response)
             return Response(z)
@@ -532,6 +533,8 @@ class GetFilterBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
 class GetProductbyBrand(APIView):
     def get(self,request,id=None):
         try:
@@ -980,7 +983,7 @@ class AddOrder(APIView):
         
 
 class UpdateOrder(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, id=None):
         try:
@@ -1308,11 +1311,11 @@ class GoogleView(APIView):
 
         # create user if not exist
         try:
-            user = User.objects.get(email=data['email'])
+            user = CustomerUser.objects.get(email=data['email'])
             
         except User.DoesNotExist:
             user = User()
-            s = User.objects.filter(username=data['name'])
+            s = CustomerUser.objects.filter(username=data['name'])
             if s:
                 user.username = data['name']+str(a)
             else:
@@ -1633,9 +1636,9 @@ class FacebookSignInView(APIView):
 
         # create user if not exist
         try:
-            user = User.objects.get(email=user_info_response["email"])
-        except User.DoesNotExist:
-            user = User()
+            user = CustomerUser.objects.get(email=user_info_response["email"])
+        except CustomerUser.DoesNotExist:
+            user = CustomerUser()
             user.username = user_info_response["email"]
             # provider random default password
             user.password = make_password(BaseUserManager().make_random_password())
@@ -1724,7 +1727,7 @@ class UpdateUserProfile(APIView):
     def post(self, request):
         try:
             a=request.user.id
-            user = User.objects.get(id=a)
+            user = CustomerUser.objects.get(id=a)
             serializer = UserProfileSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
@@ -1741,7 +1744,7 @@ class GetUserProfile(APIView):
     def get(self, request):
         try:
             a=request.user.id
-            user = User.objects.get(id=a)
+            user = CustomerUser.objects.get(id=a)
             serializer = UserProfileSerializer(user)
             return Response( serializer.data, status.HTTP_200_OK)
         except Exception as e:
@@ -1870,7 +1873,7 @@ class AllUser(APIView):
     def get(self,request):
         try:
             a=[]
-            user=User.objects.all()
+            user=CustomerUser.objects.all()
             for i in user:
                 response=i.id
                 a.append(response)
@@ -2155,7 +2158,8 @@ class AddBlogLike(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         try:
-            User = BlogLike.objects.filter(user=request.user).first()
+            Blog=request.data.get("Blog")
+            User = BlogLike.objects.filter(user=request.user).filter(Blog=Blog).first()
             if User:
                 serializer = LikeSerializer(User, data=request.data, partial=True)
                 if serializer.is_valid():
@@ -3086,3 +3090,20 @@ class GetStaticImages(APIView):
             return Response({"data":serialize.data},status=200)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
+        
+class GetNewsbyUser(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request, format=None):
+        try:
+            z=[]
+            User = News.objects.select_related().all()
+            serialize=Serializer_News(User,many=True).data
+            for i in serialize:
+                a=BlogComment.objects.filter(Blog=i["id"]).count()
+                b=BlogLike.objects.filter(Blog=i["id"]).filter(like=True).count()
+                l=BlogLike.objects.filter(Blog=i["id"]).filter(user=request.user).filter(like=True)
+                response={"id":i["id"],"Title":i["Title"],"Description":i["Description"],"username":i["username"],"Image":i["Image"],"Publish_Date":i["Publish_Date"],"likeCount":b,"commentCount":a,"ViewCount":i["ViewCount"],"Liked":l.count()>0}
+                z.append(response)
+            return Response(z)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
