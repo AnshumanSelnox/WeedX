@@ -1728,47 +1728,51 @@ class SalesOverviewcard(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
-# import base64
-import requests
+
 from rest_framework.parsers import MultiPartParser,JSONParser
-from django.core.files.uploadedfile import SimpleUploadedFile
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+import requests
 from django.core.files.base import ContentFile
 
-
-# def get_as_base64(url):
-#     return base64.b64encode(requests.get(url).content)
-
-# q=get_as_base64(url="https://selnoxmedia.s3.amazonaws.com/media/product_images/12c29b_7f4c8d01e3d244fba7a50c36c7c201ffmv21.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS4WSA6KJNP6NPPES%2F20240108%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240108T111034Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=815ada9e110d068ec667910113fdf0640e2747c67fe45ee40d4bc73eb2179591")
-# print(q)
-# class ImageToBase64(APIView):
-#     def post(self,request):
-#         try:
-#             a=[]
-#             url=request.data.get("url")
-#             for i in url:
-#                 z=get_as_base64(i)
-#                 a.append(z)
-#             return Response(a)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 class ImageUploadView(APIView):
-    parser_classes = [MultiPartParser,JSONParser]
+    parser_classes = [MultiPartParser, JSONParser]
 
     def post(self, request):
-            try:
-                for i in request.data:
-                    for j in i["images"]:
-                        response = requests.get(j)
-                        response.raise_for_status()
-                image_content = ContentFile(response.content)
-                image_file = SimpleUploadedFile('image.jpg', image_content.read(), content_type='image/jpeg')
-                form_data = {'other_field': 'value'}
-                data = request.data.copy()
-                data.update(form_data)
-                data.update({'image': image_file})
-            except requests.exceptions.RequestException as e:
-                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            z = []
+            for i in request.data:
+                b = Brand.objects.filter(name=i["Brand_Name"]).first()
+                c = SubCategory.objects.filter(name=i["SubcategoryName"]).first()
+                images = []
+                for j in i["images"]:
+                    response = requests.get(j)
+                    response.raise_for_status()
+                    image_content = ContentFile(response.content)
+                    image_content.name="image"
+                    images.append(image_content)
+                data = i.copy()
+                data["Brand_id"] = b.id
+                data["Sub_Category_id"] = c.id
+                data["Multiple_images"] = images
+                z.append(data)
+            for l in z:
+                product = Product.objects.filter(Specialid=l["Specialid"]).first()
+                if product:
+                    serialize = Serializer_Product(product, data=l, partial=True)
+                else:
+                    serialize = Serializer_Product(data=l, partial=True)
+                if serialize.is_valid():
+                    serialize.save()
+                else:
+                    return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response("Success", status=status.HTTP_201_CREATED)
+        except requests.exceptions.RequestException as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
             
  
 class ProductInsight(APIView):
@@ -2032,130 +2036,6 @@ class CategoryInsight(APIView):
                 return Response(category_stats)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-# from io import BytesIO
-# import io, base64,boto3
-# from PIL import Image
-
-# import requests
-# from PIL import Image
-# from io import BytesIO
-
-# # def link_to_image(link, output_path):
-# #     try:
-# #         response = requests.get(link)
-# #         if response.status_code == 200:
-# #             image = Image.open(BytesIO(response.content))
-# #             image.save(output_path)
-# #             print(f"Image saved to {output_path}")
-# #         else:
-# #             print(f"Failed to retrieve the image. Status code: {response.status_code}")
-# #     except Exception as e:
-# #         print(f"An error occurred: {e}")
-# def download_file(link, destination):
-#     try:
-#         # Send a GET request to the URL
-#         response = requests.get(link)
-#         response.raise_for_status()  # Raise an exception for bad requests
-
-#         # Open the image using Pillow
-#         image = Image.open(BytesIO(response.content))
-
-#         # Save the image to the specified output path
-#         image.save(destination)
-
-#         print(f"Image saved successfully at {destination}")
-
-#     except Exception as e:
-#         print(f"Error: {e}")
-
-# import base64
-# import json
-# from PIL import Image
-
-# # def image_to_json(image_path):
-# #     try:
-# #         # Open the image using Pillow
-# #         with open(image_path, "rb") as image_file:
-# #             # Convert image data to base64
-# #             base64_data = base64.b64encode(image_file.read()).decode('utf-8')
-
-# #         # Create a dictionary with the image data
-# #         image_data = {
-# #             "image_path": image_path,
-# #             "base64_data": base64_data
-# #         }
-
-# #         # Convert the dictionary to JSON
-# #         json_data = json.dumps(image_data, indent=2)
-
-# #         # Print or return the JSON data
-# #         print(json_data)
-# #         return json_data
-
-# #     except Exception as e:
-# #         print(f"Error: {e}")
-# def encode_image_to_base64(image_path):
-#     with open(image_path, "rb") as image_file:
-#         # Convert binary image data to base64
-#         base64_data = base64.b64encode(image_file.read()).decode('utf-8')
-#     return base64_data
-# def create_json_with_image(image_path):
-#     # Encode image to base64
-#     base64_data = encode_image_to_base64(image_path)
-
-#     # Create a dictionary with image data
-#     image_data = {
-#         "image_path": image_path,
-#         "base64_data": base64_data
-#     }
-
-#     # Convert the dictionary to JSON
-#     json_data = json.dumps(image_data, indent=2)
-#     return json_data
-
-# # Example usage:
-
-
-
-
-
-# from django.core.files import File
-
-
-# class ImportXcel(APIView):
-#     permission_classes=[IsAuthenticated]
-#     def post(self,request):
-#         try:
-#             data=request.data.get("data")
-#             for i in data:
-#                 b=Brand.objects.filter(name=i["Brand_Name"]).first()
-#                 c=SubCategory.objects.filter(name=i["SubcategoryName"]).first()
-#                 for j in i["images"]:
-#                     response = requests.get(j)
-#                     if response.status_code == 200:
-#                         response.encoding="utf-8"
-#                         temp_image_path = "/home/selnoxinfotech/Anshuman/BackwoodAroma/output_image.jpg"
-#                         with open(temp_image_path, 'wb') as temp_image_file:
-#                             temp_image_file.write(response.content)
-#                         i['image'] = File(open(temp_image_path, 'rb'))
-#                 createdata={"Brand_id":b.id,"Sub_Category_id":c.id,"Multiple_images":i['image']}
-#                 i.update(createdata)
-#                 product=Product.objects.filter(Specialid=i["Specialid"]).first()
-#                 if product:
-#                     serailze=Serializer_Product(product,data=i,partial=True)
-#                     if serailze.is_valid():
-#                         serailze.save()
-#                         return Response(serailze.data)
-#                     else:
-#                         return Response(serailze.errors,status=status.HTTP_400_BAD_REQUEST)
-#                 else:
-#                     serailze=Serializer_Product(i,partial=True)
-#                     if serailze.is_valid():
-#                         serailze.save()
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 class SalesPerformance(APIView):
@@ -2472,8 +2352,6 @@ class SalesGraph(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-# from dateutil import relativedelta as rd   
-# import dateutil #.relativedelta     
 
 class OrderGraph(APIView):
     permission_classes=[IsAuthenticated]

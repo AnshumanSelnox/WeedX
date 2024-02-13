@@ -135,6 +135,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     Email=serializers.ReadOnlyField(source='user.email')
     ProductName=serializers.ReadOnlyField(source='product.Product_Name')
     ProductId=serializers.ReadOnlyField(source='product.id')
+    StoreName=serializers.ReadOnlyField(source='product.Store_id.Store_Name')
+    Reviewtype = serializers.ReadOnlyField(default='ProductReview')
     # ProductImages=serializers.JSONField()
     class Meta:
         model = Review
@@ -160,6 +162,7 @@ class StoreReviewSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
     StoreName=serializers.ReadOnlyField(source='Store.Store_Name')
     Email=serializers.ReadOnlyField(source='user.email')
+    Reviewtype = serializers.ReadOnlyField(default='StoreReview')
     # StoreImage=serializers.ReadOnlyField(source='Store.Store_Image')
     # userImage=serializers.ReadOnlyField(source='user.image')
     class Meta:

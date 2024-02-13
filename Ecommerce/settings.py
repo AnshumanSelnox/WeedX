@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-
+import boto3
 
 
 from django.conf import settings
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'DeliveryBoy',
     'rest_framework_simplejwt',
+    'knox',
 
     
 ]
@@ -66,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     
 ]
 
@@ -93,21 +95,28 @@ WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            "NAME": BASE_DIR / "db.sqlite3",
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     "NAME": BASE_DIR / "db.sqlite3",
 
-        },
-"Product": {
+        # },
+"default": {
 "ENGINE": "django.db.backends.postgresql_psycopg2",
 "NAME": "postgres",
-"USER" : "selnox94",
-"PASSWORD" : "Selnox@123",
-"HOST" : "127.0.0.5",
+"USER" : "postgres",
+"PASSWORD" : "Selnox123",
+"HOST" : "database-1.cpimvtecdzns.us-east-1.rds.amazonaws.com",
 "PORT" : "5432",
 }
+# "default": {
+# "ENGINE": "django.db.backends.postgresql_psycopg2",
+# "NAME": "postgres",
+# "USER" : "postgres",
+# "PASSWORD" : "Selnox@123",
+# "HOST" : "127.0.0.1",
+# "PORT" : "5432",
+# }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

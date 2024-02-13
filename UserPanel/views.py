@@ -29,9 +29,9 @@ class Login(APIView):
         try:
             email = request.data.get("email")
             password = request.data.get("password")
-            serializer = LoginSerializer2(data=request.data)
+            serializer = LoginSerializer(data=request.data)
             if serializer.is_valid():
-                user = CustomerUser.objects.filter(email=email).first()
+                user = User.objects.filter(email=email).first()
                 if user.user_type=="Customer":
                     if user is not None :
                         tokens = create_jwt_pair_for_user(user)
@@ -81,7 +81,7 @@ EmailBody='''
 
 def send_OneToOneMail(to_emails='',from_email=''):
     Otp = random.randint(1000, 9999)
-    user = CustomerUser.objects.get(email=to_emails)
+    user = User.objects.get(email=to_emails)
     user.otp = Otp
     user.save()
     email_from = EMAIL_HOST_USER
@@ -116,7 +116,7 @@ class ForgetPasswordAPI(APIView):
             serializer = ChangePasswordSerializer(data=request.data)
             if serializer.is_valid():
                 email = serializer.validated_data['email']
-                user=CustomerUser.objects.get(email=email)
+                user=User.objects.get(email=email)
                 if user.user_type=="Customer":
                     send_OneToOneMail(
                         from_email='smtpselnox@gmail.com', to_emails=email)
@@ -141,7 +141,7 @@ class ValidateOTPForgetPassword(APIView):
         try:
             email=request.data.get("email")
             otp=request.data.get("otp")
-            user=CustomerUser.objects.filter(email=email).first()
+            user=User.objects.filter(email=email).first()
             if not user:
                 return Response({
                     'message': 'Something goes wrong',
@@ -166,7 +166,7 @@ class VerifyOtpForgetPassword(APIView):
         try:
             email=request.data.get("email")
             password=request.data.get("password")
-            user = CustomerUser.objects.get(email=email)
+            user = User.objects.get(email=email)
             serializer = PasswordReseetSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 if not user:
@@ -176,7 +176,7 @@ class VerifyOtpForgetPassword(APIView):
                     },status=status.HTTP_400_BAD_REQUEST)
                
                 if len(password) > 5:
-                    email=CustomerUser.objects.get(email=email)
+                    email=User.objects.get(email=email)
                     email.set_password(password)
                     email.save()
                     return Response({
@@ -194,7 +194,7 @@ class VerifyOtpForgetPassword(APIView):
 
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
-    serializer_class = CustomerUserSerializer
+    serializer_class = UserSerializer
 
     def get_object(self):
         try:
@@ -207,7 +207,7 @@ class UserAlreadyExist(APIView):
         try:
             email = request.data.get("email")
             if email:
-                user=CustomerUser.objects.filter(email=email)
+                user=User.objects.filter(email=email)
                 if user.exists():
                     return Response({"email": "Email is already Registered"})
                 else:
@@ -230,8 +230,8 @@ class RegisterAPI(generics.GenericAPIView):
                     if password:
                        
                         serializer = RegisterUserSerializer(data=request.data)
-                        user = CustomerUser.objects.filter(email=email)
-                        username = CustomerUser.objects.filter(username=username)
+                        user = User.objects.filter(email=email)
+                        username = User.objects.filter(username=username)
                         if user.exists():
                             if username.exists():
                                 return Response({"username": "Username is already Registered"},status=status.HTTP_400_BAD_REQUEST)
@@ -258,8 +258,8 @@ class RegisterAPI(generics.GenericAPIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ResetPassword(APIView):
-    serializer_class = PasswordResetSerializerCustomer
-    model = CustomerUser
+    serializer_class = PasswordReseetSerializer
+    model = User
     # permission_classes = (IsAuthenticated,)
 
     def get(self, queryset=None):
@@ -1311,11 +1311,11 @@ class GoogleView(APIView):
 
         # create user if not exist
         try:
-            user = CustomerUser.objects.get(email=data['email'])
+            user = User.objects.get(email=data['email'])
             
         except User.DoesNotExist:
             user = User()
-            s = CustomerUser.objects.filter(username=data['name'])
+            s = User.objects.filter(username=data['name'])
             if s:
                 user.username = data['name']+str(a)
             else:
@@ -1636,9 +1636,9 @@ class FacebookSignInView(APIView):
 
         # create user if not exist
         try:
-            user = CustomerUser.objects.get(email=user_info_response["email"])
-        except CustomerUser.DoesNotExist:
-            user = CustomerUser()
+            user = User.objects.get(email=user_info_response["email"])
+        except User.DoesNotExist:
+            user = User()
             user.username = user_info_response["email"]
             # provider random default password
             user.password = make_password(BaseUserManager().make_random_password())
@@ -1727,7 +1727,7 @@ class UpdateUserProfile(APIView):
     def post(self, request):
         try:
             a=request.user.id
-            user = CustomerUser.objects.get(id=a)
+            user = User.objects.get(id=a)
             serializer = UserProfileSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
@@ -1744,7 +1744,7 @@ class GetUserProfile(APIView):
     def get(self, request):
         try:
             a=request.user.id
-            user = CustomerUser.objects.get(id=a)
+            user = User.objects.get(id=a)
             serializer = UserProfileSerializer(user)
             return Response( serializer.data, status.HTTP_200_OK)
         except Exception as e:
@@ -1873,7 +1873,7 @@ class AllUser(APIView):
     def get(self,request):
         try:
             a=[]
-            user=CustomerUser.objects.all()
+            user=User.objects.all()
             for i in user:
                 response=i.id
                 a.append(response)
