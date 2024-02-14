@@ -3847,3 +3847,22 @@ class PopularLocationGraphPage(APIView):
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
+
+
+       
+class UserProfileAdminSideBar(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request,format=None):
+        try:
+            data=request.user
+            user=User.objects.filter(id=data.id).first()
+            roles=user.Roles.all()
+            response={"UserName":user.username,"Image":user.image.url,"Designations":[]}
+            for i in roles:
+                if len(response["Designations"])>=1:
+                    response["Designations"].append(i.RoleTitle)
+                else:
+                    response["Designations"].append(i.RoleTitle)
+            return Response(response)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

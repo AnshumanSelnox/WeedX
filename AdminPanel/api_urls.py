@@ -197,8 +197,7 @@ urlpatterns = [
     path('ReviewbyUser/<int:id>', ReviewbyUser.as_view()),
     path('PopularLocationGraph/', PopularLocationGraph.as_view()),
     path('PopularLocationGraphPage/', PopularLocationGraphPage.as_view()),
-    
-    
+    path('UserProfileAdminSideBar/',UserProfileAdminSideBar.as_view()),
     
     
     

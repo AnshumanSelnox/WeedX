@@ -31,8 +31,7 @@ SECRET_KEY = 'django-insecure-mycc!g6d=*qlf(j2!8%x%8sy3g_+&g-j5%&o130%n8i7nfnc9w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'DeliveryBoy',
     'rest_framework_simplejwt',
-    'knox',
+    # 'knox',
 
     
 ]
