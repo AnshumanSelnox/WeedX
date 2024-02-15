@@ -4,7 +4,7 @@ from rest_framework import generics, permissions
 from rest_framework.permissions import IsAuthenticated
 from AdminPanel.tokens import create_jwt_pair_for_user
 from rest_framework import status
-from Ecommerce.settings import EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT
+from Ecommerce.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 import smtplib,random,json
 from AdminPanel.models import *
 from AdminPanel.serializer import *

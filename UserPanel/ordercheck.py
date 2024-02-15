@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 import pandas as pd
 from functools import reduce
 
-
+from Ecommerce.Auth import *
  
 
 html = '''
@@ -161,8 +161,8 @@ html = '''
 
 def sendmailoforderdetailsVendor(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',IdCard='',CustomerName='',Store_Name=''):
     a=[]
-    email_from = 'weedxselnox@gmail.com'
-    password = 'cbseekrjymhpiydc'
+    email_from = sendemailfrom
+    password = passwordfrom
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
     email_message['From'] = email_from
@@ -326,8 +326,8 @@ html1='''
 '''  
 def sendmailoforderdetailsCustomer(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',CustomerName=''):
     a=[]
-    email_from = 'weedxselnox@gmail.com'
-    password = 'cbseekrjymhpiydc'
+    email_from = sendemailfrom
+    password = passwordfrom
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
     email_message['From'] = email_from
@@ -499,8 +499,8 @@ html2= '''
 
 def sendmailoforderdetailsAdmin(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',CustomerName='',Store_Name='',IdCard=''):
     a=[]
-    email_from = 'weedxselnox@gmail.com'
-    password = 'cbseekrjymhpiydc'
+    email_from = sendemailfrom
+    password = passwordfrom
     date_str = pd.Timestamp.today().strftime('%Y-%m-%d')
     email_message = MIMEMultipart()
     email_message['From'] = email_from

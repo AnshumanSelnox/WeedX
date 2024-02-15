@@ -10,7 +10,7 @@ from VendorPanel.serializer import *
 from django.shortcuts import get_object_or_404
 from AdminPanel.tokens import create_jwt_pair_for_user
 from rest_framework.permissions import IsAuthenticated
-from Ecommerce.settings import EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT
+from Ecommerce.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
 import requests,smtplib,random
