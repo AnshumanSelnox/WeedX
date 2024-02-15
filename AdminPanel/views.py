@@ -3857,7 +3857,9 @@ class UserProfileAdminSideBar(APIView):
             data=request.user
             user=User.objects.filter(id=data.id).first()
             roles=user.Roles.all()
-            response={"UserName":user.username,"Image":user.image.url,"Designations":[]}
+            serialize=UserSerializer(user).data
+            # for j in serialize:
+            response={"UserName":user.username,"Image":serialize["image"],"Designations":[]}
             for i in roles:
                 if len(response["Designations"])>=1:
                     response["Designations"].append(i.RoleTitle)
