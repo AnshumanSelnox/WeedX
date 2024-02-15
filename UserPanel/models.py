@@ -21,8 +21,6 @@ class AddtoCart(models.Model):
         self.TotalPrice = self.get_total()
         super().save(*args, **kwargs)
 
-
-
 class Order(models.Model):
     Country=models.CharField(max_length=256,blank=False,null=False)
     State=models.CharField(max_length=256,blank=False,null=False)
@@ -44,12 +42,9 @@ class Order(models.Model):
     OrderDate=models.DateTimeField(auto_now_add=True)
     Order_Type=models.CharField(choices=OrderType,max_length=100,default="Delivery")
 
-
 class Wishlist(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-
- 
 
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
@@ -77,10 +72,8 @@ class BlogLike(models.Model):
     like=models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class BlankImage(models.Model):
     Image=models.ImageField(upload_to='media/BlankImage',null=True)
-
 
 class StoreReview(models.Model):
     Store = models.ForeignKey(Stores, on_delete=models.CASCADE, related_name='reviews')
@@ -96,8 +89,6 @@ class StoreReview(models.Model):
     helpfull=models.JSONField(default=list,null=True)
     count=models.IntegerField(default=0)
 
-
-    
 class BlogView(models.Model):
     blog=models.ForeignKey(News,on_delete=models.CASCADE,null=True)
     ViewCount=models.IntegerField(null=True) 
@@ -107,14 +98,11 @@ class BlogView(models.Model):
     def save(self, *args, **kwargs):
         self.ViewCount = self.get_total()
         super().save(*args, **kwargs)  
-        
-        
+    
 class RecentView(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    
-    
-    
+
 class UserProfileOrderDetails(models.Model):
     IdCard=models.ImageField(upload_to='media/IdCard')
     FirstName=models.CharField(max_length=100)
@@ -124,8 +112,7 @@ class UserProfileOrderDetails(models.Model):
     MedicalMarijuanaNumber=models.CharField(max_length=20)
     Email=models.EmailField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    
-    
+
 class SiteMap(models.Model):
     Xml=models.JSONField()
 
@@ -134,18 +121,9 @@ class ReplyonStoreReview(models.Model):
     reply=models.TextField()
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     helpfull=models.JSONField(default=list,null=True)
-    
-# class HelpfullStoreReview(models.Model):
-#     Review=models.ManyToManyField(StoreReview)
-#     helpfull=models.BooleanField()
-#     user=models.ForeignKey(User,on_delete=models.CASCADE)
-#     # count=models.IntegerField()
-    
-    
+
 class Test(models.Model):
     file=models.FileField(upload_to='media/test')
-    
-    
 
 import datetime
 # from datetime import datetime

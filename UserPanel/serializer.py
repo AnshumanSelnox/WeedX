@@ -6,12 +6,9 @@ from AdminPanel.serializer import *
 
 class Serializer_FilterStore(serializers.ModelSerializer):
     name=serializers.CharField(source='Store_Name')
-
     class Meta:
       model=Stores
       fields=['name','id']
-
-
 
 class Serializer_FilterBrand(serializers.ModelSerializer):
 
@@ -34,7 +31,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     user.save()
     return user
 
-
 class Serializer_AddtoCart(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='created_by.username')
   StoreName=serializers.ReadOnlyField(source='Store_id.Store_Name')
@@ -52,9 +48,7 @@ class Serializer_AddtoCart(serializers.ModelSerializer):
     model=AddtoCart
     fields='__all__'
     extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}}       
-      
-  
-    
+
 class Serializer_Order(serializers.ModelSerializer):
   SellerName=serializers.ReadOnlyField(source='Store.created_by.username')
   username=serializers.ReadOnlyField(source='created_by.username')
@@ -64,9 +58,6 @@ class Serializer_Order(serializers.ModelSerializer):
     model=Order
     fields='__all__'
     extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
-
-  
-
 
 from django.contrib.auth import authenticate   
 class LoginSerializer(serializers.Serializer):
@@ -85,9 +76,6 @@ class LoginSerializer(serializers.Serializer):
         attrs['Customer'] = user
         return attrs
 
-
-
-
 class Serializer_Wishlist(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='created_by.username')
   ProductName=serializers.ReadOnlyField(source='product.Product_Name')
@@ -95,8 +83,6 @@ class Serializer_Wishlist(serializers.ModelSerializer):
     model=Wishlist
     fields='__all__'
     extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
-
-
 
 class Serializer_SubCategoryName(serializers.ModelSerializer):
   category_name = serializers.CharField(source='category_id.name', read_only=True)
@@ -109,9 +95,6 @@ class Serializer_CategoryName(serializers.ModelSerializer):
   class Meta:
     model=Category
     fields='__all__'
-
-
-
 
 class CommentSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
@@ -143,20 +126,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
 
-
 class UserProfileSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ["email","id","username","Gender",'DateOfBirth','DeliveryAddress','MedicalCardNumber','MedicalCardExpire','MedicalCardState','EmailBoolean','NewsLetter','ReviewSuggestions','PushNotification','Recommendations','Savings','OrderupdatePushNotification','OrderupdateSMSNotifications','image','MobilePhone','PhotoId','googlelink']
-    
-    
-
 
 class Serializer_BlankImage(serializers.ModelSerializer):
   class Meta:
     model=BlankImage
     fields='__all__'
-    
 
 class StoreReviewSerializer(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='user.username')
@@ -182,48 +160,18 @@ class Serializer_RecentView(serializers.ModelSerializer):
     model=RecentView
     fields='__all__'
     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
-    
-    
-    
-    
+
 class Serializer_UserProfileOrderDetails(serializers.ModelSerializer):
   username=serializers.ReadOnlyField(source='user.username')
   class Meta:
     model=UserProfileOrderDetails
     fields='__all__'
-    
-    
-    
+ 
 class Serializer_SiteMap(serializers.ModelSerializer):
   class Meta:
     model=SiteMap
     fields='__all__'
 
-# class Serializer_ReplyonStoreReview(serializers.ModelSerializer):
-#   username=serializers.ReadOnlyField(source='user.username')
-#   review=serializers.ReadOnlyField(source='Review.Title')
-#   comment=serializers.ReadOnlyField(source='Review.comment')
-#   Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
-#   Store=serializers.ReadOnlyField(source='Review.Store.id')
-#   rating=serializers.ReadOnlyField(source='Review.rating')
-
-#   class Meta:
-#     model=ReplyonStoreReview
-#     fields='__all__'
-#     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
-   
-# class Serializer_HelpfullStoreReview(serializers.ModelSerializer):
-#   username=serializers.ReadOnlyField(source='user.username')
-#   # Review=serializers.ReadOnlyField(source='Review.Title')
-#   # comment=serializers.ReadOnlyField(source='Review.comment')
-#   Store_Name=serializers.ReadOnlyField(source='Review.Store.Store_Name')
-#   # Store=serializers.ReadOnlyField(source='Review.Store')
-#   class Meta:
-#     model=HelpfullStoreReview
-#     fields='__all__' 
-#     extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
-    
-    
 class Serializer_test(serializers.ModelSerializer):
   class Meta:
     model=Test

@@ -1527,7 +1527,6 @@ class AddLaw(APIView):
         
 class UpdateLaw(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1592,7 +1591,6 @@ class AddAboutUs(APIView):
         
 class UpdateAboutUs(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1719,7 +1717,6 @@ class AddPrivacyandPolicies(APIView):
         
 class UpdatePrivacyandPolicies(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1738,7 +1735,6 @@ class UpdatePrivacyandPolicies(APIView):
 
 class DeletePrivacyandPolicies(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1784,7 +1780,6 @@ class AddPromotionalBanners(APIView):
         
 class UpdatePromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1803,7 +1798,6 @@ class UpdatePromotionalBanners(APIView):
 
 class DeletePromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type.Name
@@ -1818,7 +1812,6 @@ class DeletePromotionalBanners(APIView):
 
 class GetNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         try:
             a=request.user.user_type
@@ -1833,7 +1826,6 @@ class GetNet_Weight(APIView):
 
 class AddNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         try:
             a=request.user.user_type
@@ -1851,7 +1843,6 @@ class AddNet_Weight(APIView):
 
 class UpdateNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1870,7 +1861,6 @@ class UpdateNet_Weight(APIView):
 
 class DeleteNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1885,7 +1875,6 @@ class DeleteNet_Weight(APIView):
 
 class GetSubscribe(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         try:
             a=request.user.user_type
@@ -1909,7 +1898,6 @@ class GetStaticImages(APIView):
 
 class AddStaticImages(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         try:
             a=request.user.user_type
@@ -1927,7 +1915,6 @@ class AddStaticImages(APIView):
 
 class UpdateStaticImages(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1946,7 +1933,6 @@ class UpdateStaticImages(APIView):
 
 class DeleteStaticImages(APIView):
     permission_classes = [IsAuthenticated]
-
     def delete(self, request, id=None):
         try:
             a=request.user.user_type
@@ -1958,7 +1944,6 @@ class DeleteStaticImages(APIView):
                 return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateProfileForVendor(APIView):
     permission_classes=[IsAuthenticated]
@@ -1977,12 +1962,9 @@ class UpdateProfileForVendor(APIView):
                 return Response("Not Authorised",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-         
-         
 
 class GetRolesAndPermission(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         try:
             a=request.user.user_type
@@ -1998,7 +1980,6 @@ class GetRolesAndPermission(APIView):
     
 class AddRolesAndPermission(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         try:
             a=request.user.user_type
@@ -2016,7 +1997,6 @@ class AddRolesAndPermission(APIView):
 
 class UpdateRolesAndPermission(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request, id=None):
         try:
             a=request.user.user_type
@@ -2067,8 +2047,7 @@ class UserNameCheck(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+   
 class AllStaff(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
@@ -2089,8 +2068,7 @@ class AllStaff(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+  
 class RolesAfterLogin(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
@@ -2106,8 +2084,7 @@ class RolesAfterLogin(APIView):
         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+  
 class TotalStore(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2163,8 +2140,7 @@ class TotalStore(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class VendorCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2219,8 +2195,7 @@ class VendorCard(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-      
+   
 class AllRecentOrder(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
@@ -2263,8 +2238,6 @@ class SearchRecentOrderDashboard(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
 
 class AllPendingStores(APIView):
     permission_classes=[IsAuthenticated]
@@ -2303,9 +2276,7 @@ class AllPendingStores(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
 
-       
 class TotalSalesCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2370,9 +2341,7 @@ class TotalSalesCard(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-  
-     
+
 class TotalOrderCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2431,9 +2400,7 @@ class TotalOrderCard(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-  
- 
+
 class ProductDashBoardCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2488,8 +2455,7 @@ class ProductDashBoardCard(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-  
-  
+
 class CustomerDashBoardCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2633,7 +2599,6 @@ class TotalSalesPieChart(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class TopProduct(APIView):
     permission_classes=[IsAuthenticated]
@@ -2710,7 +2675,6 @@ class TopProduct(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class TopStore(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2783,7 +2747,6 @@ class TopStore(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-       
 
 class TotalUserGraph(APIView):
     permission_classes=[IsAuthenticated]
@@ -2843,9 +2806,7 @@ class TotalUserGraph(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
-        
+
 class TotalStoreVendorProFileCard(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request,id=None):
@@ -2997,8 +2958,7 @@ class TotalOrderVendorCard(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-   
-   
+
 class TotalProductCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -3138,8 +3098,7 @@ class TotalCustomerVendorCard(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+    
 class AllStoresVendor(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request,id=None):
@@ -3305,8 +3264,6 @@ class TotalSalesVendorPieChart(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
 
 class SalesPerformanceVendorGraph(APIView):
     permission_classes=[IsAuthenticated]
@@ -3402,7 +3359,6 @@ class SalesPerformanceVendorGraph(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
 class ProductDetailsVendor(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -3478,8 +3434,6 @@ class DeleteProductById(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
        
 class OrderByStoreId(APIView):
     permission_classes=[IsAuthenticated]
@@ -3505,7 +3459,6 @@ class OrderByStoreId(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
         
 class AllReviews(APIView):
     permission_classes=[IsAuthenticated]
@@ -3537,7 +3490,6 @@ class AllReviews(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
         
 class ReviewsByStore(APIView):
     permission_classes=[IsAuthenticated]
@@ -3665,7 +3617,6 @@ class TotalSalesPage(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
 class UserOrderandReview(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request,id=None):
@@ -3769,7 +3720,6 @@ class PopularLocationGraph(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-     
 class PopularLocationGraphPage(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -3846,10 +3796,6 @@ class PopularLocationGraphPage(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
-
-
-       
 class UserProfileAdminSideBar(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request,format=None):

@@ -4,8 +4,6 @@ from AdminPanel.choices import *
 from AdminPanel.models import *
 from django.contrib.auth import authenticate
 
-
-
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(style={"input_type": "password"},)
@@ -50,7 +48,6 @@ class RegisterSerializer1(serializers.ModelSerializer):
     user.set_password(validated_data['password'])
     user.save()
     return user
-
 
 from AdminPanel.serializer import *
 

@@ -10,14 +10,12 @@ class Serializer_Category(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-        
 
 class Serializer_SubCategory(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source='category_id.name')
     class Meta:
         model = SubCategory
         fields = '__all__'
-        
 
 class Serializer_Country(serializers.ModelSerializer):
     class Meta:
@@ -35,9 +33,6 @@ class Serializer_Cities(serializers.ModelSerializer):
     class Meta:
         model=Cities
         fields='__all__'
-        
-        
-    
 
 class Serializer_Brand(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='created_by.username')
@@ -45,9 +40,7 @@ class Serializer_Brand(serializers.ModelSerializer):
         model=Brand
         fields='__all__'
         extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
-
-
-        
+   
 class Serializer_Salestax(serializers.ModelSerializer):
     class Meta:
         model=Salestaxes
@@ -57,10 +50,7 @@ class Serializer_Esteemedtax(serializers.ModelSerializer):
     class Meta:
         model=Estemeedtaxes
         fields='__all__'        
-        
-
-     
-        
+   
 class VerifyAccountSerializer(serializers.Serializer):
     email=serializers.EmailField()
     OTP=serializers.CharField()
@@ -75,7 +65,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email','status','Roles','is_superuser','MobilePhone','image','googlelink','DateOfBirth','PhotoId')
           
-
 class RegisterSerializer(serializers.ModelSerializer):
    
 
@@ -86,9 +75,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         user=User.objects.create_superuser(validated_data['username'],validated_data['email'],validated_data['password'],user_type=validated_data['user_type'],is_superuser=validated_data["is_superuser"],MobilePhone=validated_data['MobilePhone'])
         return user
-                     
-
-
 
 class Serializer_Store(serializers.ModelSerializer):
     
@@ -96,16 +82,13 @@ class Serializer_Store(serializers.ModelSerializer):
       model=Stores
       fields='__all__'
       extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}}             
-    
-    
-       
+     
 class Serializer_NewsCategory(serializers.ModelSerializer):
     class Meta:
         model = NewsCategory
         fields = '__all__'
         extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}}     
-        
-
+ 
 class Serializer_NewsSubCategory(serializers.ModelSerializer):
 
     category_name = serializers.ReadOnlyField(source='category_id.name')
@@ -113,8 +96,7 @@ class Serializer_NewsSubCategory(serializers.ModelSerializer):
         model = NewsSubCategory
         fields = '__all__'
         extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}}     
-        
-    
+  
 class Serializer_News(serializers.ModelSerializer):
     username=serializers.ReadOnlyField(source='created_by.username')
     category_name = serializers.ReadOnlyField(source='Category.name')
@@ -128,26 +110,19 @@ class Serializer_Net_Weight(serializers.ModelSerializer):
     class Meta:
         model=Net_Weight
         fields='__all__'
-        
-        
-        
-        
+
 class ChangePasswordSerializer(serializers.Serializer):
     model = User
     email=serializers.EmailField()
 
-
 from VendorPanel.auth import EmailBackend
 from django.contrib.auth.hashers import check_password
 class LoginSerializer1(serializers.Serializer):
-
     email = serializers.EmailField()
     password = serializers.CharField(style={"input_type": "password"},)
     def verify_password(self,password):
         return check_password(password,User.objects.get(uuid=self.uuid).password)
-
     def validate(self, attrs,request=None):
-        
         username=attrs.get('username')
         email = attrs.get('email')
         password = attrs.get('password')
@@ -238,7 +213,6 @@ class Serializer_USAData(serializers.ModelSerializer):
 
 class FileUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
-
     class Meta:
         fields = ('file',)
 
@@ -277,22 +251,16 @@ class Serializer_StaticImages(serializers.ModelSerializer):
         model=StaticImages
         fields='__all__'
 
-
-
 class Serializer_product(serializers.ModelSerializer):
     class Meta:
         model=Product
         fields='__all__'
 
-
-
-
 class Serializer_BookTheDemo(serializers.ModelSerializer):
     class Meta:
         model=BookTheDemo
         fields='__all__'
-        
-        
+
 class Serializer_RolesandPermission(serializers.ModelSerializer):
     class Meta:
         model=CustomRole
