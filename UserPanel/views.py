@@ -135,7 +135,6 @@ class ForgetPasswordAPI(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class ValidateOTPForgetPassword(APIView):
     def post(self,request=None):
         try:
@@ -158,8 +157,7 @@ class ValidateOTPForgetPassword(APIView):
                     "data":"OTP matched SuccessFully"
                 },status=status.HTTP_202_ACCEPTED)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
 
 class VerifyOtpForgetPassword(APIView):
     def post(self, request):
@@ -191,7 +189,6 @@ class VerifyOtpForgetPassword(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
     serializer_class = UserSerializer
@@ -214,7 +211,6 @@ class UserAlreadyExist(APIView):
                     return Response({"email": "Email is Not Registered"})
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 # Class based view to register user
 class RegisterAPI(generics.GenericAPIView):
@@ -391,8 +387,7 @@ class ProductBySubCategory(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class StoreByCities(APIView):
     def get(self,request,id=None):
         try:
@@ -513,7 +508,6 @@ class CategoryOnProduct(APIView):
         except Exception as e:
             return Response({'error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class GetStrainType(APIView):
     def post(self,request):
         try:
@@ -533,8 +527,7 @@ class GetFilterBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class GetProductbyBrand(APIView):
     def get(self,request,id=None):
         try:
@@ -543,7 +536,6 @@ class GetProductbyBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class ProductByCategory(APIView):
     def post(self,request,id=None):
@@ -574,10 +566,6 @@ class ProductByCategory(APIView):
                         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-        
-
 
 class GetAddtocart(APIView):
     permission_classes_by_action = [IsAuthenticated]
@@ -631,7 +619,6 @@ class GetAddtocart(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class AddAddtoCart(APIView):
     permission_classes = [IsAuthenticated]
@@ -855,7 +842,6 @@ class AddAddtoCart(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
 class UpdateAddtoCart(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -872,8 +858,6 @@ class UpdateAddtoCart(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class DeleteAddtoCart(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -884,7 +868,6 @@ class DeleteAddtoCart(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)    
-
 
 class ClearAddtoCart(APIView):
     permission_classes=[IsAuthenticated]
@@ -897,7 +880,6 @@ class ClearAddtoCart(APIView):
                 return Response({"status": "success","data": serializer.data}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class GetAddtoCartImage(APIView):
     def get(self,request,id=None):
@@ -919,11 +901,9 @@ class GetOrder(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+
 from .ordercheck import sendmailoforderdetailsVendor,sendmailoforderdetailsCustomer
-    
-    
+
 class AddOrder(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -980,7 +960,6 @@ class AddOrder(APIView):
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class UpdateOrder(APIView):
     permission_classes = [IsAuthenticated]
@@ -1002,7 +981,6 @@ class UpdateOrder(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class DeleteOrder(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1013,7 +991,6 @@ class DeleteOrder(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class GetDeliveryStores(APIView):
 
@@ -1049,8 +1026,7 @@ class GetDeliveryStores(APIView):
                 return Response({"message":"No Delivery Found in your Area"})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
-        
-        
+  
 class GetPickupStores(APIView):
 
     def get(self, request):
@@ -1062,8 +1038,6 @@ class GetPickupStores(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class GetWishList(APIView):
     permission_classes = [IsAuthenticated]
@@ -1080,8 +1054,7 @@ class GetWishList(APIView):
             return Response(q) 
         except Exception as e:
             return Response({'error' : str(e)},status=500)  
-    
-    
+
 class AddWishList(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1121,8 +1094,6 @@ class UpdateWishList(APIView):
                 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
 
 class DeleteWishList(APIView):
     permission_classes = [IsAuthenticated]
@@ -1144,7 +1115,6 @@ class AllSubCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-
 #Brand
 class GetBrand(APIView):
 
@@ -1156,7 +1126,6 @@ class GetBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class CategoryByStore(APIView):
     def post(self,request):
@@ -1174,7 +1143,6 @@ class CategoryByStore(APIView):
             return Response(s,status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class filterSubcategorybyStoreandCategory(APIView):
     def post(self,request):
@@ -1222,7 +1190,6 @@ class filterProductbyStoreandCategory(APIView):
                 return Response("There is no Product",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class HomePageFilter(APIView):
     def post(self,request):
@@ -1295,7 +1262,6 @@ class HomePageFilter(APIView):
         except Exception as e:  
              return Response({'error' : str(e)},status=500)
 
-
 from urllib.parse import unquote
 import random            
 class GoogleView(APIView):
@@ -1336,8 +1302,6 @@ class GoogleView(APIView):
         response['picture']=unquote(user.image)
         return Response(response)
 
-
-
 class AllHomePageBanner(APIView):
     def get(self,request):
         try:
@@ -1346,8 +1310,6 @@ class AllHomePageBanner(APIView):
             return Response(serailize.data,status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class ResultHomeSearchFilter(APIView):
     def post(self,request):
@@ -1377,7 +1339,6 @@ class ResultHomeSearchFilter(APIView):
         except Exception as e:
             return Response({'error':str(e)},status=500)
 
-
 class GetBrandById(APIView):
     def get(self,request,id=None):
         try:
@@ -1386,7 +1347,6 @@ class GetBrandById(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class GetDispensary(APIView):
     def get(self,request,id=None):
@@ -1398,7 +1358,6 @@ class GetDispensary(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class GetStoreById(APIView):
     def get(self,request,id=None):
         try:
@@ -1408,7 +1367,6 @@ class GetStoreById(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)  
 
-
 class GetReview(APIView):
     def get(self, request, id=None):
         try:
@@ -1417,8 +1375,7 @@ class GetReview(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-    
-    
+
 class AddReview(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1654,7 +1611,6 @@ class FacebookSignInView(APIView):
         response["refresh_token"] = str(token)
         return Response(response)
 
-
 class DeliveryAddress(APIView):
     def post(self, request,id=None):
         try:
@@ -1669,7 +1625,6 @@ class DeliveryAddress(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-
 class GetPromotionalBanners(APIView):
     def get(self, request, format=None):
         try:
@@ -1679,7 +1634,6 @@ class GetPromotionalBanners(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
 
 class GetDeliveryCheck(APIView):
     def post(self, request, format=None):
@@ -1710,7 +1664,6 @@ class CountProductAccordingToCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-
 class GetNewsById(APIView):
     def get(self, request, id=None):
         try:
@@ -1719,7 +1672,6 @@ class GetNewsById(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateUserProfile(APIView):
     permission_classes = [IsAuthenticated]
@@ -1737,8 +1689,7 @@ class UpdateUserProfile(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
+
 class GetUserProfile(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
@@ -1749,7 +1700,6 @@ class GetUserProfile(APIView):
             return Response( serializer.data, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class YouMayAlsoLike(APIView):
     def post(self,request):
@@ -1800,9 +1750,7 @@ class GetDeliveryStoresHomepage(APIView):
             
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
-       
 class GetPendingOrder(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1854,8 +1802,7 @@ class GetProcessingOrder(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
+
 class GetOrderBYID(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -1867,8 +1814,7 @@ class GetOrderBYID(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-  
-  
+
 class AllUser(APIView):
     def get(self,request):
         try:
@@ -2039,8 +1985,7 @@ class GetDispensary_Product(APIView):
                 return Response("No Available Dispensaries",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+  
 class getReviewbyId(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request,id=None,productId=None):
@@ -2052,8 +1997,7 @@ class getReviewbyId(APIView):
            
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
-        
+    
 class AverageReviewAndRating(APIView):
     def get(self,request,id=None):
         try:
@@ -2110,7 +2054,6 @@ class AddBlankImage(APIView):
 
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class UpdateBlankImage(APIView):
 
@@ -2177,7 +2120,6 @@ class AddBlogLike(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    
 class AddBlankImage(APIView):
 
     def post(self, request):
@@ -2216,7 +2158,6 @@ class AddBlogView(APIView):
                 return Response(response)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class FilterDispensaries(APIView):
     def post(self,request):
@@ -2240,8 +2181,6 @@ class FilterDispensaries(APIView):
                 return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
- 
 
 class HighPriceToLowPrice(APIView):
     def get(self,request,id=None):
@@ -2268,8 +2207,7 @@ class HighPriceToLowPrice(APIView):
             return Response(q)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class AddRecentViews(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
@@ -2282,8 +2220,7 @@ class AddRecentViews(APIView):
                 return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class GetRecentViews(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -2293,7 +2230,6 @@ class GetRecentViews(APIView):
             return Response(serialize.data, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-         
 
 class AddSubscribe(APIView):
     def post(self,request):
@@ -2306,7 +2242,6 @@ class AddSubscribe(APIView):
                 return Response({ "error":serialize.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class AddUserProfileOrderDetails(APIView):
     permission_classes = [IsAuthenticated]
@@ -2327,8 +2262,7 @@ class AddUserProfileOrderDetails(APIView):
                     return Response({ "error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class GetUserProfileOrderDetails(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -2338,8 +2272,7 @@ class GetUserProfileOrderDetails(APIView):
             return Response(serialize.data, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class BuyXGetYDiscount(APIView):
     def get(self,request):
         try:
@@ -2376,7 +2309,6 @@ class PopularStrain(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-       
 class ProductDiscountCoupoun(APIView):
     def get(self,request):
         try:
@@ -2446,7 +2378,6 @@ class AddSiteMap(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateSiteMap(APIView):
     def post(self, request, id=None):
         try:
@@ -2475,8 +2406,7 @@ class DeleteSiteMap(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
+
 class getSitemapbyId(APIView):
     def get(self,request,id=None):
         try:
@@ -2515,7 +2445,6 @@ class GetBrandByStore(APIView):
                     return Response("No Brand in this Store")
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
         
 class ProductFilterByWeightandStore(APIView):
     def post(self,request):
@@ -2613,8 +2542,7 @@ class DeleteStoreReview(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
+
 class UpdateStoreReview(APIView):
     def post(self, request, id=None):
         try:
@@ -2689,7 +2617,6 @@ class WeightFilter(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)
 
-                
 class AddHelpfull(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -2715,8 +2642,7 @@ class AddHelpfull(APIView):
             return Response(serialize.data,status=201)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-        
-        
+
 class GetStoreReview(APIView):
     def get(self,request,id=None):
         try:
@@ -2725,7 +2651,6 @@ class GetStoreReview(APIView):
             return Response(serialize)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class AddProductHelpfull(APIView):
     permission_classes = [IsAuthenticated]
@@ -2748,8 +2673,6 @@ class AddProductHelpfull(APIView):
             return Response(serialize.data,status=201)
         except Exception as e:
             return Response({'error' : str(e)},status=500)
-
-
 
 class ProductListView(APIView):
     def post(self,request):
@@ -2801,13 +2724,6 @@ class SearchProductbyBrand(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-# class ComboFilter(APIView):
-#     def post(self,request):
-#         try:
-            
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PromoCodeCheck(APIView):
     permission_classes=[IsAuthenticated]
@@ -2890,8 +2806,7 @@ class PromoCodeCheck(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class GetallProductReviewbyStore(APIView):
     def post(self,request):
         try:
@@ -3057,9 +2972,6 @@ class GetUserNotificationByLogin(APIView):
             return Response(q)     
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
-
-
 
 class ClearNotification(APIView):
     permission_classes=[IsAuthenticated]
@@ -3080,8 +2992,7 @@ class ClearNotification(APIView):
                 return Response("No New Notification")
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+ 
 class GetStaticImages(APIView):
     def get(self, request, format=None):
         try:

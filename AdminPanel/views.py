@@ -21,9 +21,6 @@ from datetime import datetime,timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta 
 from operator import itemgetter  
-# class IsCustomRolePermission(BasePermission):
-#     def has_permission(self, request, view):
-#             return request.user.groups.all().exists()
 import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
@@ -181,8 +178,6 @@ class VerifyOtpResetPassword(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class LoginAPI(APIView):
     permission_classes=(permissions.AllowAny,)
     def post(self,request,format=None):
@@ -246,7 +241,6 @@ class RegisterAPI(generics.GenericAPIView):
             })
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class DeleteUser(APIView):
     permission_classes=[IsAuthenticated]
@@ -984,7 +978,6 @@ class ExportImportExcel(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class TotalCount(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request,format=None):
@@ -1041,7 +1034,6 @@ class TotalProductGraph(APIView):
             return Response({'data':{"Month":CreatedMonths,"count":TotalProductCount}})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 #Category Api
 class GetNewsCategories(APIView):
@@ -2820,8 +2812,7 @@ class TotalStoreVendorProFileCard(APIView):
         
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class TotalSalesVendorCard(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -3188,8 +3179,7 @@ class TopSaleProductVendor(APIView):
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
 class TotalSalesVendorPieChart(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
