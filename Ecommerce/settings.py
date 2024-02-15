@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from django.conf import settings
-
+from .Auth import *
 settings.configure(DEBUG=True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,16 +88,8 @@ WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 'rest_framework',
 
 
-DATABASES = {
-"default": {
-"ENGINE": "django.db.backends.postgresql_psycopg2",
-"NAME": "postgres",
-"USER" : "postgres",
-"PASSWORD" : "Selnox123",
-"HOST" : "database-1.cpimvtecdzns.us-east-1.rds.amazonaws.com",
-"PORT" : "5432",
-}
-}
+DATABASES = Database
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -138,14 +130,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
 MEDIA_URL = '/image/images/download/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
-AWS_ACCESS_KEY_ID = "AKIAS4WSA6KJK3W47WEX"
-AWS_SECRET_ACCESS_KEY = "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"
-AWS_STORAGE_BUCKET_NAME = "selnoxmedia"
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_S3_FILE_OVERWRITE = False 
-AWS_DEFAULT_ACL = None
-AWS_S3_VERIFY = True
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS
+AWS_STORAGE_BUCKET_NAME = AWS_STORAGE_BUCKET
+AWS_S3_SIGNATURE_VERSION = AWS_S3_SIGNATURE
+AWS_S3_FILE_OVERWRITE = AWS_S3_FILE 
+AWS_DEFAULT_ACL = AWS_DEFAULT
+AWS_S3_VERIFY = AWS_S3
+DEFAULT_FILE_STORAGE = DEFAULT_FILE
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -166,13 +158,13 @@ REST_FRAMEWORK = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = 'selnoxinfo@gmail.com'
-EMAIL_HOST_PASSWORD = 'ddylfolnferwhjue'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = EMAIL_BACKEND_
+EMAIL_HOST = EMAIL_HOST_
+EMAIL_HOST_USER = EMAIL_HOST_USER_
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_
+EMAIL_PORT = EMAIL_PORT_
+EMAIL_USE_TLS = EMAIL_USE_TLS_
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL_
 
 
 CORS_ALLOW_ALL_ORIGINS = True
