@@ -1,13 +1,10 @@
-
 import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import pandas as pd
 from functools import reduce
-
 from Ecommerce.Auth import *
- 
 
 html = '''
 <!DOCTYPE html>
@@ -157,8 +154,6 @@ html = '''
 </html>
     '''
 
-
-
 def sendmailoforderdetailsVendor(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',IdCard='',CustomerName='',Store_Name=''):
     a=[]
     email_from = sendemailfrom
@@ -178,10 +173,7 @@ def sendmailoforderdetailsVendor(email_to='',OrderId='',subtotal='',ProductName=
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
         server.sendmail(email_from, email_to, email_string)
-        
-        
-      
-      
+
 html1='''
 <!DOCTYPE html>
 <html lang="en">
@@ -323,7 +315,8 @@ html1='''
 </body>
 
 </html>
-'''  
+''' 
+
 def sendmailoforderdetailsCustomer(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',CustomerName=''):
     a=[]
     email_from = sendemailfrom
@@ -343,9 +336,6 @@ def sendmailoforderdetailsCustomer(email_to='',OrderId='',subtotal='',ProductNam
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
         server.sendmail(email_from, email_to, email_string)
-
-
-      
 
 html2= '''
 <!DOCTYPE html>
@@ -494,8 +484,6 @@ html2= '''
 
 </html>
     '''
-
-
 
 def sendmailoforderdetailsAdmin(email_to='',OrderId='',subtotal='',ProductName='',Address='',Weight='',Quantity='',Price='',storeaddress='',CustomerName='',Store_Name='',IdCard=''):
     a=[]
