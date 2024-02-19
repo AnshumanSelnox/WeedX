@@ -174,6 +174,53 @@ class Serializer_Product(serializers.ModelSerializer):
         price_data=validated_data.pop('Multiple_prices')
         product = Product.objects.create(**validated_data)
         for price_dat in price_data:
+            # s=json.dumps(price_dat)
+            d=json.loads(price_dat)
+            ProductWeight.objects.create(product=product, Price=d)
+        for image_data in images_data :
+            ProductImage.objects.create(product=product, image=image_data)
+        return product    
+    def update(self, instance, validated_data):
+        images_data = validated_data.pop('Multiple_images', [])
+        self._create_images(instance, images_data)
+        return super().update(instance, validated_data)
+
+    def _create_images(self, product, images_data):
+        for image_data in images_data:
+            ProductImage.objects.create(product=product, image=image_data)
+
+
+
+class Serializer_Product1(serializers.ModelSerializer):
+    category_name = serializers.ReadOnlyField(source='Sub_Category_id.category_id.name')
+    category_id=serializers.ReadOnlyField(source='Sub_Category_id.category_id.id') 
+    username=serializers.ReadOnlyField(source='created_by.username')
+    images = ProductImageSerializer(many=True, read_only=True)
+    Multiple_images=serializers.ListField(child=serializers.FileField(max_length=1000000, allow_empty_file = True, use_url = False),write_only = True)
+    Prices=ProductWeightSerializer(many=True)
+    Multiple_prices=serializers.ListField( write_only = True) #
+    StoreName= serializers.ReadOnlyField(source='Store_id.Store_Name')
+    StoreDelivery= serializers.ReadOnlyField(source='Store_id.Delivery')
+    StorePickup= serializers.ReadOnlyField(source='Store_id.StoreFront')
+    StoreCurbsidePickup= serializers.ReadOnlyField(source='Store_id.CurbSide_Pickup')
+    SubcategoryName=serializers.ReadOnlyField(source='Sub_Category_id.name')
+    StoreAddress= serializers.ReadOnlyField(source='Store_id.Store_Address') 	
+    Brand_Name=serializers.ReadOnlyField(source='Brand_id.name') 	
+    Store_Country=serializers.ReadOnlyField(source='Store_id.Country') 
+    Store_State=serializers.ReadOnlyField(source='Store_id.State') 
+    Store_City=serializers.ReadOnlyField(source='Store_id.City') 
+    Store_Type=serializers.ReadOnlyField(source='Store_id.Store_Type') 
+    
+    class Meta:
+        model = Product
+        fields = ['Product_Name','SubcategoryName','category_name','StoreAddress','Multiple_prices','category_id','username','StoreName','StoreDelivery','StorePickup','StoreCurbsidePickup','id','Sub_Category_id' ,'Store_id','Product_Description', 'Prices','images','Multiple_images','SKU','UPC','lab_Result','strain','Alt_Text','Brand_id','rating','THC', 'CBD' ,'CBN','Status','Brand_Name','Store_Country','Store_State','Store_City','Store_Type','ProductCoupoun','CategoryCoupoun','TotalRating','Specialid']
+        extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}} 
+
+    def create(self, validated_data):
+        images_data = validated_data.pop('Multiple_images')
+        price_data=validated_data.pop('Multiple_prices')
+        product = Product.objects.create(**validated_data)
+        for price_dat in price_data:
             s=json.dumps(price_dat)
             d=json.loads(s)
             ProductWeight.objects.create(product=product, Price=d)
@@ -188,7 +235,8 @@ class Serializer_Product(serializers.ModelSerializer):
     def _create_images(self, product, images_data):
         for image_data in images_data:
             ProductImage.objects.create(product=product, image=image_data)
-
+            
+            
 class UpdateProfile(serializers.ModelSerializer):
     class Meta:
         model=User

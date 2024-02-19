@@ -1704,6 +1704,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import requests
+from django.db import transaction
 from django.core.files.base import ContentFile
 
 class ImageUploadView(APIView):
@@ -1712,7 +1713,7 @@ class ImageUploadView(APIView):
 
     def post(self, request):
         try:
-            data_list = []
+            # data_list=[]
             for item in request.data:
                 brand = Brand.objects.filter(name=item.get("Brand_Name")).first()
                 subcategory = SubCategory.objects.filter(name=item.get("SubcategoryName")).first()
@@ -1723,31 +1724,31 @@ class ImageUploadView(APIView):
                     image_content = ContentFile(response.content)
                     image_content.name = "image"
                     images.append(image_content)
-                data = {
-                    "Brand_id": brand.id if brand else None,
-                    "Sub_Category_id": subcategory.id if subcategory else None,
-                    "Multiple_images": images,
-                    "Multiple_prices":item["Multiple_prices"],
-                    "Specialid":item["Specialid"],
-                    "Product_Name":item["Product_Name"],
-                    "Product_Description":item["Product_Description"],
-                    "strain":item["strain"],
-                    "Store_id":item["Store_id"]
-                }
+                    data = {
+                        "Brand_id": brand.id if brand else None,
+                        "Sub_Category_id": subcategory.id if subcategory else None,
+                        "Multiple_images": images,
+                        "Multiple_prices":item["Multiple_prices"],
+                        "Specialid":item["Specialid"],
+                        "Product_Name":item["Product_Name"],
+                        "Product_Description":item["Product_Description"],
+                        "strain":item["strain"],
+                        "Store_id":item["Store_id"]
+                    }
                 # data_list.append(data)
-                special_id = data.get("Specialid")
-                if special_id:
-                    product = Product.objects.filter(Specialid=special_id).first()
-                    if product:
-                        serializer = Serializer_Product(instance=product, data=data, partial=True)
+                    special_id = data.get("Specialid")
+                    if special_id:
+                        product = Product.objects.filter(Specialid=special_id).first()
+                        if product:
+                            serializer = Serializer_Product1(instance=product, data=data, partial=True)
+                        else:
+                            serializer = Serializer_Product1(data=data, partial=True)
                     else:
-                        serializer = Serializer_Product(data=data, partial=True)
-                else:
-                    serializer = Serializer_Product(data=data, partial=True)
-                if serializer.is_valid():
-                    serializer.save(created_by=request.user)
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                        serializer = Serializer_Product1(data=data, partial=True)
+                    if serializer.is_valid():
+                        serializer.save(created_by=request.user)
+                    else:
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # for data in data_list:
                 
@@ -1757,6 +1758,66 @@ class ImageUploadView(APIView):
         except requests.exceptions.RequestException as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+# class ImageUploadView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser, JSONParser]
+
+#     def post(self, request):
+#         try:
+#             data_list = []
+
+#             with transaction.atomic():
+#                 for item in request.data:
+#                     brand_name = item.get("Brand_Name")
+#                     subcategory_name = item.get("SubcategoryName")
+
+#                     brand = Brand.objects.filter(name=brand_name).first()
+#                     subcategory = SubCategory.objects.filter(name=subcategory_name).first()
+
+#                     images_data = []
+#                     for image_url in item.get("images", []):
+#                         response = requests.get(image_url)
+#                         response.raise_for_status()
+#                         image_content = ContentFile(response.content)
+#                         image_content.name = "image"
+#                         images_data.append(image_content)
+
+#                     data = {
+#                         "Brand_id": brand.id if brand else None,
+#                         "Sub_Category_id": subcategory.id if subcategory else None,
+#                         "Multiple_images": images_data,
+#                         "Multiple_prices": item.get("Multiple_prices"),
+#                         "Specialid": item.get("Specialid"),
+#                         "Product_Name": item.get("Product_Name"),
+#                         "Product_Description": item.get("Product_Description"),
+#                         "strain": item.get("strain"),
+#                         "Store_id": item.get("Store_id")
+#                     }
+#                     data_list.append(data)
+
+#                 for data in data_list:
+#                     special_id = data.get("Specialid")
+#                     if special_id:
+#                         product = Product.objects.filter(Specialid=special_id).first()
+
+#                         if product:
+#                             serializer = Serializer_Product1(instance=product, data=data, partial=True)
+#                     else:
+#                         serializer = Serializer_Product1(data=data, partial=True)
+
+#                     if serializer.is_valid():
+#                         serializer.save(created_by=request.user)
+#                     else:
+#                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#             return Response("Success", status=status.HTTP_201_CREATED)
+
+#         except requests.exceptions.RequestException as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
 # class ImageUploadView(APIView):
 #     parser_classes = [MultiPartParser, JSONParser]
 
