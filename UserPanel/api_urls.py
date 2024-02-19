@@ -137,8 +137,9 @@ urlpatterns = [
     path('GetUserNotificationByLogin/',GetUserNotificationByLogin.as_view()),
     path('ClearNotification/',ClearNotification.as_view()),
     path('GetNewsbyUser/',GetNewsbyUser.as_view()),
-    
-
-
+    ######################################################################################################################
+    ############################################Risee########################################################################
+    ##########################################################################################################################
+    path('ListProductView/',ListProductView.as_view()),
 ]
 

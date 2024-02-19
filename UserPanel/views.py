@@ -3018,3 +3018,14 @@ class GetNewsbyUser(APIView):
             return Response(z)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class ListProductView(APIView):
+    def get(self, request):
+        try:
+            products = Product.objects.all()
+            serialize = Serializer_Product(products, many=True)
+            return Response(serialize.data)
+        except Exception as e:
+            return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
