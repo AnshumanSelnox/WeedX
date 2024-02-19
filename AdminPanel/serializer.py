@@ -174,7 +174,8 @@ class Serializer_Product(serializers.ModelSerializer):
         price_data=validated_data.pop('Multiple_prices')
         product = Product.objects.create(**validated_data)
         for price_dat in price_data:
-            d=json.loads(price_dat)
+            s=json.dumps(price_dat)
+            d=json.loads(s)
             ProductWeight.objects.create(product=product, Price=d)
         for image_data in images_data :
             ProductImage.objects.create(product=product, image=image_data)

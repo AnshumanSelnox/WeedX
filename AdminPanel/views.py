@@ -789,8 +789,6 @@ class DeleteEsteemedTax(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
-#Replicate or Duplicate Data
-#Replicate or Duplicate Data
 class Replicate_data(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, id=None):

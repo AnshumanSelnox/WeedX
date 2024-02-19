@@ -15,7 +15,7 @@ urlpatterns = [
     path('ForgetPassword/',VerifyOtpForgetPassword.as_view(),name='VerifyOtpResetPassword'),
     ###################################################################################################
     path('Add-Product/', AddProduct.as_view()),
-    path('Get-Product/', GetProduct.as_view()),
+    path('Get-Product/<int:id>', GetProduct.as_view()),
     path('update-Product/', UpdateProduct.as_view()),
     path('delete-Product/<int:id>', DeleteProduct.as_view()),
     #################################################################################################

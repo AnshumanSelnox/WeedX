@@ -464,9 +464,9 @@ class ResetPassword(APIView):
 class GetProduct(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
+    def get(self, request, id=None):
         try:
-            User = Product.objects.filter(created_by=request.user) #created_by=self.request.user)
+            User = Product.objects.filter(created_by=request.user).filter(Store_id=id)
             serialize = Serializer_Product(User, many=True)
             return Response(serialize.data)
         except Exception as e:
@@ -1707,39 +1707,91 @@ import requests
 from django.core.files.base import ContentFile
 
 class ImageUploadView(APIView):
+    permission_classes=[IsAuthenticated]
     parser_classes = [MultiPartParser, JSONParser]
 
     def post(self, request):
         try:
-            z = []
-            for i in request.data:
-                b = Brand.objects.filter(name=i["Brand_Name"]).first()
-                c = SubCategory.objects.filter(name=i["SubcategoryName"]).first()
+            data_list = []
+            for item in request.data:
+                brand = Brand.objects.filter(name=item.get("Brand_Name")).first()
+                subcategory = SubCategory.objects.filter(name=item.get("SubcategoryName")).first()
                 images = []
-                for j in i["images"]:
-                    response = requests.get(j)
+                for image_url in item.get("images", []):
+                    response = requests.get(image_url)
                     response.raise_for_status()
                     image_content = ContentFile(response.content)
-                    image_content.name="image"
+                    image_content.name = "image"
                     images.append(image_content)
-                data = i.copy()
-                data["Brand_id"] = b.id
-                data["Sub_Category_id"] = c.id
-                data["Multiple_images"] = images
-                z.append(data)
-            for l in z:
-                product = Product.objects.filter(Specialid=l["Specialid"]).first()
-                if product:
-                    serialize = Serializer_Product(product, data=l, partial=True)
+                data = {
+                    "Brand_id": brand.id if brand else None,
+                    "Sub_Category_id": subcategory.id if subcategory else None,
+                    "Multiple_images": images,
+                    "Multiple_prices":item["Multiple_prices"],
+                    "Specialid":item["Specialid"],
+                    "Product_Name":item["Product_Name"],
+                    "Product_Description":item["Product_Description"],
+                    "strain":item["strain"],
+                    "Store_id":item["Store_id"]
+                }
+                # data_list.append(data)
+                special_id = data.get("Specialid")
+                if special_id:
+                    product = Product.objects.filter(Specialid=special_id).first()
+                    if product:
+                        serializer = Serializer_Product(instance=product, data=data, partial=True)
+                    else:
+                        serializer = Serializer_Product(data=data, partial=True)
                 else:
-                    serialize = Serializer_Product(data=l, partial=True)
-                if serialize.is_valid():
-                    serialize.save()
+                    serializer = Serializer_Product(data=data, partial=True)
+                if serializer.is_valid():
+                    serializer.save(created_by=request.user)
                 else:
-                    return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # for data in data_list:
+                
+
             return Response("Success", status=status.HTTP_201_CREATED)
+
         except requests.exceptions.RequestException as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# class ImageUploadView(APIView):
+#     parser_classes = [MultiPartParser, JSONParser]
+
+#     def post(self, request):
+#         try:
+#             z = []
+#             for i in request.data:
+#                 b = Brand.objects.filter(name=i["Brand_Name"]).first()
+#                 c = SubCategory.objects.filter(name=i["SubcategoryName"]).first()
+#                 images = []
+#                 for j in i["images"]:
+#                     response = requests.get(j)
+#                     response.raise_for_status()
+#                     image_content = ContentFile(response.content)
+#                     image_content.name="image"
+#                     images.append(image_content)
+#                 data = i.copy()
+#                 data["Brand_id"] = b.id
+#                 data["Sub_Category_id"] = c.id
+#                 data["Multiple_images"] = images
+#                 z.append(data)
+#             for l in z:
+#                 if l["Specialid"]:
+#                     product = Product.objects.filter(Specialid=l["Specialid"]).first()
+#                     if product:
+#                         serialize = Serializer_Product(product, data=l, partial=True)
+#                 else:
+#                     serialize = Serializer_Product(data=l, partial=True)
+#                 if serialize.is_valid():
+#                     serialize.save()
+#                 else:
+#                     return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+#             return Response("Success", status=status.HTTP_201_CREATED)
+#         except requests.exceptions.RequestException as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class ProductInsight(APIView):
     permission_classes=[IsAuthenticated]
