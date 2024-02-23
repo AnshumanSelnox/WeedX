@@ -62,15 +62,10 @@ class VerifyOtpLogin(APIView):
     permission_classes=(permissions.AllowAny,)
     def post(self,request):
         try:
-            data=request.data
-
             email=request.data.get("email")
-            
             otp=request.data.get("OTP")
-            
-            
-            user= User.objects.filter(email=email).first()
-            if user.user_type=="Admin" or "Co-Owner" or "Content Manager Editor" or "vendor managent" or "store managment":
+            user= User.objects.filter(email=email).filter(user_type="Admin").first()
+            if user.user_type=="Admin" :
                 if user.otp != int(otp):
                     return Response({
                         'message':'Something goes wrong',
@@ -78,14 +73,11 @@ class VerifyOtpLogin(APIView):
                     },status=status.HTTP_400_BAD_REQUEST)
                 user= User.objects.get(email=email)  
                 if user is not None:
-
                     tokens = create_jwt_pair_for_user(user)
                     permission=user.Roles.all()
                     serialize=Serializer_RolesandPermission(permission,many=True).data
-
                     response = {"message": "Login Successfull", "tokens": tokens,"UserType":user.user_type,"permission":serialize,"is_superuser":user.is_superuser}
                     return Response(data=response, status=status.HTTP_200_OK)
-
                 else:
                     return Response(data={"message": "Invalid email or password"},status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -151,7 +143,7 @@ class VerifyOtpResetPassword(APIView):
                 new_password=serializer.validated_data['new_password']
                 otp=serializer.validated_data['OTP']
             
-                user=User.objects.filter(email=email)
+                user=User.objects.filter(email=email).filter(user_type ="Admin")
                 if not user.exists():
                     return Response({
                         'message':'Something goes wrong',
@@ -192,16 +184,15 @@ class LoginAPI(APIView):
                         serializer=LoginSerializer1(data=request.data)
                         if serializer.is_valid():
                             email=serializer.validated_data['email']
-                            user1=User.objects.filter(username=username).filter(email=email)
+                            user1=User.objects.filter(username=username).filter(email=email).filter(user_type ="Admin").first()
                             if user1:
-                                send_OneToOneMail(from_email='smtpselnox@gmail.com',to_emails=email)
-                                return Response({
-                                            'message':'Email sent',
-                                            'data':{"Otp_Sent_to":email}
-                                        },status=status.HTTP_200_OK)
+                                if user1.user_type =="Admin":
+                                    send_OneToOneMail(from_email='smtpselnox@gmail.com',to_emails=email)
+                                    return Response({'message':'Email sent','data':{"Otp_Sent_to":email}},status=status.HTTP_200_OK)
+                                else:
+                                    return Response({"error":"Not Authorized"},status=status.HTTP_400_BAD_REQUEST)
                             else:
                                 return Response({"error":"Username and Email Mismatch"},status=status.HTTP_400_BAD_REQUEST)
-                            
                         else:
                             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
                     else:

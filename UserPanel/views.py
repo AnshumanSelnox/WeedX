@@ -140,7 +140,7 @@ class ValidateOTPForgetPassword(APIView):
         try:
             email=request.data.get("email")
             otp=request.data.get("otp")
-            user=User.objects.filter(email=email).first()
+            user=User.objects.filter(email=email).filter(user_type="Customer").first()
             if not user:
                 return Response({
                     'message': 'Something goes wrong',
@@ -164,7 +164,7 @@ class VerifyOtpForgetPassword(APIView):
         try:
             email=request.data.get("email")
             password=request.data.get("password")
-            user = User.objects.get(email=email)
+            user = User.objects.filter(email=email).filter(user_type="Customer").first()
             serializer = PasswordReseetSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 if not user:
@@ -204,7 +204,7 @@ class UserAlreadyExist(APIView):
         try:
             email = request.data.get("email")
             if email:
-                user=User.objects.filter(email=email)
+                user=User.objects.filter(email=email).filter(user_type="Customer")
                 if user.exists():
                     return Response({"email": "Email is already Registered"})
                 else:
@@ -224,24 +224,20 @@ class RegisterAPI(generics.GenericAPIView):
             if username:
                 if email:
                     if password:
-                       
                         serializer = RegisterUserSerializer(data=request.data)
-                        user = User.objects.filter(email=email)
-                        username = User.objects.filter(username=username)
+                        user = User.objects.filter(email=email).filter(user_type="Customer")
+                        username = User.objects.filter(username=username).filter(user_type="Customer")
                         if user.exists():
                             if username.exists():
                                 return Response({"username": "Username is already Registered"},status=status.HTTP_400_BAD_REQUEST)
                             else :
                                 return Response({"email": "Email is already Registered"},status=status.HTTP_400_BAD_REQUEST)
-
                         else:
                             if serializer.is_valid():
                                 user = serializer.save(user_type="Customer")
-
                                 return Response({"message": "User add Successfully"},status=status.HTTP_200_OK)
                             else:
                                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-                    
                     else:
                         return Response("Enter the Valid password",status=status.HTTP_400_BAD_REQUEST)
 
@@ -414,6 +410,7 @@ class GetNews(APIView):
                 # c=BlogView.objects.filter(blog=i["id"]).first()
                 response={"id":i["id"],"Title":i["Title"],"Description":i["Description"],"username":i["username"],"Image":i["Image"],"Publish_Date":i["Publish_Date"],"likeCount":a,"commentCount":b,"ViewCount":i["ViewCount"]}
                 z.append(response)
+            z = sorted(z, key=lambda x: x["id"], reverse=True)
             return Response(z)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

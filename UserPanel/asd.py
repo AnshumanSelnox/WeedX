@@ -1188,3 +1188,6 @@
 
 # #saving the image
 # image.save('my_path/image_name.jpg')
+
+# a=[5,6,3,1,123,34534,6,7,8]
+

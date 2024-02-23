@@ -226,7 +226,7 @@ class Serializer_Product1(serializers.ModelSerializer):
             ProductWeight.objects.create(product=product, Price=d)
         for image_data in images_data :
             ProductImage.objects.create(product=product, image=image_data)
-        return product    
+        return product     
     def update(self, instance, validated_data):
         images_data = validated_data.pop('Multiple_images', [])
         self._create_images(instance, images_data)

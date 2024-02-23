@@ -169,13 +169,10 @@ class VerifyOtpLogin(APIView):
         try:
             email = request.data.get("email")
             otp = request.data.get("OTP") 
-            user = User.objects.filter(email=email).first()
+            user = User.objects.filter(email=email).filter(user_type="Vendor").first()
             if user.user_type=="Vendor":
                 if user.otp != int(otp):
-                    return Response({
-                        'message': 'Something goes wrong',
-                        'data': 'invalid Otp'
-                    },status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'Something goes wrong', 'data': 'invalid Otp' },status=status.HTTP_400_BAD_REQUEST)
                 user = User.objects.get(email=email)
                 if user is not None:
                     # if user.status =="Active" and store.Status == "Active":
@@ -183,12 +180,11 @@ class VerifyOtpLogin(APIView):
                     active=store.filter(Status='Active')
                     if store:
                         if active:
-                                tokens = create_jwt_pair_for_user(user)
-
-                                response = {"message": "Login Successfull", "tokens": tokens}
-                                return Response(data=response, status=status.HTTP_200_OK)
+                            tokens = create_jwt_pair_for_user(user)
+                            response = {"message": "Login Successfull", "tokens": tokens}
+                            return Response(data=response, status=status.HTTP_200_OK)
                         else:
-                                return Response({"message":"Our Team Will Contact You Soon"},status=status.HTTP_202_ACCEPTED)
+                            return Response({"message":"Our Team Will Contact You Soon"},status=status.HTTP_202_ACCEPTED)
                     else:
                         return Response({"message":"Store Not Found"},status=status.HTTP_404_NOT_FOUND)
                 else:
@@ -197,7 +193,6 @@ class VerifyOtpLogin(APIView):
                 return Response("Not Authorized")
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     def get(self, request):
         try:
             content = {"user": str(request.user), "auth": str(request.auth)}
@@ -223,7 +218,7 @@ class ForgetPasswordAPI(APIView):
             serializer = ChangePasswordSerializer(data=request.data)
             if serializer.is_valid():
                 email = serializer.validated_data['email']
-                user=User.objects.get(email=email)
+                user=User.objects.filter(email=email).filter(user_type="Vendor").first()
                 if user.user_type=="Vendor":
                     ForgetEmailSend(
                         from_email='smtpselnox@gmail.com', to_emails=email)
@@ -248,7 +243,7 @@ class ValidateOTPForgetPassword(APIView):
         try:
             email=request.data.get("email")
             otp=request.data.get("otp")
-            user=User.objects.filter(email=email).first()
+            user=User.objects.filter(email=email).filter(user_type="Vendor").first()
             if not user.exists():
                 return Response({
                     'message': 'Something goes wrong',
@@ -283,7 +278,7 @@ class VerifyOtpForgetPassword(APIView):
                 email = serializer.validated_data['email']
                 new_password = serializer.validated_data['new_password']
 
-                user = User.objects.get(email=email)
+                user = User.objects.filter(email=email).filter(user_type="Vendor").first()
                 if not user.exists():
                     return Response({
                         'message': 'Something goes wrong',
@@ -320,7 +315,7 @@ class LoginAPI(APIView):
                     serializer = LoginSerializer(data=request.data)
                     if serializer.is_valid():
                         email = serializer.validated_data['email']
-                        user=User.objects.get(email=email)
+                        user=User.objects.filter(email=email).filter(user_type= "Vendor").first()
                         if user:
                             if user.user_type=="Vendor":
                                 send_OneToOneMail(
@@ -367,8 +362,8 @@ class RegisterAPI(generics.GenericAPIView):
             username = request.data.get("username")
             email = request.data.get("email")
             serializer = RegisterSerializer1(data=request.data)
-            user = User.objects.filter(email=email)
-            username = User.objects.filter(username=username)
+            user = User.objects.filter(email=email).filter(user_type="Vendor")
+            username = User.objects.filter(username=username).filter(user_type="Vendor")
             if username.exists():
                 data = username.first()
                 old_otp = data.otp
@@ -406,7 +401,7 @@ class OTPverificationForRegisterAPI(APIView):
         try:
             email = request.data.get("email")
             otp = request.data.get("OTP")
-            user = User.objects.filter(email=email).first()
+            user = User.objects.filter(email=email).filter(user_type="Vendor").first()
             if user.otp !=int(otp):
                 return Response({
                     'message': 'Something goes wrong',
@@ -1707,57 +1702,150 @@ import requests
 from django.db import transaction
 from django.core.files.base import ContentFile
 
-class ImageUploadView(APIView):
-    permission_classes=[IsAuthenticated]
-    parser_classes = [MultiPartParser, JSONParser]
+# class ImageUploadView(APIView):
+#     permission_classes=[IsAuthenticated]
+#     parser_classes = [MultiPartParser, JSONParser]
 
+#     def post(self, request):
+#         try:
+#             # data_list=[]
+#             for item in request.data:
+#                 brand = Brand.objects.filter(name=item.get("Brand_Name")).first()
+#                 subcategory = SubCategory.objects.filter(name=item.get("SubcategoryName")).first()
+#                 images = []
+#                 for image_url in item.get("images", []):
+#                     response = requests.get(image_url)
+#                     response.raise_for_status()
+#                     image_content = ContentFile(response.content)
+#                     image_content.name = "image"
+#                     images.append(image_content)
+#                     data = {
+#                         "Brand_id": brand.id if brand else None,
+#                         "Sub_Category_id": subcategory.id if subcategory else None,
+#                         "Multiple_images": images,
+#                         "Multiple_prices":item["Multiple_prices"],
+#                         "Specialid":item["Specialid"],
+#                         "Product_Name":item["Product_Name"],
+#                         "Product_Description":item["Product_Description"],
+#                         "strain":item["strain"],
+#                         "Store_id":item["Store_id"]
+#                     }
+#                 # data_list.append(data)
+#                     special_id = data.get("Specialid")
+#                     if special_id:
+#                         product = Product.objects.filter(Specialid=special_id).first()
+#                         if product:
+#                             serializer = Serializer_Product1(instance=product, data=data, partial=True)
+#                         else:
+#                             serializer = Serializer_Product1(data=data, partial=True)
+#                     else:
+#                         serializer = Serializer_Product1(data=data, partial=True)
+#                     if serializer.is_valid():
+#                         serializer.save(created_by=request.user)
+#                     else:
+#                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#             # for data in data_list:
+                
+
+#             return Response("Success", status=status.HTTP_201_CREATED)
+
+#         except requests.exceptions.RequestException as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# class ImageUploadView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser, JSONParser]
+
+#     def post(self, request):
+#         try:
+#             data = request.data
+#             with transaction.atomic():
+#                 for item in data:
+#                     brand_name = item.get("Brand_Name")
+#                     subcategory_name = item.get("SubcategoryName")
+#                     images = []
+#                     for image_url in item.get("images", []):
+#                         response = requests.get(image_url)
+#                         response.raise_for_status()
+#                         image_content = ContentFile(response.content)
+#                         image_content.name = "image"
+#                         images.append(image_content)
+
+#                     brand = Brand.objects.filter(name=brand_name).first()
+#                     subcategory = SubCategory.objects.filter(name=subcategory_name).first()
+
+#                     product_data = {
+#                         "Brand_id": brand.id if brand else None,
+#                         "Sub_Category_id": subcategory.id if subcategory else None,
+#                         "Multiple_images": images,
+#                         "Multiple_prices": item.get("Multiple_prices"),
+#                         "Specialid": item.get("Specialid"),
+#                         "Product_Name": item.get("Product_Name"),
+#                         "Product_Description": item.get("Product_Description"),
+#                         "strain": item.get("strain"),
+#                         "Store_id": item.get("Store_id")
+#                     }
+
+#                     special_id = product_data.get("Specialid")
+#                     product = None
+#                     if special_id:
+#                         product = Product.objects.filter(Specialid=special_id).first()
+
+#                     serializer = Serializer_Product1(instance=product, data=product_data, partial=True)
+#                     if serializer.is_valid():
+#                         serializer.save(created_by=request.user)
+#                     else:
+#                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#             return Response("Success", status=status.HTTP_201_CREATED)
+
+#         except requests.exceptions.RequestException as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# from django.db import transaction
+
+class ImageUploadView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, JSONParser]
     def post(self, request):
         try:
-            # data_list=[]
-            for item in request.data:
-                brand = Brand.objects.filter(name=item.get("Brand_Name")).first()
-                subcategory = SubCategory.objects.filter(name=item.get("SubcategoryName")).first()
-                images = []
+            data = request.data
+            # with transaction.atomic():
+            for item in data:
+                brand_name = item.get("Brand_Name")
+                subcategory_name = item.get("SubcategoryName")
                 for image_url in item.get("images", []):
                     response = requests.get(image_url)
                     response.raise_for_status()
                     image_content = ContentFile(response.content)
                     image_content.name = "image"
-                    images.append(image_content)
-                    data = {
+                    brand = Brand.objects.filter(name=brand_name).first()
+                    subcategory = SubCategory.objects.filter(name=subcategory_name).first()
+                    product_data = {
                         "Brand_id": brand.id if brand else None,
                         "Sub_Category_id": subcategory.id if subcategory else None,
-                        "Multiple_images": images,
-                        "Multiple_prices":item["Multiple_prices"],
-                        "Specialid":item["Specialid"],
-                        "Product_Name":item["Product_Name"],
-                        "Product_Description":item["Product_Description"],
-                        "strain":item["strain"],
-                        "Store_id":item["Store_id"]
+                        "Multiple_images": [image_content],
+                        "Multiple_prices": [item.get("Multiple_prices")],
+                        "Specialid": item.get("Specialid"),
+                        "Product_Name": item.get("Product_Name"),
+                        "Product_Description": item.get("Product_Description"),
+                        "strain": item.get("strain"),
+                        "Store_id": item.get("Store_id")
                     }
-                # data_list.append(data)
-                    special_id = data.get("Specialid")
+                    special_id = product_data.get("Specialid")
+                    product = None
                     if special_id:
                         product = Product.objects.filter(Specialid=special_id).first()
-                        if product:
-                            serializer = Serializer_Product1(instance=product, data=data, partial=True)
-                        else:
-                            serializer = Serializer_Product1(data=data, partial=True)
-                    else:
-                        serializer = Serializer_Product1(data=data, partial=True)
+                    serializer = Serializer_Product1(instance=product, data=product_data, partial=True)
                     if serializer.is_valid():
                         serializer.save(created_by=request.user)
                     else:
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-            # for data in data_list:
-                
-
             return Response("Success", status=status.HTTP_201_CREATED)
 
         except requests.exceptions.RequestException as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 # class ImageUploadView(APIView):

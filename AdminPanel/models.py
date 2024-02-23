@@ -106,7 +106,7 @@ class User(AbstractBaseUser):
     googlelink=models.URLField(null=True)
     Name=models.CharField(max_length=999,null=True)
     username= models.CharField(max_length=100,blank=True,null=True,unique=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     MobilePhone=models.CharField(max_length=20,null=True)
     password=models.CharField(max_length=1000)
     DeliveryAddress=models.CharField(max_length=5000,null=True)
