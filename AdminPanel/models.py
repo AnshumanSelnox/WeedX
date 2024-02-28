@@ -224,7 +224,7 @@ class Stores(models.Model):
     Store_Name=models.CharField(max_length=100,null=True)
     Legal_Store_Name=models.CharField(max_length=1000,null=True)
     Store_Address=models.CharField(max_length=1000,null=True)
-    Store_Type=models.CharField(max_length=150,choices=StoreType,default=None,null=True)
+    Store_Type=models.CharField(max_length=150,choices=StoreType,default='dispensary',null=True)
     Stores_Description=RichTextField(default=None,blank=True,null=True)
     Store_Image=models.ImageField(upload_to='media/Brand',default=None,blank=True,null=True)
     Stores_Website=models.URLField(max_length=200,blank=True,default=None,null=True)
