@@ -366,18 +366,19 @@ class ProductBySubCategory(APIView):
             State=request.data.get("State")
             City=request.data.get("City")
             if City or State or Country:
-                user=Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
-                serialize = Serializer_Product(user, many=True)
-                if len(user)==0:
+                user=Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__City=City)
+                if len(user)!=0:
+                    serialize = Serializer_Product(user, many=True)
+                    return Response(serialize.data)
+                else:
                     User1 = Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__State=State) 
-                    serialize1 = Serializer_Product(User1, many=True)
-                    if len(User1)==0:
+                    if len(User1)!=0:
+                        serialize1 = Serializer_Product(User1, many=True)
+                        return Response(serialize1.data)
+                    else:
                         User2 = Product.objects.filter(Sub_Category_id=id).filter(Status="Active").filter(Store_id__Country=Country)
                         serialize2 = Serializer_Product(User2, many=True)
                         return Response(serialize2.data)
-                    return Response(serialize1.data)
-                        
-                return Response(serialize.data)
             else:
                 return Response("No Product Found")
                 
