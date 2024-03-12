@@ -3793,3 +3793,26 @@ class UserProfileAdminSideBar(APIView):
             return Response(response)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+<<<<<<< HEAD
+=======
+
+
+class UpdateAdminProfile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id=None):
+        try:
+            roles = request.data.get('Roles', None)
+            user_type = request.user.user_type
+            if user_type == 'Admin':
+                obj = User.objects.get(id=id)
+                serializers = UserSerializer(obj, data=request.data, partial=True)
+                if serializers.is_valid():
+                    user_serializer = serializers.save()
+                    user_serializer.Roles.set(roles)
+                    return Response(serializers.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+>>>>>>> a890b7e (update user database)

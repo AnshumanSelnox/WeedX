@@ -18,13 +18,14 @@ urlpatterns = [
     path('update-SubCategory/<int:id>', UpdateSubCategories.as_view()),
     path('delete-SubCategory/<int:id>', DeleteSubCategory.as_view()),
     ###################################################################################################
-    path("Login/",LoginAPI.as_view()),
-    path("get-UserAPI/",UserAPI.as_view()),
-    path('register/',RegisterAPI.as_view()),
-    path('VerifyOtp/',VerifyOtpLogin.as_view()),
+    path("Login/", LoginAPI.as_view()),
+    path("get-UserAPI/", UserAPI.as_view()),
+    path('register/', RegisterAPI.as_view()),
+    path('VerifyOtp/', VerifyOtpLogin.as_view()),
     # path('logout/',knox_views.LogoutView.as_view(),name='logout'),
-    path('ResetPasswordAPI/',ResetPasswordAPI.as_view(),name='ResetPasswordAPI'),
-    path('VerifyOtpResetPassword/',VerifyOtpResetPassword.as_view(),name='VerifyOtpResetPassword'),
+    path('ResetPasswordAPI/', ResetPasswordAPI.as_view(), name='ResetPasswordAPI'),
+    path('VerifyOtpResetPassword/', VerifyOtpResetPassword.as_view(),
+         name='VerifyOtpResetPassword'),
     path('Delete-User/<int:id>', DeleteUser.as_view()),
     # path('logoutall/',knox_views.LogoutAllView.as_view(),name='logoutall'),DeleteUser
     ########################################################################################################
@@ -123,18 +124,24 @@ urlpatterns = [
     #######################################################################################################################
     path('Add-TermsAndCondition/', AddTermsandCondition.as_view()),
     path('Get-TermsAndCondition/', GetTermsandCondition.as_view()),
-    path('update-TermsAndCondition/<int:id>', UpdateTermsandCondition.as_view()),
-    path('delete-TermsAndCondition/<int:id>', DeleteTermsandCondition.as_view()),
+    path('update-TermsAndCondition/<int:id>',
+         UpdateTermsandCondition.as_view()),
+    path('delete-TermsAndCondition/<int:id>',
+         DeleteTermsandCondition.as_view()),
     #######################################################################################################################
     path('Add-PrivacyAndPolicies/', AddPrivacyandPolicies.as_view()),
     path('Get-PrivacyAndPolicies/', GetPrivacyandPolicies.as_view()),
-    path('update-PrivacyAndPolicies/<int:id>', UpdatePrivacyandPolicies.as_view()),
-    path('delete-PrivacyAndPolicies/<int:id>', DeletePrivacyandPolicies.as_view()),
+    path('update-PrivacyAndPolicies/<int:id>',
+         UpdatePrivacyandPolicies.as_view()),
+    path('delete-PrivacyAndPolicies/<int:id>',
+         DeletePrivacyandPolicies.as_view()),
     #######################################################################################################################
     path('Add-PromotionalBanners/', AddPromotionalBanners.as_view()),
     path('Get-PromotionalBanners/', GetPromotionalBanners.as_view()),
-    path('update-PromotionalBanners/<int:id>', UpdatePromotionalBanners.as_view()),
-    path('delete-PromotionalBanners/<int:id>', DeletePromotionalBanners.as_view()),
+    path('update-PromotionalBanners/<int:id>',
+         UpdatePromotionalBanners.as_view()),
+    path('delete-PromotionalBanners/<int:id>',
+         DeletePromotionalBanners.as_view()),
     #######################################################################################################################
     path('Add-NetWeight/', AddNet_Weight.as_view()),
     path('Get-NetWeight/', GetNet_Weight.as_view()),
@@ -153,8 +160,10 @@ urlpatterns = [
     ######################################################################################################################
     path('Get-RolesAndPermission/', GetRolesAndPermission.as_view()),
     path('Add-RolesAndPermission/', AddRolesAndPermission.as_view()),
-    path('Update-RolesAndPermission/<int:id>', UpdateRolesAndPermission.as_view()),
-    path('Delete-RolesAndPermission/<int:id>', DeleteRolesAndPermission.as_view()),
+    path('Update-RolesAndPermission/<int:id>',
+         UpdateRolesAndPermission.as_view()),
+    path('Delete-RolesAndPermission/<int:id>',
+         DeleteRolesAndPermission.as_view()),
     path('UserNameCheck/', UserNameCheck.as_view()),
     path('AllStaf/', AllStaff.as_view()),
     path('RolesAfterLogin/', RolesAfterLogin.as_view()),
@@ -172,7 +181,8 @@ urlpatterns = [
     path('TopStore/', TopStore.as_view()),
     path('TotalSalesPieChart/', TotalSalesPieChart.as_view()),
     path('TotalUserGraph/', TotalUserGraph.as_view()),
-    path('TotalStoreVendorProFileCard/<int:id>', TotalStoreVendorProFileCard.as_view()),
+    path('TotalStoreVendorProFileCard/<int:id>',
+         TotalStoreVendorProFileCard.as_view()),
     path('ParticularOrder/<int:id>', ParticularOrder.as_view()),
     path('TotalSalesVendorCard/', TotalSalesVendorCard.as_view()),
     path('TotalOrderVendorCard/', TotalOrderVendorCard.as_view()),
@@ -196,6 +206,7 @@ urlpatterns = [
     path('ReviewbyUser/<int:id>', ReviewbyUser.as_view()),
     path('PopularLocationGraph/', PopularLocationGraph.as_view()),
     path('PopularLocationGraphPage/', PopularLocationGraphPage.as_view()),
-    path('UserProfileAdminSideBar/',UserProfileAdminSideBar.as_view()), 
+    path('UserProfileAdminSideBar/', UserProfileAdminSideBar.as_view()),
+    ############################## RISEE #########################################
+    path('UpdateAdminProfile/<int:id>', UpdateAdminProfile.as_view())
 ]
-
