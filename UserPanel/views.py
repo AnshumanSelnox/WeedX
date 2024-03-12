@@ -907,7 +907,6 @@ class AddOrder(APIView):
 
     def post(self, request):
         try:
-            index=0
             w=[]
             d=[]
             f=[]
@@ -969,6 +968,10 @@ class UpdateOrder(APIView):
             serializer = Serializer_Order(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
+                noti={"OrderStausUpdate":id}
+                notiserialize=Serializer_UserNotification(data=noti,partial=True)
+                if notiserialize.is_valid():
+                    notiserialize.save()
                 return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
             if cancel:
                 for i in User["Product"]:

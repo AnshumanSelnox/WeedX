@@ -1309,6 +1309,10 @@ class UpdateOrder(APIView):
             serializer = Serializer_Order(User, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(modified_by=request.user.username)
+                noti={"OrderStausUpdate":id}
+                notiserialize=Serializer_UserNotification(data=noti,partial=True)
+                if notiserialize.is_valid():
+                    notiserialize.save()
                 return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
