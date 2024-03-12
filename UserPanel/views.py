@@ -582,35 +582,35 @@ class GetAddtocart(APIView):
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets,"Country":i.Country,"State":i.State,"City":i.City}
                             a.append(response)
                         elif i.Brand_Id ==None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id.id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets,"Country":i.Country,"State":i.State,"City":i.City}
                             a.append(response)
                         elif i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
+                                    "Brand_Id":i.Brand_Id.id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets,"Country":i.Country,"State":i.State,"City":i.City}
                             a.append(response)
                         elif i.Brand_Id ==None and i.Image_id == None:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":i.Image_id,
-                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
+                                    "Brand_Id":i.Brand_Id,"Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets,"Country":i.Country,"State":i.State,"City":i.City}
                             a.append(response)
                         else:
                             response={"id":i.id,"username":i.created_by.username,"StoreName":i.Store_id.Store_Name,"ProductName":i.Product_id.Product_Name,"Image":image.image.url,
                                     "StoreDelivery":i.Store_id.Delivery,"StorePickup":i.Store_id.StoreFront,"StoreCurbsidePickup":i.Store_id.CurbSide_Pickup,"StoreAddress":i.Store_id.Store_Address,
                                     "StoreHours":i.Store_id.Hours,"StoreCurbSidePickupHours":i.Store_id.CurbSidePickupHours,"SubcategoryName":i.Sub_Category_id.name,"Cart_Quantity":i.Cart_Quantity,
                                     "Price":j,"TotalPrice":i.TotalPrice,"category":i.category,"created_by":i.created_by.id,"Product_id":i.Product_id.id,"Store_id":i.Store_id.id,"Image_id":"",
-                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets}
+                                    "Brand_Id":"","Sub_Category_id":i.Sub_Category_id.id,"CoupounField":i.CoupounField,"CustomerGets":i.CustomerGets,"Country":i.Country,"State":i.State,"City":i.City}
                             a.append(response)
 
             return Response(a)
@@ -2907,69 +2907,119 @@ class GetUserNotification(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+# class GetUserNotificationByLogin(APIView):
+#     permission_classes=[IsAuthenticated]
+#     def get(self,request):
+#         try:
+#             z=[]
+#             q=[]
+#             noti=UserNotification.objects.all()
+#             for i in noti:
+#                 if i.lastday == None:
+#                     d=i.created_at + i.days
+#                     lastday={"lastday":d}
+#                     l=UserNotification.objects.filter(id=i.id).first()
+#                     serialize1=Serializer_UserNotification(l,data=lastday,partial=True)
+#                     if serialize1.is_valid():
+#                         serialize1.save()
+            
+#                 if i.lastday==datetime.now():
+#                     blog=UserNotification.objects.filter(ProductReview=i.ProductReview).first()    
+#                     blog.delete()
+#                 a=Review.objects.filter(id=i.ProductReview_id).filter(user=request.user).first()
+#                 if a:
+#                     if a.Reply != None:
+#                         seraialize=ReviewSerializer(a).data
+#                 else:
+#                     seraialize=[]
+#                 if a:
+#                     if len(a.helpfull) >3:
+#                         seraialize3=ReviewSerializer(a,many=True).data
+#                 else:
+#                     seraialize3=[]
+                    
+#                 if i.lastday==datetime.now():
+#                     blog=UserNotification.objects.filter(storeReview=i.storeReview).filter(user=request.user).first()    
+#                     blog.delete()
+#                 s=StoreReview.objects.filter(id=i.storeReview).first()
+#                 if s:
+#                     if s.Reply != None:
+#                         seraialize4=StoreReviewSerializer(s,many=True).data
+#                 else:
+#                     seraialize4=[]
+#                 if s:
+                    
+#                     if len(s.helpfull) >3:
+#                         seraialize5=StoreReviewSerializer(s,many=True).data
+#                 else:
+#                     seraialize5=[]
+#                 if i.lastday==datetime.now():
+#                         blog=UserNotification.objects.filter(Blog=i.Blog_id).first()    
+#                         blog.delete()
+#                 blog=News.objects.filter(id=i.Blog_id)
+#                 serialize2=Serializer_News(blog,many=True).data
+#                 if i.lastday==datetime.now():
+#                         blog=UserNotification.objects.filter(OrderStausUpdate=i.OrderStausUpdate).first()    
+#                         blog.delete()
+#                 order=Order.objects.filter(OrderId=i.OrderStausUpdate_id).filter(created_by=request.user)
+#                 serialize6=Serializer_Order(order,many=True).data
+#                 notification=UserNotification.objects.filter(user=request.user)
+#                 serializer=Serializer_UserNotification(notification,many=True)
+                
+#                 response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6,"Notification":serializer.data}
+#                 z.append(response)
+#             for c in z:
+#                 if c not in q:
+#                     q.append(c)
+#             return Response(q)     
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+from django.utils import timezone
+
 class GetUserNotificationByLogin(APIView):
-    permission_classes=[IsAuthenticated]
-    def get(self,request):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         try:
+            notifications = UserNotification.objects.all()
+            response_data = []
             z=[]
-            q=[]
-            noti=UserNotification.objects.all()
-            for i in noti:
-                if i.lastday == None:
-                    d=i.created_at + i.days
-                    lastday={"lastday":d}
-                    l=UserNotification.objects.filter(id=i.id).first()
-                    serialize1=Serializer_UserNotification(l,data=lastday,partial=True)
-                    if serialize1.is_valid():
-                        serialize1.save()
-                if i.lastday==datetime.now():
-                    blog=UserNotification.objects.filter(ProductReview=i.ProductReview).first()    
-                    blog.delete()
-                a=Review.objects.filter(id=i.ProductReview_id).filter(user=request.user).first()
-                if a:
-                    if a.Reply != None:
-                        seraialize=ReviewSerializer(a).data
-                else:
-                    seraialize=[]
-                if a:
-                    if len(a.helpfull) >3:
-                        seraialize3=ReviewSerializer(a,many=True).data
-                else:
-                    seraialize3=[]
-                    
-                if i.lastday==datetime.now():
-                    blog=UserNotification.objects.filter(storeReview=i.storeReview).filter(user=request.user).first()    
-                    blog.delete()
-                s=StoreReview.objects.filter(id=i.storeReview).first()
-                if s:
-                    if s.Reply != None:
-                        seraialize4=StoreReviewSerializer(s,many=True).data
-                else:
-                    seraialize4=[]
-                if s:
-                    
-                    if len(s.helpfull) >3:
-                        seraialize5=StoreReviewSerializer(s,many=True).data
-                else:
-                    seraialize5=[]
-                if i.lastday==datetime.now():
-                        blog=UserNotification.objects.filter(Blog=i.Blog_id).first()    
-                        blog.delete()
-                blog=News.objects.filter(id=i.Blog_id)
-                serialize2=Serializer_News(blog,many=True).data
-                if i.lastday==datetime.now():
-                        blog=UserNotification.objects.filter(OrderStausUpdate=i.OrderStausUpdate).first()    
-                        blog.delete()
-                order=Order.objects.filter(OrderId=i.OrderStausUpdate_id).filter(created_by=request.user)
-                serialize6=Serializer_Order(order,many=True).data
-                response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6}
-                z.append(response)
-            for c in z:
-                if c not in q:
-                    q.append(c)
-            return Response(q)     
+
+            for notification in notifications:
+                if notification.lastday is None:
+                    notification.lastday = notification.created_at + notification.days
+                    notification.save()
+                if notification.lastday == timezone.now().date():
+                    notification.delete()
+                    continue
+                product_review = Review.objects.filter(id=notification.ProductReview).filter( user=request.user).first()
+                product_helpful = product_review if (product_review and len(product_review.helpfull) > 3) else None
+                store_review = StoreReview.objects.filter(id=notification.storeReview).filter( user=request.user).first()
+                store_helpful = store_review if (store_review and len(store_review.helpfull) > 3) else None
+                blog = News.objects.filter(id=notification.Blog_id)
+                order = Order.objects.filter(OrderId=notification.OrderStausUpdate_id).filter(created_by=request.user)
+                notifications1 = UserNotification.objects.filter(Blog=notification.Blog_id).filter(OrderStausUpdate=notification.OrderStausUpdate)
+                serializer_review = ReviewSerializer(product_review,many=True).data if product_review else []
+                serializer_blog = Serializer_News(blog,many=True).data if blog else []
+                serializer_order = Serializer_Order(order,many=True).data if order else []
+                response = {
+                    "ProductReview": serializer_review,
+                    "blog": serializer_blog,
+                    "ProductHelpfull": ReviewSerializer(product_helpful, many=True).data if product_helpful else [],
+                    "StoreReview": StoreReviewSerializer(store_review, many=True).data if store_review else [],
+                    "StoreHelpFull": StoreReviewSerializer(store_helpful, many=True).data if store_helpful else [],
+                    "Order": serializer_order,
+                    "Notification": Serializer_UserNotification(notifications1,many=True).data if notifications1 else []
+                }
+                response_data.append(response)
+            for i in response_data:
+                if i not in z:
+                    z.append(i)
+            return Response(z)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ClearNotification(APIView):
     permission_classes=[IsAuthenticated]

@@ -47,7 +47,7 @@ urlpatterns = [
     path('FilterCitiesByStates/<int:id>', FilterCitiesByStates.as_view()),    
     #########################################################################################################################################################
     path('CategoryOnProduct/<int:id>', CategoryOnProduct.as_view()),
-    path('Get-OrderByVendors/', GetOrderByVendors.as_view()),
+    path('Get-OrderByVendors/<int:id>', GetOrderByVendors.as_view()),
     path('Delete-ProductImage/<int:id>', DeleteProductImage.as_view()),
     path('StatusVendor/<int:id>', StatusVendor.as_view()),
     path('Get-TotalCountOrder/', TotalCountOrder.as_view()),

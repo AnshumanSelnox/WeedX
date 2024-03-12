@@ -13,6 +13,9 @@ class AddtoCart(models.Model):
     category=models.CharField(max_length=100,null=True)
     Sub_Category_id=models.ForeignKey(SubCategory,on_delete=models.CASCADE,null=True)
     CoupounField=models.JSONField(null=True)
+    Country=models.CharField(max_length=100,null=True)
+    State=models.CharField(max_length=100,null=True)
+    City=models.CharField(max_length=100,null=True)
     CustomerGets=models.JSONField(null=True)
     def get_total(self):
         return round(float(self.Price["SalePrice"]) * float(self.Cart_Quantity))

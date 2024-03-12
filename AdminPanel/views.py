@@ -2633,7 +2633,7 @@ class TopProduct(APIView):
                             cart=0
                             qwe = qwe + j["TotalPrice"]
                             cart= cart +j["Cart_Quantity"]
-                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
                             z.append(response)
                     for l in z:
                         if l not in y:

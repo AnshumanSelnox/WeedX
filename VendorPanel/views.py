@@ -884,9 +884,9 @@ class CategoryOnProduct(APIView):
 
 class GetOrderByVendors(APIView):
     permission_classes=[IsAuthenticated]
-    def get(self,request):
+    def get(self,request,id=None):
         try:
-            a=Stores.objects.filter(created_by=request.user).first()
+            a=Stores.objects.filter(id=id).first()
             RecentOrder=Order.objects.filter(Store=a)
             serialize=Serializer_Order(RecentOrder,many=True)
             return Response(serialize.data)

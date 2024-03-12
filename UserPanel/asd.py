@@ -1184,3 +1184,9 @@
 
 
 # a=(1,2,3)
+
+
+a=125
+
+z={"asdasd":'' if a else ''}
+print(z)
