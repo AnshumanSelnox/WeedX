@@ -3793,8 +3793,6 @@ class UserProfileAdminSideBar(APIView):
             return Response(response)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-<<<<<<< HEAD
-=======
 
 
 class UpdateAdminProfile(APIView):
@@ -3815,4 +3813,3 @@ class UpdateAdminProfile(APIView):
                     return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
->>>>>>> a890b7e (update user database)

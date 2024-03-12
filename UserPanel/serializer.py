@@ -129,7 +129,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ["email","id","username","Gender",'DateOfBirth','DeliveryAddress','MedicalCardNumber','MedicalCardExpire','MedicalCardState','EmailBoolean','NewsLetter','ReviewSuggestions','PushNotification','Recommendations','Savings','OrderupdatePushNotification','OrderupdateSMSNotifications','image','MobilePhone','PhotoId','googlelink']
+    fields = ["email","id","username","Gender",'DateOfBirth','DeliveryAddress','MedicalCardNumber','MedicalCardExpire','MedicalCardState','EmailBoolean','NewsLetter','ReviewSuggestions','PushNotification','Recommendations','Savings','OrderupdatePushNotification','OrderupdateSMSNotifications','image','MobilePhone','PhotoId','googlelink','RemovedNotification']
 
 class Serializer_BlankImage(serializers.ModelSerializer):
   class Meta:
@@ -182,4 +182,4 @@ class Serializer_UserNotification(serializers.ModelSerializer):
   class Meta:
     model=UserNotification
     fields='__all__'
-    extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}
+    # extra_kwargs = {'user': {'default': serializers.CurrentUserDefault()}}

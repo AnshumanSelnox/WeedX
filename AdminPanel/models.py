@@ -131,6 +131,7 @@ class User(AbstractBaseUser):
     is_superuser=models.BooleanField(default=False)
     Roles=models.ManyToManyField(CustomRole,blank=True)
     created_at=models.DateTimeField(auto_now_add=True)
+    RemovedNotification=models.JSONField(default=list,null=True)
 
         
     
