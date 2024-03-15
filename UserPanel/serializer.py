@@ -50,6 +50,7 @@ class Serializer_AddtoCart(serializers.ModelSerializer):
     extra_kwargs = {'created_by': {'default': serializers.CurrentUserDefault()}}       
 
 class Serializer_Order(serializers.ModelSerializer):
+  StoreName=serializers.ReadOnlyField(source='Store.Store_Name')
   SellerName=serializers.ReadOnlyField(source='Store.created_by.username')
   username=serializers.ReadOnlyField(source='created_by.username')
   email=serializers.ReadOnlyField(source='created_by.email')

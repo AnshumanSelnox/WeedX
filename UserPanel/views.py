@@ -2966,9 +2966,11 @@ class GetUserNotificationByLogin(APIView):
                         blog.delete()
                 order=Order.objects.filter(OrderId=i.OrderStausUpdate_id).filter(created_by=request.user)
                 serialize6=Serializer_Order(order,many=True).data
-                
-                response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6,"Notification":i.id}
-                z.append(response)
+                if seraialize!=[] or serialize2!=[] or seraialize3!=[] or seraialize4!=[] or seraialize5!=[] or serialize6 !=[]:
+                    response={"ProductReview":seraialize,"blog":serialize2,"ProductHelpfull":seraialize3,"StoreReview":seraialize4,"StoreHelpFull":seraialize5,"Order":serialize6,"Notification":i.id}
+                    z.append(response)
+                else:
+                    continue
             for c in z:
                 if c not in q:
                     q.append(c)
@@ -2976,132 +2978,6 @@ class GetUserNotificationByLogin(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# from django.utils import timezone
-
-# class GetUserNotificationByLogin(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         try:
-#             notifications = UserNotification.objects.all()
-#             response_data = []
-#             z=[]
-
-#             for notification in notifications:
-#                 if notification.lastday is None:
-#                     notification.lastday = notification.created_at + notification.days
-#                     notification.save()
-#                 if notification.lastday == timezone.now().date():
-#                     notification.delete()
-#                     continue
-#                 product_review = Review.objects.filter(id=notification.ProductReview).filter( user=request.user).first()
-#                 product_helpful = product_review if (product_review and len(product_review.helpfull) > 3) else None
-#                 store_review = StoreReview.objects.filter(id=notification.storeReview).filter( user=request.user).first()
-#                 store_helpful = store_review if (store_review and len(store_review.helpfull) > 3) else None
-#                 blog = News.objects.filter(id=notification.Blog_id)
-#                 order = Order.objects.filter(OrderId=notification.OrderStausUpdate_id).filter(created_by=request.user)
-#                 notifications1 = UserNotification.objects.filter(Blog=notification.Blog_id).filter(OrderStausUpdate=notification.OrderStausUpdate)
-#                 serializer_review = ReviewSerializer(product_review,many=True).data if product_review else []
-#                 serializer_blog = Serializer_News(blog,many=True).data if blog else []
-#                 serializer_order = Serializer_Order(order,many=True).data if order else []
-#                 response = {
-#                     "ProductReview": serializer_review,
-#                     "blog": serializer_blog,
-#                     "ProductHelpfull": ReviewSerializer(product_helpful, many=True).data if product_helpful else [],
-#                     "StoreReview": StoreReviewSerializer(store_review, many=True).data if store_review else [],
-#                     "StoreHelpFull": StoreReviewSerializer(store_helpful, many=True).data if store_helpful else [],
-#                     "Order": serializer_order,
-#                     "Notification": Serializer_UserNotification(notifications1,many=True).data if notifications1 else []
-#                 }
-#                 response_data.append(response)
-#             for i in response_data:
-#                 if i not in z:
-#                     z.append(i)
-#             return Response(z)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-# from django.utils import timezone
-
-# class GetUserNotificationByLogin(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         try:
-#             notifications = UserNotification.objects.all().select_related(
-#                 'Blog',  'ProductReview', 'storeReview', 'OrderStausUpdate', 'Instock'
-#             )
-#             response_data = []
-
-#             order=Order.objects.filter(created_by=request.user.id)
-#             for notification in notifications:
-#                 if notification.lastday is None:
-#                     notification.lastday = notification.created_at + timezone.timedelta(days=notification.days)
-#                     notification.save()
-
-#                 if notification.lastday == timezone.now().date():
-#                     notification.delete()
-#                     continue
-
-#                 serializer_data = {
-#                     "ProductReview": ReviewSerializer(notification.ProductReview,many=True).data if notification.ProductReview else [],
-#                     "StoreReview": StoreReviewSerializer(notification.storeReview,many=True).data if notification.storeReview else [],
-#                     "Order": Serializer_Order(order,many=True).data if order else [],
-#                     # "Instock": ProductSerializer(notification.Instock).data if notification.Instock else [],
-#                     "Blog": Serializer_News(notification.Blog).data if notification.Blog else [],
-#                     "NotificationID":notification.id
-#                     # "Notification":Serializer_UserNotification(notification).data if notification else []
-#                     # "Coupoun": CouponSerializer(notification.coupoun).data if notification.coupoun else [],
-#                 }
-#                 response_data.append(serializer_data)
-
-#             return Response(response_data)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# class GetUserNotificationByLogin(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         try:
-#             notifications = UserNotification.objects.all()
-#             response_data = []
-
-#             for notification in notifications:
-#                 if notification.lastday is None:
-#                     notification.lastday = notification.created_at + notification.days
-#                     notification.save()
-#                 if notification.lastday == timezone.now().date():
-#                     notification.delete()
-#                     continue
-
-#                 product_review = Review.objects.filter(id=notification.ProductReview, user=request.user).first()
-#                 product_helpful = product_review if (product_review and len(product_review.helpfull) > 3) else None
-#                 store_review = StoreReview.objects.filter(id=notification.storeReview, user=request.user).first()
-#                 store_helpful = store_review if (store_review and len(store_review.helpfull) > 3) else None
-#                 blog = News.objects.filter(id=notification.Blog.id)
-#                 order = Order.objects.filter(OrderId=notification.OrderStausUpdate.OrderId, created_by=request.user)
-#                 notifications1 = UserNotification.objects.filter(Blog=notification.Blog).filter(OrderStausUpdate=notification.OrderStausUpdate.OrderId)
-
-#                 serializer_review = ReviewSerializer(product_review).data if product_review else []
-#                 serializer_blog = Serializer_News(blog).data if blog else []
-#                 serializer_order = Serializer_Order(order).data if order else []
-
-#                 response = {
-#                     "ProductReview": serializer_review,
-#                     "blog": serializer_blog,
-#                     "ProductHelpfull": ReviewSerializer(product_helpful).data if product_helpful else [],
-#                     "StoreReview": StoreReviewSerializer(store_review).data if store_review else [],
-#                     "StoreHelpFull": StoreReviewSerializer(store_helpful).data if store_helpful else [],
-#                     "Order": serializer_order,
-#                     "Notification": Serializer_UserNotification(notifications1).data if notifications1 else []
-#                 }
-#                 response_data.append(response)
-
-#             # Removed redundant code for list comparison, as Response will automatically serialize the list.
-#             return Response(response_data)
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

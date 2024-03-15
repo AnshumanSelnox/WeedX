@@ -602,7 +602,7 @@ class GetBrand(APIView):
         try:
             a=request.user.user_type
             if a == 'Admin':
-                User = Brand.objects.select_related().all()
+                User = Brand.objects.select_related().all().order_by('-created')
                 serialize = Serializer_Brand(User, many=True)
                 return Response(serialize.data)
             else:
@@ -801,8 +801,8 @@ class GetStores(APIView):
     def get(self, request, format=None):
         try:
             a=request.user.user_type
-            if a == 'Admin' or a=='store managment':
-                User = Stores.objects.select_related().all()
+            if a == 'Admin':
+                User = Stores.objects.select_related().all().order_by('-created')
                 serialize = Serializer_Store(User, many=True)
                 return Response(serialize.data)
             else:
@@ -873,7 +873,7 @@ class GetNews(APIView):
         try:
             a=request.user.user_type
             if a == 'Admin':
-                User = News.objects.select_related().all()
+                User = News.objects.select_related().all().order_by('-created')
                 serialize = Serializer_News(User, many=True)
                 return Response(serialize.data)
             else:
@@ -1781,7 +1781,7 @@ class DeletePromotionalBanners(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, id=None):
         try:
-            a=request.user.user_type.Name
+            a=request.user.user_type
             if a == 'Admin':
                 User = get_object_or_404(PromotionalBanners, id=id)
                 User.delete()
@@ -2016,8 +2016,8 @@ class UserNameCheck(APIView):
             if a=="Admin":
                 username=request.data.get("username",None)
                 email=request.data.get("email",None)
-                UserName=User.objects.filter(username=username)
-                Email=User.objects.filter(email=email)
+                UserName=User.objects.filter(username=username).filter(user_type="Admin")
+                Email=User.objects.filter(email=email).filter(user_type='Admin')
                 if UserName.exists():
                     return Response("This UserName is already Exist")
                 elif Email.exists():
@@ -2036,13 +2036,16 @@ class AllStaff(APIView):
             qwe=request.user.user_type
             if qwe =="Admin":
                 a=[]
-                user=User.objects.all()
+                user=User.objects.filter(user_type='Admin')
                 for i in user:
                     if i.Roles!=[]:
                         z=i.Roles.all()
                         b=Serializer_RolesandPermission(z,many=True).data
                         if z:
                             response={"ID":i.id,"Name":i.username,"Email":i.email,"Status":i.status,"Roles": [x["RoleTitle"] for x in b ],"created_at": i.created_at,"MobileNo":i.MobilePhone}
+                            a.append(response)
+                        else:
+                            response={"ID":i.id,"Name":i.username,"Email":i.email,"Status":i.status,"Roles":[],"created_at": i.created_at,"MobileNo":i.MobilePhone}
                             a.append(response)
                 return Response(a)
             else:
@@ -2059,6 +2062,7 @@ class RolesAfterLogin(APIView):
                 user=request.user
                 z=user.Roles.all()
                 serialize=Serializer_RolesandPermission(z,many=True).data
+                serialize.append({"SuperUser":request.user.is_superuser})
                 return Response(serialize)
             else:
                 return Response("Not Authorized",status=status.HTTP_403_FORBIDDEN)
@@ -2235,7 +2239,7 @@ class AllPendingStores(APIView):
                     store=Stores.objects.filter(Status="Hide").filter(created__icontains=StartDate).order_by("-id")
                     for i in store:
                         user=User.objects.filter(id=i.created_by_id).first()
-                        response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url  }
+                        response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url if hasattr(user, 'image') and user.image.url else '' }
                         z.append(response)
                     return Response(z)
                 else:
@@ -2245,7 +2249,7 @@ class AllPendingStores(APIView):
                         store=Stores.objects.filter(Status="Hide").filter(created__gte=week,created__lt=(today+timedelta(days=1))).order_by("-id")
                         for i in store:
                             user=User.objects.filter(id=i.created_by_id).first()
-                            response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url  }
+                            response={"UserName":user.username,"TimeOfCreation":user.created_at,"Email":user.email,"MobileNo":user.MobilePhone,"StoreName":i.Store_Name,"StoreType":i.Store_Type,"StoreStatus":i.Status,"image":user.image.url if hasattr(user, 'image') and user.image.url else '' }
                             z.append(response)
                         week=week + timedelta(days=1)
                     for m in z:
@@ -2602,7 +2606,7 @@ class TopProduct(APIView):
                             cart=0
                             qwe = qwe + j["TotalPrice"]
                             cart= cart +j["Cart_Quantity"]
-                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
                             z.append(response)
                     for l in z:
                         if l not in y:
@@ -3115,7 +3119,7 @@ class TopSaleProductVendor(APIView):
                             cart=0
                             qwe = qwe + j["TotalPrice"]
                             cart= cart +j["Cart_Quantity"]
-                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
                             z.append(response)
                     for l in z:
                         if l not in y:
@@ -3146,7 +3150,7 @@ class TopSaleProductVendor(APIView):
                             cart=0
                             qwe = qwe + j["TotalPrice"]
                             cart= cart +j["Cart_Quantity"]
-                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
+                            response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"],"ProductPrice":j["Price"]["SalePrice"],"Stock": j["Price"]["Stock"],"StoreName":j["StoreName"]}
                             z.append(response)
                     for l in z:
                         if l not in y:
@@ -3813,3 +3817,4 @@ class UpdateAdminProfile(APIView):
                     return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

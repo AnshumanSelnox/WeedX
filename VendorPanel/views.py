@@ -367,7 +367,7 @@ class RegisterAPI(generics.GenericAPIView):
             if username.exists():
                 data = username.first()
                 old_otp = data.otp
-                if old_otp == None:
+                if old_otp == None or data.otpvalidate == False:
                     RegisterEmailSend(
                         from_email='smtpselnox@gmail.com', to_emails=email)
                     return Response({"message": {"Otp sent to": email}},status=status.HTTP_200_OK)
@@ -377,7 +377,7 @@ class RegisterAPI(generics.GenericAPIView):
             elif user.exists():
                 data = user.first()
                 old_otp = data.otp
-                if old_otp == None:
+                if old_otp == None or data.otpvalidate == False:
                     send_OneToOneMail(
                         from_email='smtpselnox@gmail.com', to_emails=email)
                     return Response({"message": {"Otp sent to": email}},status=status.HTTP_200_OK)
@@ -402,6 +402,8 @@ class OTPverificationForRegisterAPI(APIView):
             email = request.data.get("email")
             otp = request.data.get("OTP")
             user = User.objects.filter(email=email).filter(user_type="Vendor").first()
+            
+            
             if user.otp !=int(otp):
                 return Response({
                     'message': 'Something goes wrong',
@@ -409,8 +411,11 @@ class OTPverificationForRegisterAPI(APIView):
                 },status=status.HTTP_400_BAD_REQUEST)
             user = User.objects.get(email=email)
             if user is not None:
+                user.otpvalidate=True
+                user.save()
                 return Response({
                     "user": UserSerializer(user).data,
+                    
                     # "token": AuthToken.objects.create(user)[1]
                 },status=status.HTTP_200_OK)
             else:
@@ -461,7 +466,7 @@ class GetProduct(APIView):
 
     def get(self, request, id=None):
         try:
-            User = Product.objects.filter(created_by=request.user).filter(Store_id=id)
+            User = Product.objects.filter(created_by=request.user).filter(Store_id=id).order_by('-created')
             serialize = Serializer_Product(User, many=True)
             return Response(serialize.data)
         except Exception as e:
@@ -887,7 +892,7 @@ class GetOrderByVendors(APIView):
     def get(self,request,id=None):
         try:
             a=Stores.objects.filter(id=id).first()
-            RecentOrder=Order.objects.filter(Store=a)
+            RecentOrder=Order.objects.filter(Store=a).order_by('-OrderDate')
             serialize=Serializer_Order(RecentOrder,many=True)
             return Response(serialize.data)
         except Exception as e:
@@ -1720,7 +1725,7 @@ class ProductInsight(APIView):
                         cart=0
                         qwe = qwe + j["TotalPrice"]
                         cart= cart +j["Cart_Quantity"]
-                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"]}
                         x.append(response)
                 for l in x:
                     if l not in y:
@@ -1738,7 +1743,7 @@ class ProductInsight(APIView):
                         cart=0
                         qwe = qwe + j["TotalPrice"]
                         cart= cart +j["Cart_Quantity"]
-                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"]}
                         x.append(response)
                 for l in x:
                     if l not in y:
@@ -1756,7 +1761,7 @@ class ProductInsight(APIView):
                         cart=0
                         qwe = qwe + j["TotalPrice"]
                         cart= cart +j["Cart_Quantity"]
-                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"]}
                         x.append(response)
                 for l in x:
                     if l not in y:
@@ -1774,7 +1779,7 @@ class ProductInsight(APIView):
                         cart=0
                         qwe = qwe + j["TotalPrice"]
                         cart= cart +j["Cart_Quantity"]
-                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url,"category":j["category"],"Product_id":j["Product_id"]}
+                        response={"ProductName":j["ProductName"],"ProductSalesCount":cart,"Price":qwe,"Image":a.image.url if hasattr(a, 'image') and a.image.url else '',"category":j["category"],"Product_id":j["Product_id"]}
                         x.append(response)
                 for l in x:
                     if l not in y:
@@ -2261,11 +2266,12 @@ class SalesGraph(APIView):
                     week=week + relativedelta(months=+1)
                     result = {"Date":week.strftime("%B"),"UnitSold":UnitSold,"DeliverSale":DeliverSale,"StoreSale":StoreSale}  #"Date":week.strftime("%B"),
                     z.append(result)
-                for qwe in range(0,len(z)):
-                    for rty in z:
-                        if (z[qwe]==rty):
-                            l.update(rty)
-                return Response([l])
+                # for qwe in range(0,len(z)):
+                #     for rty in z:
+                #         if (z[qwe]==rty):
+                #             l.update(rty)
+                # return Response([l])
+                return Response(z)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
