@@ -316,18 +316,22 @@ class LoginAPI(APIView):
                     if serializer.is_valid():
                         email = serializer.validated_data['email']
                         user=User.objects.filter(email=email).filter(user_type= "Vendor").first()
-                        if user:
-                            if user.user_type=="Vendor":
-                                send_OneToOneMail(
-                                    from_email='smtpselnox@gmail.com', to_emails=email)
-                                return Response({
-                                    'message': 'Email sent',
-                                    'data': {"Otp_Sent_to": email}
-                                },status=status.HTTP_200_OK)
+                        z=user.check_password(password)
+                        if z:
+                            if user:
+                                if user.user_type=="Vendor":
+                                    send_OneToOneMail(
+                                        from_email='smtpselnox@gmail.com', to_emails=email)
+                                    return Response({
+                                        'message': 'Email sent',
+                                        'data': {"Otp_Sent_to": email}
+                                    },status=status.HTTP_200_OK)
+                                else:
+                                    return Response({"error": "Not Vendor"}, status=status.HTTP_400_BAD_REQUEST)
                             else:
-                                return Response({"error": "Not Vendor"}, status=status.HTTP_400_BAD_REQUEST)
+                                return Response({"error":"Vendor Not Register"},status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            return Response({"error":"Vendor Not Register"},status=status.HTTP_400_BAD_REQUEST)
+                            return Response({"error": "Password not Match"}, status=status.HTTP_400_BAD_REQUEST)
                     else:
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
