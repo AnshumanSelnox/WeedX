@@ -2,23 +2,23 @@ from rest_framework import serializers
 from .models import *
 from AdminPanel.choices import *
 from AdminPanel.models import *
-from django.contrib.auth import authenticate
+# from django.contrib.auth import authenticate
 
-class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(style={"input_type": "password"},)
+# class LoginSerializer(serializers.Serializer):
+#     email = serializers.EmailField()
+#     password = serializers.CharField(style={"input_type": "password"},)
 
-    def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
+#     def validate(self, attrs):
+#         email = attrs.get('email')
+#         password = attrs.get('password')
 
-        user = authenticate(email=email, password=password,user_type= "Vendor")
+#         user = authenticate(email=email, password=password,user_type= "Vendor")
 
-        if not user:
-            raise serializers.ValidationError('Invalid Email or Password !')
+#         if not user:
+#             raise serializers.ValidationError('Invalid Email or Password !')
 
-        attrs['Vendor'] = user
-        return attrs
+#         attrs['Vendor'] = user
+#         return attrs
 
 class LoginSerializer1(serializers.Serializer):
     email = serializers.EmailField()

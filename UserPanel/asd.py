@@ -1186,7 +1186,47 @@
 # a=(1,2,3)
 
 
-a=125
+# a=125
 
-z={"asdasd":'' if a else ''}
-print(z)
+# z={"asdasd":'' if a else ''}
+# print(z)
+
+
+# import math
+# import os
+# import random
+# import re
+# import sys
+
+
+
+# if __name__ == '__main__':
+#     n = int(input().strip())
+#     if n%2==0 and n <6 and n>=20:
+#         print("Weird")
+#     elif n%2==1 or n <6 and n>=20:
+#         print("Weird")
+#     elif n%2==0 and n<20:
+#         print('Not Weird')
+#     else:
+#         print('Not Weird')
+
+
+# if __name__ == '__main__':
+#     x = int(input())
+#     y = int(input())
+#     z = int(input())
+#     n = int(input())
+#     arr = []
+#     [arr.append(([i,j,k])) for i in range(x+1) for j in range(y+1) for k in range(z+1) if i+j+k!=n]
+#     print(arr)
+
+# def print_full_name(first, last):
+#     # Write your code here
+#     print(f"Hello {first} {last}! You just delved into python.")
+#     # return(z)
+
+# if __name__ == '__main__':
+#     first_name = input()
+#     last_name = input()
+#     print_full_name(first_name, last_name)
