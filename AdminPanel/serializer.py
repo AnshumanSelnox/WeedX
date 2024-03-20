@@ -2,10 +2,6 @@ import json
 from rest_framework import serializers
 from .models import *
 
-
-
-
-
 class Serializer_Category(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -189,8 +185,6 @@ class Serializer_Product(serializers.ModelSerializer):
         for image_data in images_data:
             ProductImage.objects.create(product=product, image=image_data)
 
-
-
 class Serializer_Product1(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField(source='Sub_Category_id.category_id.name')
     category_id=serializers.ReadOnlyField(source='Sub_Category_id.category_id.id') 
@@ -235,8 +229,7 @@ class Serializer_Product1(serializers.ModelSerializer):
     def _create_images(self, product, images_data):
         for image_data in images_data:
             ProductImage.objects.create(product=product, image=image_data)
-            
-            
+        
 class UpdateProfile(serializers.ModelSerializer):
     class Meta:
         model=User

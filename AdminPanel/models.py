@@ -75,7 +75,6 @@ class CustomRole(models.Model):
     DeleteRoles=models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
     
-
 class UserManager(BaseUserManager):
     def create_user(self, username,email, password=None, **kwargs):
         if not email:
@@ -146,7 +145,6 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.email
 
-
 class Category(models.Model):               #category table
     name=models.CharField(max_length=500,unique=True)
     categoryImages=models.ImageField(upload_to='media/Category',null=True)
@@ -173,7 +171,6 @@ class SubCategory(models.Model):            #Subcategory table
 
     def __str__(self):
         return self.name
-
     
 class Countries(models.Model):                      #Country Table
     CountryName=models.CharField(max_length=100,unique=True)
@@ -183,8 +180,7 @@ class Countries(models.Model):                      #Country Table
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.CountryName
-    
-    
+       
 class States(models.Model):                         #State Table
     StateName=models.CharField(max_length=100,unique=True)
     StateFlagFlag=models.ImageField(upload_to='media/State',null=True)
@@ -206,7 +202,6 @@ class Cities(models.Model):                         #City Table
     def __str__(self):
         return self.CityName
     
-
 class Stores(models.Model):
     Country=models.CharField(null=True,max_length=500)
     State=models.CharField(null=True,max_length=500)
@@ -359,7 +354,6 @@ class ProductWeight(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True,related_name='Prices')
     Price=models.JSONField()
 
-
 class NewsCategory(models.Model):               #category table  
     name=models.CharField(max_length=500,unique=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -382,12 +376,6 @@ class NewsSubCategory(models.Model):            #Subcategory table
     created_by=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
         return self.name
-    
- 
-
-        
-    
-
 
 class News(models.Model):
     Category_id=models.ForeignKey(NewsCategory,on_delete=models.CASCADE,default=1)
@@ -412,29 +400,19 @@ class News(models.Model):
         self.ViewCount = self.ViewCount + 1
         super().save(*args, **kwargs)
 
-
-
-
 class ExportFile(models.Model):
     File=models.FileField(upload_to="excel")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-
-
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='media/product_images')
-
-
 
 class HomePageBanner(models.Model):
     Banner=models.ImageField(upload_to='media/Banner')
     mobile=models.ImageField(upload_to='media/MobileBanner')
     status=models.CharField(max_length=999,choices=Status,default="Active")
-
-
-
 
 class Coupoun(models.Model):
     discountType=(('Amount off Products','Amount off Products'),('Amount off Order','Amount off Order'),('Buy X get Y','Buy X get Y'),('Free Shipping','Free Shipping'))
@@ -473,8 +451,6 @@ class Coupoun(models.Model):
     EndTime=models.TimeField(null=True)
     created_by=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
 
-
-
 class USACountry(models.Model):
     
     zip=models.CharField(max_length=100,null=True)
@@ -496,13 +472,11 @@ class USACountry(models.Model):
     military=models.CharField(max_length=100,null=True) 
     timezone=models.CharField(max_length=100,null=True) 
 
-
 class Law(models.Model):
     Country=models.ForeignKey(Countries,on_delete=models.CASCADE)
     State=models.ForeignKey(States,on_delete=models.CASCADE)
     City=models.ForeignKey(Cities,on_delete=models.CASCADE)
     content=RichTextField()
-
 
 class AboutUs(models.Model):
     Content=RichTextField()
@@ -514,7 +488,6 @@ class TermsandCondition (models.Model):
 class PrivacyandPolicies(models.Model):
     Content=RichTextField()
 
-
 class PromotionalBanners(models.Model):
     Country=models.CharField(max_length=100,null=True)
     State=models.CharField(max_length=100,null=True)
@@ -524,12 +497,9 @@ class PromotionalBanners(models.Model):
     mobile=models.ImageField(upload_to='media/MobilePromotionalBanner')
     status=models.CharField(max_length=999,choices=Status,default="Active")
 
-
-
 class Subscribe(models.Model):
     email=models.EmailField(unique=True)
-    
-    
+
 class StaticImages(models.Model):
     Logo=models.ImageField(upload_to='media/Logo')
     AboutUs1=models.ImageField(upload_to='media/AboutUs1')

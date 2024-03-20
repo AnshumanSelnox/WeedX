@@ -55,7 +55,6 @@ class Login(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 EmailBody='''
 
      <div>
@@ -97,7 +96,6 @@ def send_OneToOneMail(to_emails='',from_email=''):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(email_from, password)
         server.sendmail(email_from, to_emails, email_string)
-
 
 class ForgetPasswordAPI(APIView):
     serializer_class = ChangePasswordSerializer
@@ -2978,9 +2976,6 @@ class GetUserNotificationByLogin(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
 class ClearNotification(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
@@ -3020,8 +3015,6 @@ class GetNewsbyUser(APIView):
             return Response(z)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class ListProductView(APIView):
     def get(self, request):

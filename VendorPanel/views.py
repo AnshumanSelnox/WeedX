@@ -66,8 +66,6 @@ def send_OneToOneMail(to_emails='',from_email=''):
         server.login(email_from, password)
         server.sendmail(email_from, to_emails, email_string)    
         
-
-
 EmailBody1='''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,8 +158,6 @@ def ForgetEmailSend(to_emails='',from_email=''):
         server.login(email_from, password)
         server.sendmail(email_from, to_emails, email_string)
 
-
-
 class VerifyOtpLogin(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -237,7 +233,6 @@ class ForgetPasswordAPI(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class ValidateOTPForgetPassword(APIView):
     def post(self,request=None):
         try:
@@ -261,7 +256,6 @@ class ValidateOTPForgetPassword(APIView):
                 },status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class VerifyOtpForgetPassword(APIView):
     def get_object(self, queryset=None):
@@ -301,7 +295,6 @@ class VerifyOtpForgetPassword(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class LoginAPI(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -345,10 +338,7 @@ class LoginAPI(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 # Get User API
-
-
 class UserAPI(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated,]
     serializer_class = UserSerializer
@@ -358,7 +348,6 @@ class UserAPI(generics.RetrieveAPIView):
             return self.request.user
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 # Class based view to register user
 class RegisterAPI(generics.GenericAPIView):
@@ -402,7 +391,6 @@ class RegisterAPI(generics.GenericAPIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class OTPverificationForRegisterAPI(APIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -429,7 +417,6 @@ class OTPverificationForRegisterAPI(APIView):
                 return Response({"message": "User is already Register"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class ResetPassword(APIView):
     serializer_class = PasswordReseetSerializer
@@ -465,8 +452,6 @@ class ResetPassword(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 #Product
 class GetProduct(APIView):
     permission_classes = [IsAuthenticated]
@@ -493,8 +478,7 @@ class AddProduct(APIView):
                 return Response({"error": serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+               
 class UpdateProduct(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -526,7 +510,6 @@ class UpdateProduct(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class DeleteProduct(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, id=None):
@@ -536,8 +519,7 @@ class DeleteProduct(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-     
+
 #Brand
 class GetBrand(APIView):
     permission_classes = [IsAuthenticated]
@@ -581,7 +563,6 @@ class AddBrand(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateBrand(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -611,7 +592,6 @@ class UpdateBrand(APIView):
                 return Response({"name": "Enter the valid Name"},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 #Stores 
 class GetStores(APIView):
@@ -654,7 +634,6 @@ class AddStores(APIView):
                 return Response({"Stores_MobileNo":"Enter the valid No."},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UpdateStores(APIView):
     permission_classes = [IsAuthenticated]
@@ -709,7 +688,6 @@ class AddNet_Weight(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UpdateNet_Weight(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -748,7 +726,6 @@ class GetCategories(APIView):
             return Response(serialize.data)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
 
 #Sub Category Api
 class GetSubCategories(APIView):
@@ -796,8 +773,7 @@ class FilterCitiesByStates(APIView):
                 return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
-        
+
 class ActiveCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -807,7 +783,6 @@ class ActiveCategory(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
             
 class ActiveSubCategory(APIView):
     permission_classes = [IsAuthenticated]
@@ -819,8 +794,6 @@ class ActiveSubCategory(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
 class ActiveCountry(APIView):
     def get(self,request):
         try:
@@ -829,8 +802,7 @@ class ActiveCountry(APIView):
             return Response({"status": "success", "data":serializer.data}, status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+  
 class ActiveStates(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
@@ -914,7 +886,6 @@ class DeleteProductImage(APIView):
             return Response({"status": "success", "data": "Deleted"})
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class StatusVendor(APIView):
     permission_classes = [IsAuthenticated]
@@ -1709,7 +1680,6 @@ class SalesOverviewcard(APIView):
                 return Response(a)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class ProductInsight(APIView):
     permission_classes=[IsAuthenticated]
@@ -2584,13 +2554,9 @@ class VendorCardDashBoard(APIView):
         except Exception as e:
             return Response({'error' : str(e)},status=500)  
 
-
-
-
 from rest_framework.parsers import MultiPartParser,JSONParser
 import requests
 from django.core.files.base import ContentFile
-
 
 class ImageUploadView(APIView):
     permission_classes = [IsAuthenticated]
